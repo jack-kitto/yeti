@@ -72,6 +72,18 @@ export type LibraryPatch = {
   activeWorkspaceId?: string;
 };
 
+export type CatalogLinkInput = {
+  url: string;
+  title?: string;
+  image?: string;
+};
+
+export type CatalogLinkPatch = {
+  url?: string;
+  title?: string;
+  image?: string;
+};
+
 export type LibraryStore = {
   read(): Promise<Library | null>;
   write(library: Library): Promise<void>;

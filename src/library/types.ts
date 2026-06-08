@@ -21,6 +21,13 @@ export type Theme = {
   borderRadius: number;
 };
 
+export type ThemePatch = {
+  palette?: Partial<ThemePalette>;
+  backgroundUrl?: string | null;
+  glassOpacity?: number;
+  borderRadius?: number;
+};
+
 export type EdgeGroupLinkPlacement = {
   linkId: string;
   orderKey: FractionalOrderKey;

@@ -80,3 +80,76 @@ export function addEdgeGroup(
     },
   }));
 }
+
+function findEdgeGroup(
+  workspace: Workspace,
+  edge: EdgePosition,
+  groupId: string,
+): EdgeGroup {
+  const group = workspace.placements.edges[edge].find((entry) => entry.id === groupId);
+  if (!group) {
+    throw new Error(`Edge group "${groupId}" not found on ${edge} edge`);
+  }
+  return group;
+}
+
+export function updateEdgeGroup(
+  library: Library,
+  workspaceId: string,
+  edge: EdgePosition,
+  groupId: string,
+  patch: EdgeGroupPatch,
+): Library {
+  findWorkspace(library, workspaceId);
+
+  return updateWorkspace(library, workspaceId, (workspace) => {
+    const group = findEdgeGroup(workspace, edge, groupId);
+    const name = patch.name !== undefined ? patch.name.trim() : group.name;
+    if (!name) {
+      throw new Error("Edge group name is required");
+    }
+
+    return {
+      ...workspace,
+      placements: {
+        ...workspace.placements,
+        edges: {
+          ...workspace.placements.edges,
+          [edge]: workspace.placements.edges[edge].map((entry) =>
+            entry.id === groupId
+              ? {
+                  ...entry,
+                  name,
+                  ...(patch.handleIcon !== undefined
+                    ? patch.handleIcon.trim()
+                      ? { handleIcon: patch.handleIcon.trim() }
+                      : { handleIcon: undefined }
+                    : {}),
+                }
+              : entry,
+          ),
+        },
+      },
+    };
+  });
+}
+
+export function deleteEdgeGroup(
+  library: Library,
+  workspaceId: string,
+  edge: EdgePosition,
+  groupId: string,
+): Library {
+  findWorkspace(library, workspaceId);
+
+  return updateWorkspace(library, workspaceId, (workspace) => ({
+    ...workspace,
+    placements: {
+      ...workspace.placements,
+      edges: {
+        ...workspace.placements.edges,
+        [edge]: workspace.placements.edges[edge].filter((entry) => entry.id !== groupId),
+      },
+    },
+  }));
+}

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { applyPatch, getLibrary, loadOrSeedLibrary, saveLibrary } from "./library";
+import {
+  applyPatch,
+  getLibrary,
+  loadOrSeedLibrary,
+  resetLibrary,
+  saveLibrary,
+} from "./library";
 import { STARTER_CATALOG } from "./starter-template";
 import { createInMemoryLibraryStore } from "./store";
 import { EDGE_PREVIEW_LIMIT } from "@/placement/placement";
@@ -76,6 +82,25 @@ describe("saveLibrary and getLibrary", () => {
     const retrieved = await getLibrary(store);
 
     expect(retrieved?.catalog[0].title).toBe("GitHub — updated");
+  });
+});
+
+describe("resetLibrary", () => {
+  it("wipes custom data and re-seeds the starter template", async () => {
+    const store = createInMemoryLibraryStore();
+    const library = await loadOrSeedLibrary(store);
+    library.catalog = [];
+    library.workspaces[0].name = "Custom";
+    await saveLibrary(store, library);
+
+    const reset = await resetLibrary(store);
+
+    expect(reset.catalog.length).toBe(STARTER_CATALOG.length);
+    expect(reset.workspaces.map((workspace) => workspace.name)).toEqual([
+      "Work",
+      "Personal",
+    ]);
+    expect((await getLibrary(store))?.catalog.length).toBe(STARTER_CATALOG.length);
   });
 });
 

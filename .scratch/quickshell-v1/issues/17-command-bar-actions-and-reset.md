@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,11 +12,11 @@ Implement `resetLibrary(store)` in the Library module. Destructive actions alway
 
 ## Acceptance criteria
 
-- [ ] Typing `:` switches command bar to action mode; only actions appear in results
-- [ ] `:reset` surfaces "Reset to starter template"; `Enter` shows confirmation dialog
-- [ ] Confirmed reset wipes library and re-seeds; shell reflects new data without DevTools
-- [ ] Cancelled reset leaves library unchanged
-- [ ] Library module test covers reset behavior
+- [x] Typing `:` switches command bar to action mode; only actions appear in results
+- [x] `:reset` surfaces "Reset to starter template"; `Enter` shows confirmation dialog
+- [x] Confirmed reset wipes library and re-seeds; shell reflects new data without DevTools
+- [x] Cancelled reset leaves library unchanged
+- [x] Library module test covers reset behavior
 
 ## Blocked by
 

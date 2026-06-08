@@ -16,7 +16,57 @@ export type CommandBarLinkResult = {
   source: "workspace" | "catalog";
 };
 
-export type CommandBarResult = CommandBarWorkspaceResult | CommandBarLinkResult;
+export type CommandBarActionResult = {
+  kind: "action";
+  actionId: "reset";
+  label: string;
+};
+
+export type CommandBarResult =
+  | CommandBarWorkspaceResult
+  | CommandBarLinkResult
+  | CommandBarActionResult;
+
+export function isCommandBarActionMode(query: string): boolean {
+  return query.startsWith(":");
+}
+
+const COMMAND_BAR_ACTIONS: CommandBarActionResult[] = [
+  {
+    kind: "action",
+    actionId: "reset",
+    label: "Reset to starter template",
+  },
+];
+
+export function buildCommandBarActionResults(query: string): CommandBarActionResult[] {
+  const actionQuery = query.slice(1).trim().toLowerCase();
+  if (!actionQuery) {
+    return COMMAND_BAR_ACTIONS;
+  }
+
+  return COMMAND_BAR_ACTIONS.filter((action) => {
+    const haystack = `${action.actionId} ${action.label}`.toLowerCase();
+    let queryIndex = 0;
+    for (let i = 0; i < haystack.length && queryIndex < actionQuery.length; i++) {
+      if (haystack[i] === actionQuery[queryIndex]) {
+        queryIndex++;
+      }
+    }
+    return queryIndex === actionQuery.length;
+  });
+}
+
+export function buildCommandBarRows(
+  library: Library,
+  query: string,
+): CommandBarResult[] {
+  if (isCommandBarActionMode(query)) {
+    return buildCommandBarActionResults(query);
+  }
+
+  return buildCommandBarResults(library, query);
+}
 
 export function buildCommandBarResults(
   library: Library,

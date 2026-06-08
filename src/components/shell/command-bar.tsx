@@ -2,12 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  buildCommandBarResults,
+  buildCommandBarRows,
   initialCommandBarSelection,
   moveCommandBarSelection,
   shortcutMatchesEvent,
   type CommandBarResult,
 } from "@/command-bar/command-bar";
+import { useResetLibrary } from "@/hooks/use-library";
 import type { Library } from "@/library/types";
 
 type CommandBarProps = {
@@ -16,16 +17,23 @@ type CommandBarProps = {
 };
 
 function resultKey(result: CommandBarResult): string {
-  return result.kind === "workspace" ? result.workspaceId : result.linkId;
+  if (result.kind === "workspace") {
+    return result.workspaceId;
+  }
+  if (result.kind === "link") {
+    return result.linkId;
+  }
+  return result.actionId;
 }
 
 export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const resetLibraryMutation = useResetLibrary();
 
   const results = useMemo(
-    () => buildCommandBarResults(library, query),
+    () => buildCommandBarRows(library, query),
     [library, query],
   );
 
@@ -55,6 +63,19 @@ export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
     if (result.kind === "workspace") {
       onSwitchWorkspace(result.workspaceId);
       setQuery("");
+      return;
+    }
+
+    if (result.kind === "action") {
+      if (result.actionId === "reset") {
+        const confirmed = window.confirm(
+          "Reset the library to the starter template? This wipes your local library and cannot be undone without a snapshot backup.",
+        );
+        if (confirmed) {
+          resetLibraryMutation.mutate();
+          setQuery("");
+        }
+      }
       return;
     }
 
@@ -110,7 +131,7 @@ export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         onKeyDown={handleInputKeyDown}
-        placeholder="Search links…"
+        placeholder="Search links… (: for actions)"
         aria-label="Command bar"
         aria-expanded={showResults}
         aria-controls="command-bar-results"
@@ -149,6 +170,26 @@ export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
                   >
                     <span>Switch to {result.name}</span>
                     <span className="text-xs opacity-60">workspace</span>
+                  </button>
+                </li>
+              );
+            }
+
+            if (result.kind === "action") {
+              return (
+                <li key={result.actionId} id={id} role="option" aria-selected={selected}>
+                  <button
+                    type="button"
+                    className={`flex w-full items-center justify-between rounded-[var(--qs-border-radius)] px-3 py-2 text-left text-sm ${
+                      selected
+                        ? "bg-[color:var(--qs-color-accent)]/15 ring-1 ring-[color:var(--qs-color-accent)]/40"
+                        : "hover:bg-black/5"
+                    }`}
+                    onMouseEnter={() => setSelectedIndex(index)}
+                    onClick={() => executeResult(result)}
+                  >
+                    <span>{result.label}</span>
+                    <span className="text-xs opacity-60">action</span>
                   </button>
                 </li>
               );

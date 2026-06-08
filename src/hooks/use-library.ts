@@ -1,7 +1,12 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { applyPatch, loadOrSeedLibrary, saveLibrary } from "@/library/library";
+import {
+  applyPatch,
+  loadOrSeedLibrary,
+  resetLibrary,
+  saveLibrary,
+} from "@/library/library";
 import { createIndexedDbLibraryStore } from "@/library/indexed-db-store";
 import type { Library, LibraryPatch } from "@/library/types";
 
@@ -30,6 +35,17 @@ export function useSaveLibrary() {
 
   return useMutation({
     mutationFn: (library: Library) => saveLibrary(store, library),
+    onSuccess: (library) => {
+      queryClient.setQueryData(["library"], library);
+    },
+  });
+}
+
+export function useResetLibrary() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => resetLibrary(store),
     onSuccess: (library) => {
       queryClient.setQueryData(["library"], library);
     },

@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import { initialKey } from "@/fractional-order/fractional-order";
 import type { Library } from "@/library/types";
 import {
-  buildCommandBarResults,
+  buildCommandBarActionResults,
+  buildCommandBarRows,
   initialCommandBarSelection,
+  isCommandBarActionMode,
   moveCommandBarSelection,
   shortcutMatchesEvent,
 } from "./command-bar";
@@ -68,9 +70,9 @@ function makeLibrary(): Library {
   };
 }
 
-describe("buildCommandBarResults", () => {
+describe("buildCommandBarRows", () => {
   it("lists workspace switches before links in the command bar", () => {
-    const results = buildCommandBarResults(makeLibrary(), "pe");
+    const results = buildCommandBarRows(makeLibrary(), "pe");
 
     expect(results.map((result) => result.kind)).toEqual(["workspace", "link"]);
     expect(results[0]).toMatchObject({
@@ -78,6 +80,22 @@ describe("buildCommandBarResults", () => {
       workspaceId: "personal",
       name: "Personal",
     });
+  });
+});
+
+describe("buildCommandBarActionResults", () => {
+  it("returns shell actions when the query uses the action prefix", () => {
+    expect(isCommandBarActionMode(":reset")).toBe(true);
+    expect(buildCommandBarActionResults(":reset")[0]).toMatchObject({
+      kind: "action",
+      actionId: "reset",
+      label: "Reset to starter template",
+    });
+  });
+
+  it("filters actions by text after the prefix", () => {
+    expect(buildCommandBarActionResults(":res")).toHaveLength(1);
+    expect(buildCommandBarActionResults(":nope")).toHaveLength(0);
   });
 });
 

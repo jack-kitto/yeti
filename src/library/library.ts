@@ -41,6 +41,13 @@ export async function loadOrSeedLibrary(store: LibraryStore): Promise<Library> {
   return starter;
 }
 
+export async function resetLibrary(store: LibraryStore): Promise<Library> {
+  const starter = createStarterLibrary();
+  validateLibrary(starter);
+  await store.write(starter);
+  return starter;
+}
+
 export async function applyPatch(
   store: LibraryStore,
   patch: LibraryPatch,

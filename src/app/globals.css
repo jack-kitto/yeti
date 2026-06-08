@@ -15,6 +15,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  overflow: hidden;
   color: var(--qs-color-text);
   background-color: var(--qs-color-background);
   background-image: var(--qs-background-image);
@@ -24,4 +25,115 @@ body {
     system-ui,
     -apple-system,
     sans-serif;
+}
+
+.shell-icon-btn {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  margin-top: -17px;
+  border-radius: 11px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: color-mix(in srgb, var(--qs-color-surface) 72%, transparent);
+  color: var(--qs-color-text);
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.shell-icon-btn:hover,
+.shell-icon-btn.active {
+  transform: translateY(-1px);
+  border-color: rgba(0, 0, 0, 0.14);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.shell-icon-glyph {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.shell-icon-image {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.shell-flyout {
+  position: absolute;
+  min-width: 168px;
+  padding: 8px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--qs-color-surface) 88%, transparent);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.992);
+  transition:
+    opacity 95ms linear,
+    transform 140ms ease;
+  will-change: transform, opacity, left, top;
+  pointer-events: none;
+}
+
+.shell-flyout.measuring {
+  opacity: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.shell-flyout.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+.shell-flyout.exiting {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.992);
+  pointer-events: none;
+}
+
+.shell-flyout-title {
+  margin: 2px 4px 8px;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.shell-flyout-more,
+.shell-flyout-dismiss {
+  margin-top: 4px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--qs-border-radius);
+  padding: 6px 8px;
+  text-align: left;
+  font-size: 13px;
+  color: var(--qs-color-accent);
+  cursor: pointer;
+}
+
+.shell-flyout-more:hover,
+.shell-flyout-dismiss:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.shell-flyout-dismiss {
+  font-size: 11px;
+  opacity: 0.65;
 }

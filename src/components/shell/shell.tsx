@@ -1,23 +1,66 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { applyTheme } from "@/theme/theme";
+import { useEffect, useState } from "react";
 import { useApplyLibraryPatch, useLibrary, useSaveLibrary } from "@/hooks/use-library";
+import { applyTheme } from "@/theme/theme";
 import { reorderEdgeGroupOnRim } from "@/placement/placement";
 import type { EdgePosition } from "@/library/types";
+import { getShellLayout } from "@/shell-frame/layout";
 import { CommandBar } from "./command-bar";
-import { EdgeRim } from "./edge-rim";
 import { Launcher } from "./launcher";
 import { PinStrip } from "./pin-strip";
+import { ShellCanvas } from "./shell-canvas";
+import { ShellEdgeLayer } from "./shell-edge-layer";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 
+type PanelBounds = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
+function readPanelBounds(): PanelBounds {
+  const layout = getShellLayout();
+  return {
+    left: layout.panelX,
+    top: layout.panelY,
+    width: layout.panelW,
+    height: layout.panelH,
+  };
+}
+
 export function Shell() {
-  const shellRef = useRef<HTMLDivElement>(null);
   const { data: library, isLoading } = useLibrary();
   const applyLibraryPatch = useApplyLibraryPatch();
   const saveLibraryMutation = useSaveLibrary();
+  const [panelBounds, setPanelBounds] = useState<PanelBounds>(readPanelBounds);
 
-  function handleReorderGroup(edge: EdgePosition, groupId: string, targetSlotIndex: number) {
+  const activeWorkspace = library?.workspaces.find(
+    (w) => w.id === library.activeWorkspaceId,
+  );
+
+  useEffect(() => {
+    if (!activeWorkspace) {
+      return;
+    }
+    applyTheme(document.documentElement, activeWorkspace.theme);
+  }, [activeWorkspace]);
+
+  useEffect(() => {
+    function handleResize() {
+      setPanelBounds(readPanelBounds());
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  function handleReorderGroup(
+    edge: EdgePosition,
+    groupId: string,
+    targetSlotIndex: number,
+  ) {
     if (!library) {
       return;
     }
@@ -25,16 +68,6 @@ export function Shell() {
     const updated = reorderEdgeGroupOnRim(library, edge, groupId, targetSlotIndex);
     saveLibraryMutation.mutate(updated);
   }
-
-  const activeWorkspace = library?.workspaces.find(
-    (w) => w.id === library.activeWorkspaceId,
-  );
-
-  useEffect(() => {
-    if (shellRef.current && activeWorkspace) {
-      applyTheme(shellRef.current, activeWorkspace.theme);
-    }
-  }, [activeWorkspace]);
 
   if (isLoading || !library || !activeWorkspace) {
     return (
@@ -45,56 +78,37 @@ export function Shell() {
   }
 
   return (
-    <div ref={shellRef} className="relative min-h-screen">
-      <div
-        className="pointer-events-none absolute inset-0 bg-[color:var(--qs-color-background)]"
-        style={{ opacity: 1 - activeWorkspace.theme.glassOpacity }}
-        aria-hidden
-      />
+    <div className="relative h-screen w-screen overflow-hidden">
+      <ShellCanvas theme={activeWorkspace.theme} />
+      <ShellEdgeLayer library={library} onReorderGroup={handleReorderGroup} />
 
-      <EdgeRim
-        edge="left"
-        library={library}
-        onReorderGroup={(groupId, targetSlotIndex) =>
-          handleReorderGroup("left", groupId, targetSlotIndex)
-        }
-      />
-      <EdgeRim
-        edge="top"
-        library={library}
-        onReorderGroup={(groupId, targetSlotIndex) =>
-          handleReorderGroup("top", groupId, targetSlotIndex)
-        }
-      />
-      <EdgeRim
-        edge="bottom"
-        library={library}
-        onReorderGroup={(groupId, targetSlotIndex) =>
-          handleReorderGroup("bottom", groupId, targetSlotIndex)
-        }
-      />
-      <div className="absolute inset-y-0 right-0 w-3" aria-label="Right edge" />
+      <main
+        className="pointer-events-none absolute z-10 flex flex-col items-center justify-center gap-4 px-8"
+        style={{
+          left: panelBounds.left,
+          top: panelBounds.top,
+          width: panelBounds.width,
+          height: panelBounds.height,
+        }}
+      >
+        <div className="pointer-events-auto flex w-full max-w-md flex-col items-center gap-4">
+          <WorkspaceSwitcher
+            library={library}
+            onSwitch={(workspaceId) =>
+              applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
+            }
+          />
+          <CommandBar
+            library={library}
+            onSwitchWorkspace={(workspaceId) =>
+              applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
+            }
+          />
+          <PinStrip library={library} />
+        </div>
+      </main>
 
       <Launcher library={library} />
-
-      <main className="relative flex min-h-screen flex-col items-center justify-center gap-4 px-8">
-        <WorkspaceSwitcher
-          library={library}
-          onSwitch={(workspaceId) =>
-            applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
-          }
-        />
-        <CommandBar
-          library={library}
-          onSwitchWorkspace={(workspaceId) =>
-            applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
-          }
-        />
-        <PinStrip library={library} />
-        <p className="max-w-md text-center text-sm opacity-80">
-          Hover an edge handle for links. {activeWorkspace.name} workspace active.
-        </p>
-      </main>
     </div>
   );
 }

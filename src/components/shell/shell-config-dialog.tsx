@@ -36,7 +36,7 @@ function sectionContent(section: ConfigSection, library: Library) {
     case "workspaces":
       return <ShellConfigWorkspaces library={library} />;
     case "library":
-      return <ShellConfigLibrary />;
+      return <ShellConfigLibrary library={library} />;
   }
 }
 

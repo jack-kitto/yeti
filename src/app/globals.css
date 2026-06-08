@@ -1096,6 +1096,13 @@ body {
   color: color-mix(in srgb, var(--qs-color-text) 58%, transparent);
 }
 
+.shell-config-error {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #9a4f4f;
+}
+
 .shell-config-title {
   margin: 0 0 2px;
   font-size: 11px;

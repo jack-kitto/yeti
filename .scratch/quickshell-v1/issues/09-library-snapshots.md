@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -37,13 +37,17 @@ Add Snapshot round-trip unit tests.
 
 ## Acceptance criteria
 
-- [ ] User can export library as downloadable YAML from config
-- [ ] User can import library snapshot from a URL; library is fully replaced on success
-- [ ] Invalid YAML or schema version shows a clear error; library unchanged on failure
-- [ ] Background images in snapshots are URL references only
-- [ ] Snapshot module tests cover serialize, deserialize, and round-trip fidelity
+- [x] User can export library as downloadable YAML from config
+- [x] User can import library snapshot from a URL; library is fully replaced on success
+- [x] Invalid YAML or schema version shows a clear error; library unchanged on failure
+- [x] Background images in snapshots are URL references only
+- [x] Snapshot module tests cover serialize, deserialize, and round-trip fidelity
 
 ## Blocked by
 
 - `.scratch/quickshell-v1/issues/06-config-link-catalog.md`
 - `.scratch/quickshell-v1/issues/14-edge-groups-model.md`
+
+## Comments
+
+Implemented via `src/snapshot/snapshot.ts` (7 tests), library import persistence (2 tests), and snapshot export/import UI in `ShellConfigLibrary`.

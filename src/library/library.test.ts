@@ -36,6 +36,18 @@ describe("loadOrSeedLibrary", () => {
 });
 
 describe("saveLibrary and getLibrary", () => {
+  it("rejects a library with duplicate pins for the same link in a workspace", async () => {
+    const store = createInMemoryLibraryStore();
+    const library = await loadOrSeedLibrary(store);
+    const workspace = library.workspaces[0];
+    workspace.placements.pins.push({
+      linkId: workspace.placements.pins[0].linkId,
+      position: { kind: "strip", order: 99 },
+    });
+
+    await expect(saveLibrary(store, library)).rejects.toThrow(/duplicate pin/i);
+  });
+
   it("persists the library so a later read returns the same data", async () => {
     const store = createInMemoryLibraryStore();
     const library = await loadOrSeedLibrary(store);

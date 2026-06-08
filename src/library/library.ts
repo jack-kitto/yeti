@@ -1,6 +1,22 @@
 import { createStarterLibrary } from "./starter-template";
 import type { Library, LibraryPatch, LibraryStore } from "./types";
 
+export function validateLibrary(library: Library): void {
+  for (const workspace of library.workspaces) {
+    const seen = new Set<string>();
+
+    for (const pin of workspace.placements.pins) {
+      if (seen.has(pin.linkId)) {
+        throw new Error(
+          `Duplicate pin for link "${pin.linkId}" in workspace "${workspace.id}"`,
+        );
+      }
+
+      seen.add(pin.linkId);
+    }
+  }
+}
+
 export async function getLibrary(store: LibraryStore): Promise<Library | null> {
   return store.read();
 }
@@ -9,6 +25,7 @@ export async function saveLibrary(
   store: LibraryStore,
   library: Library,
 ): Promise<Library> {
+  validateLibrary(library);
   await store.write(library);
   return library;
 }
@@ -38,6 +55,7 @@ export async function applyPatch(
     ...patch,
   };
 
+  validateLibrary(next);
   await store.write(next);
   return next;
 }

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { applyTheme } from "@/theme/theme";
 import { useApplyLibraryPatch, useLibrary } from "@/hooks/use-library";
 import { EdgeMenu } from "./edge-menu";
+import { PinStrip } from "./pin-strip";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 
 export function Shell() {
@@ -42,13 +43,20 @@ export function Shell() {
       <EdgeMenu edge="bottom" library={library} />
       <div className="absolute inset-y-0 right-0 w-3" aria-label="Right edge" />
 
-      <main className="relative flex min-h-screen flex-col items-center justify-center gap-6 px-8">
+      <main className="relative flex min-h-screen flex-col items-center justify-center gap-4 px-8">
         <WorkspaceSwitcher
           library={library}
           onSwitch={(workspaceId) =>
             applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
           }
         />
+        <div
+          className="w-full max-w-md rounded-[var(--qs-border-radius)] border border-white/20 bg-[color:var(--qs-color-surface)]/60 px-4 py-2.5 text-sm opacity-60 backdrop-blur-sm"
+          aria-hidden
+        >
+          Search links…
+        </div>
+        <PinStrip library={library} />
         <p className="max-w-md text-center text-sm opacity-80">
           Hover an edge for links. {activeWorkspace.name} workspace active.
         </p>

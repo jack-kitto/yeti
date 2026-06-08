@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,11 +12,11 @@ Resolve **pins** from the active workspace **placements**. New pins land in the 
 
 ## Acceptance criteria
 
-- [ ] Pin strip renders on canvas with links pinned in the active workspace
-- [ ] Pins use link display fallbacks (custom image → favicon)
-- [ ] Clicking a pin opens a new tab
-- [ ] Only one pin per link per workspace is possible
-- [ ] Pin order reflects workspace placement data from the library
+- [x] Pin strip renders on canvas with links pinned in the active workspace
+- [x] Pins use link display fallbacks (custom image → favicon)
+- [x] Clicking a pin opens a new tab
+- [x] Only one pin per link per workspace is possible
+- [x] Pin order reflects workspace placement data from the library
 
 ## Blocked by
 

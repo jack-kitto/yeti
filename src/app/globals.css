@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --qs-color-background: #f5f0e8;
+  --qs-color-surface: #fffdf9;
+  --qs-color-text: #2c2419;
+  --qs-color-accent: #c17f59;
+  --qs-background-image: none;
+  --qs-glass-opacity: 0.72;
+  --qs-border-radius: 20px;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--qs-color-text);
+  background-color: var(--qs-color-background);
+  background-image: var(--qs-background-image);
+  background-size: cover;
+  background-position: center;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}

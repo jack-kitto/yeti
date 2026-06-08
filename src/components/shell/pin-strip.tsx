@@ -15,7 +15,7 @@ export function PinStrip({ library }: PinStripProps) {
 
   return (
     <div
-      className="flex flex-wrap items-center justify-center gap-1 rounded-[var(--qs-border-radius)] border border-white/20 bg-[color:var(--qs-color-surface)]/80 px-3 py-2 shadow-sm backdrop-blur-sm"
+      className="flex flex-wrap items-center justify-center gap-1 rounded-[var(--qs-border-radius)] bg-[color:var(--qs-color-surface)]/80 px-3 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] backdrop-blur-sm"
       aria-label="Pin strip"
     >
       {pins.map((link) => (

@@ -15,7 +15,7 @@ export function LinkItem({ link, showTitle = true }: LinkItemProps) {
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="shell-link-item flex items-center gap-2 rounded-[10px] px-2 py-1.5 text-sm"
+      className="shell-link-item flex items-center gap-2 rounded-[12px] px-2 py-1.5 text-sm transition-transform duration-150 ease-[cubic-bezier(0.2,0,0,1)] active:scale-[0.96]"
       title={title}
     >
       {imageUrl ? (
@@ -24,7 +24,7 @@ export function LinkItem({ link, showTitle = true }: LinkItemProps) {
           alt=""
           width={20}
           height={20}
-          className="rounded-sm"
+          className="shell-image rounded-sm"
         />
       ) : (
         <span className="inline-block h-5 w-5 rounded-sm bg-black/10" />

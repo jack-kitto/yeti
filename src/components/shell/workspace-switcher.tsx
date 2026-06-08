@@ -21,7 +21,7 @@ export function WorkspaceSwitcher({
             key={workspace.id}
             type="button"
             onClick={() => onSwitch(workspace.id)}
-            className={`rounded-full px-4 py-1.5 text-sm transition ${
+            className={`rounded-full px-4 py-1.5 text-sm transition-[transform,background-color] duration-150 ease-[cubic-bezier(0.2,0,0,1)] active:scale-[0.96] ${
               active
                 ? "bg-[color:var(--qs-color-accent)] text-white"
                 : "text-[color:var(--qs-color-text)] hover:bg-black/5"

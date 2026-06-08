@@ -10,6 +10,14 @@
   --qs-background-image: none;
   --qs-glass-opacity: 0.72;
   --qs-border-radius: 20px;
+  --qs-image-outline: rgba(0, 0, 0, 0.1);
+  --qs-shadow-sm:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+  --qs-shadow-md:
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+  --qs-press-ease: cubic-bezier(0.2, 0, 0, 1);
 }
 
 body {
@@ -25,6 +33,35 @@ body {
     system-ui,
     -apple-system,
     sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-wrap: pretty;
+}
+
+.shell-image {
+  outline: 1px solid var(--qs-image-outline);
+  outline-offset: -1px;
+}
+
+.shell-pressable {
+  transition:
+    transform 140ms var(--qs-press-ease),
+    background 140ms ease,
+    opacity 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.shell-pressable:active {
+  transform: scale(0.96);
+}
+
+.shell-hit-target {
+  position: relative;
+}
+
+.shell-hit-target::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
 }
 
 .shell-icon-btn {
@@ -34,7 +71,7 @@ body {
   margin-left: -17px;
   margin-top: -17px;
   border-radius: 11px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: none;
   background: color-mix(in srgb, var(--qs-color-surface) 72%, transparent);
   color: var(--qs-color-text);
   display: grid;
@@ -43,18 +80,27 @@ body {
   cursor: pointer;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--qs-shadow-sm);
   transition:
     background 140ms ease,
-    border-color 140ms ease,
-    transform 140ms ease,
+    transform 140ms var(--qs-press-ease),
     box-shadow 140ms ease;
+}
+
+.shell-icon-btn::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
 }
 
 .shell-icon-btn:hover,
 .shell-icon-btn.active {
   transform: translateY(-1px);
-  border-color: rgba(0, 0, 0, 0.14);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--qs-shadow-md);
+}
+
+.shell-icon-btn:active {
+  transform: scale(0.96);
 }
 
 .shell-icon-glyph {
@@ -67,6 +113,8 @@ body {
   height: 20px;
   border-radius: 6px;
   object-fit: cover;
+  outline: 1px solid var(--qs-image-outline);
+  outline-offset: -1px;
 }
 
 .shell-rim-hit {
@@ -87,7 +135,7 @@ body {
   box-shadow: none;
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.9);
-  will-change: transform, opacity, left, top;
+  will-change: transform, opacity;
   pointer-events: none;
 }
 
@@ -112,7 +160,7 @@ body {
 .shell-dashboard-tab {
   flex: 1;
   border: 0;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 6px 4px;
   background: transparent;
   color: var(--qs-color-text);
@@ -121,11 +169,19 @@ body {
   text-transform: uppercase;
   opacity: 0.55;
   cursor: pointer;
+  transition:
+    transform 140ms var(--qs-press-ease),
+    background 140ms ease,
+    opacity 140ms ease;
 }
 
 .shell-dashboard-tab.active {
   opacity: 1;
   background: rgba(0, 0, 0, 0.06);
+}
+
+.shell-dashboard-tab:active {
+  transform: scale(0.96);
 }
 
 .shell-dashboard-placeholder {
@@ -179,7 +235,7 @@ body {
   justify-content: space-between;
   gap: 12px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 8px 10px;
   background: transparent;
   color: var(--qs-color-text);
@@ -188,7 +244,13 @@ body {
   line-height: 1.2;
   text-align: left;
   cursor: pointer;
-  transition: background 120ms ease;
+  transition:
+    transform 140ms var(--qs-press-ease),
+    background 120ms ease;
+}
+
+.shell-search-result:active {
+  transform: scale(0.96);
 }
 
 .shell-search-result:hover,
@@ -211,8 +273,10 @@ body {
   padding: 8px 14px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--qs-color-accent) 14%, var(--qs-color-surface));
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  border: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    var(--qs-shadow-sm);
 }
 
 .shell-search-pill-icon {
@@ -220,6 +284,7 @@ body {
   opacity: 0.45;
   line-height: 1;
   user-select: none;
+  transform: translateY(0.5px);
 }
 
 .shell-search-input {
@@ -239,6 +304,7 @@ body {
 }
 
 .shell-search-clear {
+  position: relative;
   border: 0;
   background: transparent;
   color: var(--qs-color-text);
@@ -247,10 +313,23 @@ body {
   line-height: 1;
   padding: 0 2px;
   cursor: pointer;
+  transition:
+    transform 140ms var(--qs-press-ease),
+    opacity 140ms ease;
+}
+
+.shell-search-clear::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
 }
 
 .shell-search-clear:hover {
   opacity: 0.75;
+}
+
+.shell-search-clear:active {
+  transform: scale(0.96);
 }
 
 .shell-link-item {
@@ -278,7 +357,7 @@ body {
 .shell-config-section + .shell-config-section {
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 
 .shell-config-heading {
@@ -311,8 +390,9 @@ body {
   justify-content: space-between;
   gap: 8px;
   padding: 8px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: rgba(0, 0, 0, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .shell-config-catalog-copy {
@@ -342,6 +422,7 @@ body {
 }
 
 .shell-config-action {
+  position: relative;
   border: 0;
   background: transparent;
   border-radius: 8px;
@@ -349,10 +430,23 @@ body {
   font-size: 11px;
   color: var(--qs-color-accent);
   cursor: pointer;
+  transition:
+    transform 140ms var(--qs-press-ease),
+    background 140ms ease;
+}
+
+.shell-config-action::before {
+  content: "";
+  position: absolute;
+  inset: -8px -4px;
 }
 
 .shell-config-action:hover {
   background: rgba(0, 0, 0, 0.05);
+}
+
+.shell-config-action:active {
+  transform: scale(0.96);
 }
 
 .shell-config-action-danger {
@@ -372,18 +466,24 @@ body {
 }
 
 .shell-config-input {
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
+  border: none;
+  border-radius: 12px;
   padding: 8px 10px;
   font: inherit;
   font-size: 13px;
   color: var(--qs-color-text);
   background: rgba(255, 255, 255, 0.45);
   outline: none;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 140ms ease;
 }
 
 .shell-config-input:focus {
-  border-color: rgba(0, 0, 0, 0.18);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.14);
 }
 
 .shell-config-form-actions {
@@ -396,20 +496,29 @@ body {
 .shell-config-submit,
 .shell-config-reset {
   border: 0;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 8px 10px;
   font: inherit;
   font-size: 13px;
   cursor: pointer;
+  transition:
+    transform 140ms var(--qs-press-ease),
+    background 140ms ease;
 }
 
 .shell-config-submit {
   background: color-mix(in srgb, var(--qs-color-accent) 18%, var(--qs-color-surface));
   color: var(--qs-color-text);
+  box-shadow: var(--qs-shadow-sm);
 }
 
 .shell-config-submit:hover {
   background: color-mix(in srgb, var(--qs-color-accent) 28%, var(--qs-color-surface));
+}
+
+.shell-config-submit:active,
+.shell-config-reset:active {
+  transform: scale(0.96);
 }
 
 .shell-config-reset {
@@ -434,6 +543,7 @@ body {
 .shell-config-subtitle {
   margin: 0 0 12px;
   font-size: 15px;
+  text-wrap: balance;
 }
 
 .shell-flyout-title {
@@ -450,17 +560,25 @@ body {
   margin-top: 4px;
   border: 0;
   background: transparent;
-  border-radius: var(--qs-border-radius);
+  border-radius: 12px;
   padding: 6px 8px;
   text-align: left;
   font-size: 13px;
   color: var(--qs-color-accent);
   cursor: pointer;
+  transition:
+    transform 140ms var(--qs-press-ease),
+    background 140ms ease;
 }
 
 .shell-flyout-more:hover,
 .shell-flyout-dismiss:hover {
   background: rgba(0, 0, 0, 0.05);
+}
+
+.shell-flyout-more:active,
+.shell-flyout-dismiss:active {
+  transform: scale(0.96);
 }
 
 .shell-flyout-dismiss {

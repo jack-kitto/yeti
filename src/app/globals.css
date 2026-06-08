@@ -271,8 +271,156 @@ body {
 }
 
 .shell-surface-config {
-  width: min(280px, 80vw);
+  width: min(320px, 80vw);
   padding: 10px 12px;
+}
+
+.shell-config-section + .shell-config-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.shell-config-heading {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.shell-config-scroll {
+  max-height: min(240px, 36vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.shell-config-catalog {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shell-config-catalog-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.shell-config-catalog-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shell-config-catalog-title {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.shell-config-catalog-url {
+  font-size: 11px;
+  opacity: 0.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shell-config-catalog-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.shell-config-action {
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  padding: 4px 6px;
+  font-size: 11px;
+  color: var(--qs-color-accent);
+  cursor: pointer;
+}
+
+.shell-config-action:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.shell-config-action-danger {
+  color: #9a4f4f;
+}
+
+.shell-config-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shell-config-form-label {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.shell-config-input {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--qs-color-text);
+  background: rgba(255, 255, 255, 0.45);
+  outline: none;
+}
+
+.shell-config-input:focus {
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+.shell-config-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.shell-config-submit,
+.shell-config-reset {
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.shell-config-submit {
+  background: color-mix(in srgb, var(--qs-color-accent) 18%, var(--qs-color-surface));
+  color: var(--qs-color-text);
+}
+
+.shell-config-submit:hover {
+  background: color-mix(in srgb, var(--qs-color-accent) 28%, var(--qs-color-surface));
+}
+
+.shell-config-reset {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: #9a4f4f;
+}
+
+.shell-config-reset:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .shell-config-title {
@@ -286,20 +434,6 @@ body {
 .shell-config-subtitle {
   margin: 0 0 12px;
   font-size: 15px;
-}
-
-.shell-config-list {
-  margin: 0 0 12px;
-  padding-left: 18px;
-  font-size: 13px;
-  line-height: 1.5;
-  opacity: 0.75;
-}
-
-.shell-config-note {
-  margin: 0;
-  font-size: 11px;
-  opacity: 0.45;
 }
 
 .shell-flyout-title {

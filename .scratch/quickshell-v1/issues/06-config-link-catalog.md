@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,13 +14,13 @@ Include **library reset** — "Reset to starter template" with confirmation (sam
 
 ## Acceptance criteria
 
-- [ ] Hovering the right edge opens the config panel flyout
-- [ ] Panel auto-sizes to content up to full viewport height; overflows scroll inside the panel
-- [ ] User can add a link with URL and optional title/image
-- [ ] User can edit and delete existing catalog links
-- [ ] Catalog changes persist across page reload
-- [ ] Links can exist in catalog without being placed on edges or pins
-- [ ] Config exposes library reset with confirmation; re-seeds starter template
+- [x] Hovering the right edge opens the config panel flyout
+- [x] Panel auto-sizes to content up to full viewport height; overflows scroll inside the panel
+- [x] User can add a link with URL and optional title/image
+- [x] User can edit and delete existing catalog links
+- [x] Catalog changes persist across page reload
+- [x] Links can exist in catalog without being placed on edges or pins
+- [x] Config exposes library reset with confirmation; re-seeds starter template
 
 ## Blocked by
 
@@ -29,3 +29,5 @@ Include **library reset** — "Reset to starter template" with confirmation (sam
 ## Comments
 
 Issue 01 is done. Right-rim **config** surface opens via the canvas shell (issue 25) but `ShellConfigPanel` is still a placeholder stub — this issue replaces it with real catalog CRUD.
+
+Implemented via `src/library/catalog.ts` (pure mutations + tests), store wrappers, React Query hooks, and `ShellConfigPanel` catalog UI.

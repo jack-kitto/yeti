@@ -333,7 +333,10 @@ export function ShellEdgeLayer({
               onMouseEnter={() => setZoneHover("menu", true)}
               onMouseLeave={() => leaveZoneHover("menu")}
             >
-              <ShellConfigPanel workspaceName={activeWorkspace?.name ?? "Workspace"} />
+              <ShellConfigPanel
+                library={library}
+                workspaceName={activeWorkspace?.name ?? "Workspace"}
+              />
             </div>
           );
         }

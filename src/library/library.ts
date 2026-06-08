@@ -4,7 +4,20 @@ import {
   deleteCatalogLink as deleteCatalogLinkFromLibrary,
   updateCatalogLink as updateCatalogLinkInLibrary,
 } from "./catalog";
-import type { CatalogLinkInput, CatalogLinkPatch, Library, LibraryPatch, LibraryStore } from "./types";
+import { updateWorkspaceTheme } from "@/theme/workspace-theme";
+import {
+  createWorkspace as createWorkspaceInLibrary,
+  deleteWorkspace as deleteWorkspaceFromLibrary,
+  renameWorkspace as renameWorkspaceInLibrary,
+} from "@/workspace/workspaces";
+import type {
+  CatalogLinkInput,
+  CatalogLinkPatch,
+  Library,
+  LibraryPatch,
+  LibraryStore,
+  ThemePatch,
+} from "./types";
 
 export function validateLibrary(library: Library): void {
   for (const workspace of library.workspaces) {
@@ -122,4 +135,54 @@ export async function mutateLibrary(
   }
 
   return saveLibrary(store, mutate(library));
+}
+
+export async function createWorkspace(
+  store: LibraryStore,
+  name: string,
+): Promise<Library> {
+  const library = await store.read();
+  if (!library) {
+    throw new Error("Library not initialized");
+  }
+
+  return saveLibrary(store, createWorkspaceInLibrary(library, name));
+}
+
+export async function renameWorkspace(
+  store: LibraryStore,
+  workspaceId: string,
+  name: string,
+): Promise<Library> {
+  const library = await store.read();
+  if (!library) {
+    throw new Error("Library not initialized");
+  }
+
+  return saveLibrary(store, renameWorkspaceInLibrary(library, workspaceId, name));
+}
+
+export async function deleteWorkspace(
+  store: LibraryStore,
+  workspaceId: string,
+): Promise<Library> {
+  const library = await store.read();
+  if (!library) {
+    throw new Error("Library not initialized");
+  }
+
+  return saveLibrary(store, deleteWorkspaceFromLibrary(library, workspaceId));
+}
+
+export async function updateWorkspaceThemeInLibrary(
+  store: LibraryStore,
+  workspaceId: string,
+  patch: ThemePatch,
+): Promise<Library> {
+  const library = await store.read();
+  if (!library) {
+    throw new Error("Library not initialized");
+  }
+
+  return saveLibrary(store, updateWorkspaceTheme(library, workspaceId, patch));
 }

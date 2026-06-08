@@ -13,9 +13,10 @@ type EdgeRimProps = {
 };
 
 const rimClass: Record<EdgePosition, string> = {
-  left: "absolute bottom-0 left-0 top-0 w-12",
-  top: "absolute left-0 right-0 top-0 h-12",
-  bottom: "absolute bottom-0 left-0 right-0 h-12",
+  left: "absolute bottom-0 left-0 top-0 w-11 border-r border-black/5 bg-[color:var(--qs-color-surface)]/45 shadow-sm backdrop-blur-xl",
+  top: "absolute left-0 right-0 top-0 h-11 border-b border-black/5 bg-[color:var(--qs-color-surface)]/45 shadow-sm backdrop-blur-xl",
+  bottom:
+    "absolute bottom-0 left-0 right-0 h-11 border-t border-black/5 bg-[color:var(--qs-color-surface)]/45 shadow-sm backdrop-blur-xl",
 };
 
 export function EdgeRim({ edge, library, onReorderGroup }: EdgeRimProps) {

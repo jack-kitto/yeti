@@ -100,7 +100,9 @@ export function ShellConfigDialog({ library, workspaceName }: ShellConfigDialogP
           ))}
         </nav>
 
-        <div className="shell-config-dialog-body">{sectionContent(section, library)}</div>
+        <div className="shell-config-dialog-body shell-config-dialog-body-scroll">
+          {sectionContent(section, library)}
+        </div>
       </div>
     </div>
   );

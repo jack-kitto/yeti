@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import {
+  computeMaxEdgeSlotCount,
+  insertIndexToSlotIndex,
+  slotIndexToInsertIndex,
+} from "@/edge-slots/edge-slots";
+import { useEdgeLengthPx } from "@/hooks/use-edge-length";
 import { useMutateLibrary } from "@/hooks/use-library";
 import { resolveLinkTitle } from "@/link-display/link-display";
-import type { EdgePosition, Library } from "@/library/types";
+import type { EdgeGroup, EdgePosition, Library } from "@/library/types";
 import {
   addEdgeGroup,
   addLinkToEdgeGroup,
@@ -17,6 +23,7 @@ import {
   resolveEdgeGroupLinks,
   resolveEdgeGroups,
 } from "@/placement/placement";
+import { ShellConfigLinkPicker } from "./shell-config-link-picker";
 
 const EDGES: EdgePosition[] = ["left", "top", "bottom"];
 
@@ -34,6 +41,20 @@ const EMPTY_GROUP_FORM: GroupFormState = {
   handleIcon: "",
 };
 
+function groupAtSlot(
+  slotIndex: number,
+  groups: readonly EdgeGroup[],
+  maxSlots: number,
+): EdgeGroup | null {
+  for (let index = 0; index < groups.length; index++) {
+    if (insertIndexToSlotIndex(index, groups.length, maxSlots) === slotIndex) {
+      return groups[index];
+    }
+  }
+
+  return null;
+}
+
 export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
   const mutateLibrary = useMutateLibrary();
   const workspaceId = library.activeWorkspaceId;
@@ -42,8 +63,14 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
   const [groupForm, setGroupForm] = useState<GroupFormState>(EMPTY_GROUP_FORM);
   const [newGroupForm, setNewGroupForm] = useState<GroupFormState>(EMPTY_GROUP_FORM);
   const [linkToAdd, setLinkToAdd] = useState("");
+  const [showNewGroupForm, setShowNewGroupForm] = useState(false);
+  const edgeLengthPx = useEdgeLengthPx(edge);
 
   const groups = useMemo(() => resolveEdgeGroups(library, edge), [library, edge]);
+  const maxSlots = useMemo(
+    () => computeMaxEdgeSlotCount(edgeLengthPx),
+    [edgeLengthPx],
+  );
   const selectedGroup =
     groups.find((group) => group.id === selectedGroupId) ?? groups[0] ?? null;
   const groupLinks = selectedGroup
@@ -114,6 +141,7 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
       },
     );
     setNewGroupForm(EMPTY_GROUP_FORM);
+    setShowNewGroupForm(false);
   }
 
   function handleDeleteGroup() {
@@ -133,8 +161,9 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
     if (!selectedGroup) {
       return;
     }
+    const insertIndex = slotIndexToInsertIndex(slotIndex, groups.length, maxSlots);
     mutateLibrary.mutate((current) =>
-      reorderEdgeGroupOnRim(current, edge, selectedGroup.id, slotIndex),
+      reorderEdgeGroupOnRim(current, edge, selectedGroup.id, insertIndex),
     );
   }
 
@@ -183,188 +212,242 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
   );
 
   const currentGroupSlotIndex = selectedGroup
-    ? groups.findIndex((group) => group.id === selectedGroup.id)
+    ? insertIndexToSlotIndex(
+        groups.findIndex((group) => group.id === selectedGroup.id),
+        groups.length,
+        maxSlots,
+      )
     : -1;
 
   return (
-    <div className="shell-config-dialog-section">
+    <div className="shell-config-dialog-section shell-config-dialog-section-fill">
       <div className="shell-config-edge-tabs" role="tablist" aria-label="Edge">
-          {EDGES.map((edgeName) => (
-            <button
-              key={edgeName}
-              type="button"
-              role="tab"
-              aria-selected={edge === edgeName}
-              className={`shell-config-edge-tab${edge === edgeName ? " active" : ""}`}
-              onClick={() => setEdge(edgeName)}
-            >
-              {edgeName}
-            </button>
-          ))}
-        </div>
+        {EDGES.map((edgeName) => (
+          <button
+            key={edgeName}
+            type="button"
+            role="tab"
+            aria-selected={edge === edgeName}
+            className={`shell-config-edge-tab${edge === edgeName ? " active" : ""}`}
+            onClick={() => setEdge(edgeName)}
+          >
+            {edgeName}
+          </button>
+        ))}
+      </div>
 
-        {groups.length > 0 ? (
-          <ul className="shell-config-group-list">
-            {groups.map((group) => (
-              <li key={group.id}>
-                <button
-                  type="button"
-                  className={`shell-config-group-select${
-                    selectedGroup?.id === group.id ? " active" : ""
-                  }`}
-                  onClick={() => setSelectedGroupId(group.id)}
-                >
-                  <span>{group.handleIcon ?? "•"}</span>
-                  <span>{group.name}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="shell-config-empty">No groups on this edge yet.</p>
-        )}
+      <div className="shell-config-placements-grid">
+        <aside className="shell-config-placements-sidebar">
+          {groups.length > 0 ? (
+            <ul className="shell-config-group-list">
+              {groups.map((group) => (
+                <li key={group.id}>
+                  <button
+                    type="button"
+                    className={`shell-config-group-select${
+                      selectedGroup?.id === group.id ? " active" : ""
+                    }`}
+                    onClick={() => setSelectedGroupId(group.id)}
+                  >
+                    <span>{group.handleIcon ?? "•"}</span>
+                    <span>{group.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="shell-config-empty">No groups on this edge yet.</p>
+          )}
 
-        {selectedGroup ? (
-          <div className="shell-config-group-editor">
-            <form className="shell-config-form" onSubmit={saveGroupDetails}>
-              <p className="shell-config-form-label">Group details</p>
+          {showNewGroupForm ? (
+            <form className="shell-config-form" onSubmit={handleAddGroup}>
+              <p className="shell-config-form-label">New edge group</p>
               <input
                 type="text"
                 required
-                value={groupForm.name}
+                value={newGroupForm.name}
                 onChange={(event) =>
-                  setGroupForm((current) => ({ ...current, name: event.target.value }))
+                  setNewGroupForm((current) => ({ ...current, name: event.target.value }))
                 }
                 placeholder="Group name"
                 className="shell-config-input"
               />
               <input
                 type="text"
-                value={groupForm.handleIcon}
+                value={newGroupForm.handleIcon}
                 onChange={(event) =>
-                  setGroupForm((current) => ({ ...current, handleIcon: event.target.value }))
+                  setNewGroupForm((current) => ({
+                    ...current,
+                    handleIcon: event.target.value,
+                  }))
                 }
-                placeholder="Handle icon (emoji or image URL)"
+                placeholder="Handle icon (optional)"
                 className="shell-config-input"
               />
               <div className="shell-config-form-actions">
-                <button type="submit" className="shell-config-submit">
-                  Save group
-                </button>
                 <button
                   type="button"
-                  className="shell-config-action shell-config-action-danger"
-                  onClick={handleDeleteGroup}
+                  className="shell-config-action"
+                  onClick={() => {
+                    setShowNewGroupForm(false);
+                    setNewGroupForm(EMPTY_GROUP_FORM);
+                  }}
                 >
-                  Delete
+                  Cancel
+                </button>
+                <button type="submit" className="shell-config-submit">
+                  Add group
                 </button>
               </div>
             </form>
+          ) : (
+            <button
+              type="button"
+              className="shell-config-add-button"
+              onClick={() => setShowNewGroupForm(true)}
+            >
+              + New edge group
+            </button>
+          )}
+        </aside>
 
-            <div className="shell-config-slot-rail">
-              <p className="shell-config-form-label">Slot rail</p>
-              <div className="shell-config-slot-buttons">
-                {groups.map((group, index) => (
-                  <button
-                    key={group.id}
-                    type="button"
-                    className={`shell-config-slot${
-                      currentGroupSlotIndex === index ? " active" : ""
-                    }`}
-                    aria-label={`Move ${selectedGroup.name} to slot ${index + 1}`}
-                    onClick={() => handleMoveGroupToSlot(index)}
-                  >
-                    {index + 1}
+        <div className="shell-config-placements-editor">
+          {selectedGroup ? (
+            <>
+              <form className="shell-config-form" onSubmit={saveGroupDetails}>
+                <p className="shell-config-form-label">Group details</p>
+                <input
+                  type="text"
+                  required
+                  value={groupForm.name}
+                  onChange={(event) =>
+                    setGroupForm((current) => ({ ...current, name: event.target.value }))
+                  }
+                  placeholder="Group name"
+                  className="shell-config-input"
+                />
+                <input
+                  type="text"
+                  value={groupForm.handleIcon}
+                  onChange={(event) =>
+                    setGroupForm((current) => ({
+                      ...current,
+                      handleIcon: event.target.value,
+                    }))
+                  }
+                  placeholder="Handle icon (emoji or image URL)"
+                  className="shell-config-input"
+                />
+                <div className="shell-config-form-actions">
+                  <button type="submit" className="shell-config-submit">
+                    Save group
                   </button>
-                ))}
+                  <button
+                    type="button"
+                    className="shell-config-action shell-config-action-danger"
+                    onClick={handleDeleteGroup}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </form>
+
+              <div className="shell-config-slot-rail">
+                <p className="shell-config-form-label">
+                  Slot rail <span className="shell-config-slot-count tabular-nums">({maxSlots})</span>
+                </p>
+                <div className="shell-config-slot-buttons">
+                  {Array.from({ length: maxSlots }, (_, slotIndex) => {
+                    const occupant = groupAtSlot(slotIndex, groups, maxSlots);
+                    const isActive = currentGroupSlotIndex === slotIndex;
+                    const label = occupant
+                      ? occupant.handleIcon ?? occupant.name.slice(0, 2)
+                      : String(slotIndex + 1);
+
+                    return (
+                      <button
+                        key={slotIndex}
+                        type="button"
+                        className={`shell-config-slot${
+                          isActive ? " active" : ""
+                        }${occupant ? " occupied" : " empty"}`}
+                        title={
+                          occupant
+                            ? `${occupant.name} — slot ${slotIndex + 1}`
+                            : `Empty slot ${slotIndex + 1}`
+                        }
+                        aria-label={
+                          occupant
+                            ? `Move ${selectedGroup.name} to slot ${slotIndex + 1} (${occupant.name})`
+                            : `Move ${selectedGroup.name} to slot ${slotIndex + 1}`
+                        }
+                        onClick={() => handleMoveGroupToSlot(slotIndex)}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            <div className="shell-config-dialog-scroll">
-              <ul className="shell-config-catalog">
-                {groupLinks.map((link, index) => (
-                  <li key={link.id} className="shell-config-catalog-item">
-                    <div className="shell-config-catalog-copy">
-                      <span className="shell-config-catalog-title">
-                        {resolveLinkTitle(link)}
-                      </span>
-                    </div>
-                    <div className="shell-config-catalog-actions">
-                      <button
-                        type="button"
-                        className="shell-config-action"
-                        disabled={index === 0}
-                        onClick={() => handleMoveLink(link.id, index - 1)}
-                      >
-                        ↑
-                      </button>
-                      <button
-                        type="button"
-                        className="shell-config-action"
-                        disabled={index === groupLinks.length - 1}
-                        onClick={() => handleMoveLink(link.id, index + 1)}
-                      >
-                        ↓
-                      </button>
-                      <button
-                        type="button"
-                        className="shell-config-action shell-config-action-danger"
-                        onClick={() => handleRemoveLinkFromGroup(link.id)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <div className="shell-config-dialog-scroll shell-config-dialog-scroll-compact">
+                <ul className="shell-config-catalog">
+                  {groupLinks.map((link, index) => (
+                    <li key={link.id} className="shell-config-catalog-item">
+                      <div className="shell-config-catalog-copy">
+                        <span className="shell-config-catalog-title">
+                          {resolveLinkTitle(link)}
+                        </span>
+                      </div>
+                      <div className="shell-config-catalog-actions">
+                        <button
+                          type="button"
+                          className="shell-config-action"
+                          disabled={index === 0}
+                          onClick={() => handleMoveLink(link.id, index - 1)}
+                        >
+                          ↑
+                        </button>
+                        <button
+                          type="button"
+                          className="shell-config-action"
+                          disabled={index === groupLinks.length - 1}
+                          onClick={() => handleMoveLink(link.id, index + 1)}
+                        >
+                          ↓
+                        </button>
+                        <button
+                          type="button"
+                          className="shell-config-action shell-config-action-danger"
+                          onClick={() => handleRemoveLinkFromGroup(link.id)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-            <form className="shell-config-form" onSubmit={handleAddLinkToGroup}>
-              <p className="shell-config-form-label">Add link to group</p>
-              <select
-                value={linkToAdd}
-                onChange={(event) => setLinkToAdd(event.target.value)}
-                className="shell-config-input"
-              >
-                <option value="">Choose a catalog link…</option>
-                {catalogOptions.map((link) => (
-                  <option key={link.id} value={link.id}>
-                    {resolveLinkTitle(link)}
-                  </option>
-                ))}
-              </select>
-              <button type="submit" className="shell-config-submit" disabled={!linkToAdd}>
-                Add to group
-              </button>
-            </form>
-          </div>
-        ) : null}
-
-        <form className="shell-config-form" onSubmit={handleAddGroup}>
-          <p className="shell-config-form-label">New edge group</p>
-          <input
-            type="text"
-            required
-            value={newGroupForm.name}
-            onChange={(event) =>
-              setNewGroupForm((current) => ({ ...current, name: event.target.value }))
-            }
-            placeholder="Group name"
-            className="shell-config-input"
-          />
-          <input
-            type="text"
-            value={newGroupForm.handleIcon}
-            onChange={(event) =>
-              setNewGroupForm((current) => ({ ...current, handleIcon: event.target.value }))
-            }
-            placeholder="Handle icon (optional)"
-            className="shell-config-input"
-          />
-          <button type="submit" className="shell-config-submit">
-            Add edge group
-          </button>
-        </form>
+              <form className="shell-config-form" onSubmit={handleAddLinkToGroup}>
+                <p className="shell-config-form-label">Add link to group</p>
+                <ShellConfigLinkPicker
+                  links={catalogOptions}
+                  value={linkToAdd}
+                  onChange={setLinkToAdd}
+                />
+                <button type="submit" className="shell-config-submit" disabled={!linkToAdd}>
+                  Add to group
+                </button>
+              </form>
+            </>
+          ) : (
+            <p className="shell-config-empty">
+              Create an edge group to edit placements on this rim.
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

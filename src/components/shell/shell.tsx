@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { applyTheme } from "@/theme/theme";
 import { useApplyLibraryPatch, useLibrary } from "@/hooks/use-library";
+import { CommandBar } from "./command-bar";
 import { EdgeMenu } from "./edge-menu";
 import { PinStrip } from "./pin-strip";
 import { WorkspaceSwitcher } from "./workspace-switcher";
@@ -50,12 +51,12 @@ export function Shell() {
             applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
           }
         />
-        <div
-          className="w-full max-w-md rounded-[var(--qs-border-radius)] border border-white/20 bg-[color:var(--qs-color-surface)]/60 px-4 py-2.5 text-sm opacity-60 backdrop-blur-sm"
-          aria-hidden
-        >
-          Search links…
-        </div>
+        <CommandBar
+          library={library}
+          onSwitchWorkspace={(workspaceId) =>
+            applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
+          }
+        />
         <PinStrip library={library} />
         <p className="max-w-md text-center text-sm opacity-80">
           Hover an edge for links. {activeWorkspace.name} workspace active.

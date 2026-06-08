@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -16,12 +16,12 @@ Add Search module unit tests.
 
 ## Acceptance criteria
 
-- [ ] Command bar visible on canvas; typing filters links with fuzzy matching
-- [ ] Placed links in active workspace rank above unplaced catalog links
-- [ ] Unplaced catalog links still appear as fallback results
-- [ ] Selecting a link result opens a new tab
-- [ ] User can switch workspace from the command bar by name
-- [ ] Search module unit tests cover ranking and fuzzy match behavior
+- [x] Command bar visible on canvas; typing filters links with fuzzy matching
+- [x] Placed links in active workspace rank above unplaced catalog links
+- [x] Unplaced catalog links still appear as fallback results
+- [x] Selecting a link result opens a new tab
+- [x] User can switch workspace from the command bar by name
+- [x] Search module unit tests cover ranking and fuzzy match behavior
 
 ## Blocked by
 

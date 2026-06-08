@@ -9,6 +9,7 @@ import {
 } from "@/hooks/use-library";
 import { resolveLinkTitle } from "@/link-display/link-display";
 import type { Link, Library } from "@/library/types";
+import { ShellConfigPlacements } from "./shell-config-placements";
 
 type ShellConfigPanelProps = {
   library: Library;
@@ -191,6 +192,8 @@ export function ShellConfigPanel({ library, workspaceName }: ShellConfigPanelPro
           </div>
         </form>
       </section>
+
+      <ShellConfigPlacements library={library} />
 
       <section className="shell-config-section">
         <h2 className="shell-config-heading">Library</h2>

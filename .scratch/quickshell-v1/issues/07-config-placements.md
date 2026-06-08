@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,17 +14,23 @@ Allow the same catalog link in multiple edge groups. Placements are independent 
 
 ## Acceptance criteria
 
-- [ ] Config UI creates, edits, and deletes edge groups per workspace
-- [ ] User sets group name and handle icon (image, emoji, or initials fallback)
-- [ ] Slot rail reorders groups along an edge (fractional order keys)
-- [ ] User assigns and reorders links within each edge group
-- [ ] Config UI assigns canvas pins for the selected workspace
-- [ ] Same catalog link can appear in multiple edge groups in one workspace
-- [ ] Work and Personal can have different placements for the same catalog link
-- [ ] Placement changes reflect on shell handles, flyouts, and pin strip after save
+- [x] Config UI creates, edits, and deletes edge groups per workspace
+- [x] User sets group name and handle icon (image, emoji, or initials fallback)
+- [x] Slot rail reorders groups along an edge (fractional order keys)
+- [x] User assigns and reorders links within each edge group
+- [x] Config UI assigns canvas pins for the selected workspace
+- [x] Same catalog link can appear in multiple edge groups in one workspace
+- [x] Work and Personal can have different placements for the same catalog link
+- [x] Placement changes reflect on shell handles, flyouts, and pin strip after save
 
 ## Blocked by
 
 - `.scratch/quickshell-v1/issues/06-config-link-catalog.md`
 - `.scratch/quickshell-v1/issues/15-edge-handles-and-flyouts.md`
 - `.scratch/quickshell-v1/issues/03-canvas-pin-strip.md`
+
+## Comments
+
+Implemented via `src/placement/placement-mutations.ts` (pure mutations + 10 tests), `mutateLibrary` persistence, and `ShellConfigPlacements` in the config panel.
+
+Per-workspace isolation comes from targeting `library.activeWorkspaceId`; switching workspaces in the shell shows each workspace's placements independently.

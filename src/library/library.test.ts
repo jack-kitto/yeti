@@ -32,7 +32,13 @@ describe("loadOrSeedLibrary", () => {
 
     expect(library.catalog.length).toBe(STARTER_CATALOG.length);
     expect(library.catalog.length).toBeGreaterThanOrEqual(30);
-    expect(work.placements.edges.left.length).toBeGreaterThan(EDGE_PREVIEW_LIMIT);
+    const devTools = work.placements.edges.left.find(
+      (group) => group.name === "Dev tools",
+    )!;
+    expect(devTools.links.length).toBeGreaterThan(EDGE_PREVIEW_LIMIT);
+    expect(work.placements.edges.left.length).toBeGreaterThan(1);
+    expect(devTools.name).toBe("Dev tools");
+    expect(devTools.handleIcon).toBe("🛠");
   });
 
   it("does not re-seed when the store already has a library", async () => {
@@ -55,7 +61,7 @@ describe("saveLibrary and getLibrary", () => {
     const workspace = library.workspaces[0];
     workspace.placements.pins.push({
       linkId: workspace.placements.pins[0].linkId,
-      position: { kind: "strip", order: 99 },
+      position: { kind: "strip", orderKey: "z9" },
     });
 
     await expect(saveLibrary(store, library)).rejects.toThrow(/duplicate pin/i);

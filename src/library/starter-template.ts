@@ -1,13 +1,40 @@
-import type { Library, Link, Theme, Workspace } from "./types";
+import { rebalanceKeys } from "@/fractional-order/fractional-order";
+import type { EdgeGroup, Library, Link, Theme, Workspace } from "./types";
 
 function link(id: string, url: string, title: string): Link {
   return { id, url, title };
 }
 
+type EdgeGroupInput = {
+  id: string;
+  name: string;
+  handleIcon?: string;
+  links: string[];
+};
+
+function orderedLinks(linkIds: string[]): EdgeGroup["links"] {
+  const keys = rebalanceKeys(linkIds.length);
+  return linkIds.map((linkId, index) => ({
+    linkId,
+    orderKey: keys[index],
+  }));
+}
+
+function orderedEdgeGroups(groups: EdgeGroupInput[]): EdgeGroup[] {
+  const keys = rebalanceKeys(groups.length);
+  return groups.map((group, index) => ({
+    id: group.id,
+    name: group.name,
+    handleIcon: group.handleIcon,
+    orderKey: keys[index],
+    links: orderedLinks(group.links),
+  }));
+}
+
 type WorkspacePlacementsInput = {
-  left: string[];
-  top: string[];
-  bottom: string[];
+  left: EdgeGroupInput[];
+  top: EdgeGroupInput[];
+  bottom: EdgeGroupInput[];
   pins: string[];
 };
 
@@ -17,19 +44,21 @@ function workspace(
   theme: Theme,
   placements: WorkspacePlacementsInput,
 ): Workspace {
+  const pinKeys = rebalanceKeys(placements.pins.length);
+
   return {
     id,
     name,
     theme,
     placements: {
       edges: {
-        left: placements.left,
-        top: placements.top,
-        bottom: placements.bottom,
+        left: orderedEdgeGroups(placements.left),
+        top: orderedEdgeGroups(placements.top),
+        bottom: orderedEdgeGroups(placements.bottom),
       },
-      pins: placements.pins.map((linkId, order) => ({
+      pins: placements.pins.map((linkId, index) => ({
         linkId,
-        position: { kind: "strip" as const, order },
+        position: { kind: "strip" as const, orderKey: pinKeys[index] },
       })),
     },
   };
@@ -109,41 +138,97 @@ export function createStarterLibrary(): Library {
 
   const work = workspace("work", "Work", workTheme, {
     left: [
-      "github",
-      "mdn",
-      "localhost",
-      "railway",
-      "vercel",
-      "npm",
-      "docker",
-      "stackoverflow",
-      "typescript",
-      "react",
-      "nextjs",
-      "tailwind",
+      {
+        id: "work-dev-tools",
+        name: "Dev tools",
+        handleIcon: "🛠",
+        links: [
+          "github",
+          "localhost",
+          "vercel",
+          "npm",
+          "docker",
+          "typescript",
+          "react",
+          "nextjs",
+          "tailwind",
+        ],
+      },
+      {
+        id: "work-docs",
+        name: "Docs",
+        handleIcon: "📚",
+        links: ["mdn", "stackoverflow", "railway"],
+      },
     ],
-    top: ["figma", "linear", "notion", "supabase", "planetscale", "prisma"],
-    bottom: ["turborepo", "bun", "deno", "cloudflare", "fly"],
+    top: [
+      {
+        id: "work-product",
+        name: "Product",
+        handleIcon: "✏️",
+        links: ["figma", "linear", "notion"],
+      },
+      {
+        id: "work-backend",
+        name: "Backend",
+        handleIcon: "🗄",
+        links: ["supabase", "planetscale", "prisma"],
+      },
+    ],
+    bottom: [
+      {
+        id: "work-runtime",
+        name: "Runtime",
+        handleIcon: "⚡",
+        links: ["turborepo", "bun", "deno"],
+      },
+      {
+        id: "work-hosting",
+        name: "Hosting",
+        handleIcon: "☁️",
+        links: ["cloudflare", "fly"],
+      },
+    ],
     pins: ["github", "localhost", "vercel", "linear", "prisma", "sentry"],
   });
 
   const personal = workspace("personal", "Personal", personalTheme, {
     left: [
-      "hackernews",
-      "reddit",
-      "obsidian",
-      "arc",
-      "raycast",
-      "notion",
-      "figma",
-      "storybook",
-      "shadcn",
-      "playwright",
-      "vitest",
-      "posthog",
+      {
+        id: "personal-read",
+        name: "Read",
+        handleIcon: "📰",
+        links: ["hackernews", "reddit", "obsidian"],
+      },
+      {
+        id: "personal-tools",
+        name: "Tools",
+        handleIcon: "🧰",
+        links: ["arc", "raycast", "notion", "figma", "storybook", "shadcn"],
+      },
+      {
+        id: "personal-quality",
+        name: "Quality",
+        handleIcon: "✅",
+        links: ["playwright", "vitest", "posthog"],
+      },
     ],
-    top: ["github", "mdn", "typescript", "react"],
-    bottom: ["railway", "vercel", "npm", "docker"],
+    top: [
+      {
+        id: "personal-learn",
+        name: "Learn",
+        handleIcon: "📖",
+        links: ["github", "mdn", "typescript", "react"],
+      },
+    ],
+    bottom: [
+      {
+        id: "personal-ship",
+        name: "Ship",
+        handleIcon: "🚀",
+        links: ["railway", "vercel", "npm", "docker"],
+      },
+    ],
     pins: ["hackernews", "obsidian", "arc", "raycast", "notion"],
   });
 

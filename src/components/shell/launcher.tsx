@@ -7,7 +7,7 @@ import {
 } from "@/link-display/link-display";
 import type { Library, Link } from "@/library/types";
 import {
-  resolveEdgeGroupLinks,
+  resolveEdgeLinksOnRim,
   resolveWorkspacePlacedLinks,
 } from "@/placement/placement";
 import { filterLinks } from "@/search/search";
@@ -62,7 +62,7 @@ export function Launcher({ library }: LauncherProps) {
     }
 
     if (edge) {
-      return resolveEdgeGroupLinks(library, edge);
+      return resolveEdgeLinksOnRim(library, edge);
     }
 
     return resolveWorkspacePlacedLinks(library);

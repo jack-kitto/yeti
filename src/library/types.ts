@@ -1,3 +1,5 @@
+import type { FractionalOrderKey } from "@/fractional-order/fractional-order";
+
 export type Link = {
   id: string;
   url: string;
@@ -19,12 +21,31 @@ export type Theme = {
   borderRadius: number;
 };
 
+export type EdgeGroupLinkPlacement = {
+  linkId: string;
+  orderKey: FractionalOrderKey;
+};
+
+export type EdgeGroup = {
+  id: string;
+  name: string;
+  handleIcon?: string;
+  orderKey: FractionalOrderKey;
+  links: EdgeGroupLinkPlacement[];
+};
+
+export type EdgePlacements = {
+  left: EdgeGroup[];
+  top: EdgeGroup[];
+  bottom: EdgeGroup[];
+};
+
 export type PinPosition =
-  | { kind: "strip"; order: number }
+  | { kind: "strip"; orderKey: FractionalOrderKey }
   | { kind: "freeform"; x: number; y: number };
 
 export type WorkspacePlacements = {
-  edges: { left: string[]; top: string[]; bottom: string[] };
+  edges: EdgePlacements;
   pins: { linkId: string; position: PinPosition }[];
 };
 

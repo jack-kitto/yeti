@@ -1,15 +1,46 @@
 import { describe, expect, it } from "vitest";
+import { initialKey, insertBetween } from "@/fractional-order/fractional-order";
+import type { EdgeGroup, Library, PinPosition } from "@/library/types";
 import {
   EDGE_PREVIEW_LIMIT,
+  resolveEdgeGroupFlyout,
   resolveEdgeGroupLinks,
-  resolveEdgeLinks,
+  resolveEdgeGroups,
   resolvePins,
   resolveWorkspacePlacedLinks,
 } from "./placement";
-import type { Library, PinPosition } from "@/library/types";
 
-function makeLibrary(leftLinkIds: string[]): Library {
-  const catalog = leftLinkIds.map((id) => ({
+function edgeGroup(
+  id: string,
+  name: string,
+  orderKey: string,
+  linkIds: string[],
+): EdgeGroup {
+  let previous: string | null = null;
+  const links = linkIds.map((linkId) => {
+    const orderKeyForLink = previous === null ? initialKey() : insertBetween(previous, null);
+    previous = orderKeyForLink;
+    return { linkId, orderKey: orderKeyForLink };
+  });
+
+  return { id, name, orderKey, links };
+}
+
+function makeLibrary(edgeGroups: {
+  left?: EdgeGroup[];
+  top?: EdgeGroup[];
+  bottom?: EdgeGroup[];
+}): Library {
+  const linkIds = new Set<string>();
+  for (const groups of Object.values(edgeGroups)) {
+    for (const group of groups ?? []) {
+      for (const link of group.links) {
+        linkIds.add(link.linkId);
+      }
+    }
+  }
+
+  const catalog = [...linkIds].map((id) => ({
     id,
     url: `https://${id}.example.com`,
     title: id,
@@ -32,7 +63,11 @@ function makeLibrary(leftLinkIds: string[]): Library {
           borderRadius: 16,
         },
         placements: {
-          edges: { left: leftLinkIds, top: [], bottom: [] },
+          edges: {
+            left: edgeGroups.left ?? [],
+            top: edgeGroups.top ?? [],
+            bottom: edgeGroups.bottom ?? [],
+          },
           pins: [],
         },
       },
@@ -42,22 +77,67 @@ function makeLibrary(leftLinkIds: string[]): Library {
   };
 }
 
-describe("resolveEdgeLinks", () => {
-  it("returns links for the active workspace edge in placement order", () => {
-    const library = makeLibrary(["alpha", "beta", "gamma"]);
+describe("resolveEdgeGroups", () => {
+  it("lists edge groups on a rim in fractional order", () => {
+    const first = initialKey();
+    const second = insertBetween(first, null);
+    const library = makeLibrary({
+      left: [
+        edgeGroup("docs", "Docs", second, []),
+        edgeGroup("dev", "Dev tools", first, []),
+      ],
+    });
 
-    const result = resolveEdgeLinks(library, "left");
+    const groups = resolveEdgeGroups(library, "left");
 
-    expect(result.links.map((l) => l.id)).toEqual(["alpha", "beta", "gamma"]);
-    expect(result.totalCount).toBe(3);
-    expect(result.hasMore).toBe(false);
+    expect(groups.map((group) => group.id)).toEqual(["dev", "docs"]);
+  });
+});
+
+describe("resolveEdgeGroupLinks", () => {
+  it("returns links for one edge group in fractional order", () => {
+    const first = initialKey();
+    const third = insertBetween(first, null);
+    const second = insertBetween(first, third);
+    const library = makeLibrary({
+      left: [
+        edgeGroup("dev", "Dev tools", first, ["gamma", "alpha", "beta"]),
+      ],
+    });
+    library.catalog.find((link) => link.id === "alpha")!.title = "alpha";
+    library.catalog.find((link) => link.id === "beta")!.title = "beta";
+    library.catalog.find((link) => link.id === "gamma")!.title = "gamma";
+    library.workspaces[0].placements.edges.left[0].links = [
+      { linkId: "gamma", orderKey: third },
+      { linkId: "alpha", orderKey: first },
+      { linkId: "beta", orderKey: second },
+    ];
+
+    const links = resolveEdgeGroupLinks(library, "left", "dev");
+
+    expect(links.map((link) => link.id)).toEqual(["alpha", "beta", "gamma"]);
   });
 
-  it("truncates flyout preview to 8 links and sets hasMore", () => {
-    const ids = Array.from({ length: 10 }, (_, i) => `link-${i}`);
-    const library = makeLibrary(ids);
+  it("returns every link in an edge group without flyout truncation", () => {
+    const ids = Array.from({ length: 10 }, (_, index) => `link-${index}`);
+    const library = makeLibrary({
+      left: [edgeGroup("dev", "Dev tools", initialKey(), ids)],
+    });
 
-    const result = resolveEdgeLinks(library, "left");
+    const links = resolveEdgeGroupLinks(library, "left", "dev");
+
+    expect(links.map((link) => link.id)).toEqual(ids);
+  });
+});
+
+describe("resolveEdgeGroupFlyout", () => {
+  it("truncates flyout preview to 8 links and sets hasMore", () => {
+    const ids = Array.from({ length: 10 }, (_, index) => `link-${index}`);
+    const library = makeLibrary({
+      left: [edgeGroup("dev", "Dev tools", initialKey(), ids)],
+    });
+
+    const result = resolveEdgeGroupFlyout(library, "left", "dev");
 
     expect(result.links).toHaveLength(EDGE_PREVIEW_LIMIT);
     expect(result.links[0].id).toBe("link-0");
@@ -67,28 +147,14 @@ describe("resolveEdgeLinks", () => {
   });
 });
 
-describe("resolveEdgeGroupLinks", () => {
-  it("returns every link on an edge without flyout truncation", () => {
-    const ids = Array.from({ length: 10 }, (_, i) => `link-${i}`);
-    const library = makeLibrary(ids);
-
-    const result = resolveEdgeGroupLinks(library, "left");
-
-    expect(result.map((l) => l.id)).toEqual(ids);
-  });
-});
-
 describe("resolveWorkspacePlacedLinks", () => {
-  it("returns all placed links across edges and pins in the active workspace", () => {
-    const library = makeLibrary(["alpha", "beta"]);
-    library.workspaces[0].placements.edges.top = ["gamma"];
-    library.catalog.push({
-      id: "gamma",
-      url: "https://gamma.example.com",
-      title: "gamma",
+  it("returns all placed links across edge groups and pins in the active workspace", () => {
+    const library = makeLibrary({
+      left: [edgeGroup("dev", "Dev tools", initialKey(), ["alpha", "beta"])],
+      top: [edgeGroup("refs", "References", initialKey(), ["gamma"])],
     });
     library.workspaces[0].placements.pins = [
-      { linkId: "delta", position: { kind: "strip", order: 0 } },
+      { linkId: "delta", position: { kind: "strip", orderKey: initialKey() } },
     ];
     library.catalog.push({
       id: "delta",
@@ -98,7 +164,7 @@ describe("resolveWorkspacePlacedLinks", () => {
 
     const result = resolveWorkspacePlacedLinks(library);
 
-    expect(result.map((l) => l.id)).toEqual(["alpha", "beta", "gamma", "delta"]);
+    expect(result.map((link) => link.id)).toEqual(["alpha", "beta", "gamma", "delta"]);
   });
 });
 
@@ -139,38 +205,44 @@ function makeLibraryWithPins(
 }
 
 describe("resolvePins", () => {
-  it("returns strip pins for the active workspace in placement order", () => {
+  it("returns strip pins for the active workspace in fractional order", () => {
+    const first = initialKey();
+    const third = insertBetween(first, null);
+    const second = insertBetween(first, third);
     const library = makeLibraryWithPins([
-      { linkId: "beta", position: { kind: "strip", order: 1 } },
-      { linkId: "alpha", position: { kind: "strip", order: 0 } },
-      { linkId: "gamma", position: { kind: "strip", order: 2 } },
+      { linkId: "beta", position: { kind: "strip", orderKey: second } },
+      { linkId: "alpha", position: { kind: "strip", orderKey: first } },
+      { linkId: "gamma", position: { kind: "strip", orderKey: third } },
     ]);
 
     const result = resolvePins(library);
 
-    expect(result.map((l) => l.id)).toEqual(["alpha", "beta", "gamma"]);
+    expect(result.map((link) => link.id)).toEqual(["alpha", "beta", "gamma"]);
   });
 
   it("excludes freeform pins from the strip", () => {
     const library = makeLibraryWithPins([
-      { linkId: "alpha", position: { kind: "strip", order: 0 } },
+      { linkId: "alpha", position: { kind: "strip", orderKey: initialKey() } },
       { linkId: "beta", position: { kind: "freeform", x: 0.5, y: 0.5 } },
     ]);
 
     const result = resolvePins(library);
 
-    expect(result.map((l) => l.id)).toEqual(["alpha"]);
+    expect(result.map((link) => link.id)).toEqual(["alpha"]);
   });
 
   it("keeps only one pin per link when duplicates exist in placement data", () => {
+    const first = initialKey();
+    const third = insertBetween(first, null);
+    const second = insertBetween(first, third);
     const library = makeLibraryWithPins([
-      { linkId: "alpha", position: { kind: "strip", order: 0 } },
-      { linkId: "alpha", position: { kind: "strip", order: 2 } },
-      { linkId: "beta", position: { kind: "strip", order: 1 } },
+      { linkId: "alpha", position: { kind: "strip", orderKey: first } },
+      { linkId: "alpha", position: { kind: "strip", orderKey: third } },
+      { linkId: "beta", position: { kind: "strip", orderKey: second } },
     ]);
 
     const result = resolvePins(library);
 
-    expect(result.map((l) => l.id)).toEqual(["alpha", "beta"]);
+    expect(result.map((link) => link.id)).toEqual(["alpha", "beta"]);
   });
 });

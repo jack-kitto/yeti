@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,12 +14,12 @@ Update the **starter template** with multiple named groups per edge (e.g. dev to
 
 ## Acceptance criteria
 
-- [ ] Library types model edge groups per edge (left, top, bottom) with fractional order
-- [ ] Starter template seeds multiple edge groups per edge with names and handle icons
-- [ ] Placement module resolves links for a specific edge group and lists groups on an edge
-- [ ] Pin strip order uses fractional order keys in the schema
-- [ ] Unit tests cover group resolution and ordering
-- [ ] Old flat-edge library shape is not supported (reset required)
+- [x] Library types model edge groups per edge (left, top, bottom) with fractional order
+- [x] Starter template seeds multiple edge groups per edge with names and handle icons
+- [x] Placement module resolves links for a specific edge group and lists groups on an edge
+- [x] Pin strip order uses fractional order keys in the schema
+- [x] Unit tests cover group resolution and ordering
+- [x] Old flat-edge library shape is not supported (reset required)
 
 ## Blocked by
 

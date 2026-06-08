@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { resolveEdgeLinks } from "@/placement/placement";
+import { resolveEdgeGroupFlyout, resolveEdgeGroups } from "@/placement/placement";
 import type { EdgePosition, Library } from "@/library/types";
 import { useLauncherStore } from "@/store/launcher-store";
 import { LinkItem } from "./link-item";
@@ -41,7 +41,11 @@ export function EdgeMenu({ edge, library }: EdgeMenuProps) {
   const openFromEdge = useLauncherStore((state) => state.openFromEdge);
   const open = hovered || pinned;
 
-  const { links, hasMore } = resolveEdgeLinks(library, edge);
+  const groups = resolveEdgeGroups(library, edge);
+  const firstGroup = groups[0];
+  const { links, hasMore } = firstGroup
+    ? resolveEdgeGroupFlyout(library, edge, firstGroup.id)
+    : { links: [], hasMore: false };
   const layout = edgeLayout[edge];
 
   return (

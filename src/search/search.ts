@@ -28,8 +28,10 @@ function getPlacedLinkIds(workspace: Workspace): Set<string> {
   const ids = new Set<string>();
 
   for (const edge of ["left", "top", "bottom"] as const) {
-    for (const linkId of workspace.placements.edges[edge]) {
-      ids.add(linkId);
+    for (const group of workspace.placements.edges[edge]) {
+      for (const placement of group.links) {
+        ids.add(placement.linkId);
+      }
     }
   }
 

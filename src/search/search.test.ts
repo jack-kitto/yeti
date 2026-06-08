@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { initialKey } from "@/fractional-order/fractional-order";
 import { filterLinks, searchLinks, searchWorkspaces } from "./search";
 import type { Library, Link } from "@/library/types";
 
@@ -28,7 +29,24 @@ function makeLibrary(
           borderRadius: 16,
         },
         placements: {
-          edges: { left: placedIds, top: [], bottom: [] },
+          edges: {
+            left:
+              placedIds.length === 0
+                ? []
+                : [
+                    {
+                      id: "left-default",
+                      name: "Left",
+                      orderKey: initialKey(),
+                      links: placedIds.map((linkId) => ({
+                        linkId,
+                        orderKey: initialKey(),
+                      })),
+                    },
+                  ],
+            top: [],
+            bottom: [],
+          },
           pins: [],
         },
       },

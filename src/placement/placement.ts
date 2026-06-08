@@ -1,4 +1,5 @@
-import type { EdgePosition, Library, Link } from "@/library/types";
+import { sortByKey } from "@/fractional-order/fractional-order";
+import type { EdgeGroup, EdgePosition, Library, Link } from "@/library/types";
 
 export const EDGE_PREVIEW_LIMIT = 8;
 
@@ -8,22 +9,50 @@ export type ResolvedEdgeLinks = {
   hasMore: boolean;
 };
 
-export function resolveEdgeLinks(
+function activeWorkspace(library: Library) {
+  return library.workspaces.find((w) => w.id === library.activeWorkspaceId);
+}
+
+export function resolveEdgeGroups(
   library: Library,
   edge: EdgePosition,
-): ResolvedEdgeLinks {
-  const workspace = library.workspaces.find(
-    (w) => w.id === library.activeWorkspaceId,
-  );
-
+): EdgeGroup[] {
+  const workspace = activeWorkspace(library);
   if (!workspace) {
-    return { links: [], totalCount: 0, hasMore: false };
+    return [];
+  }
+
+  return sortByKey(workspace.placements.edges[edge], (group) => group.orderKey);
+}
+
+export function resolveEdgeGroupLinks(
+  library: Library,
+  edge: EdgePosition,
+  groupId: string,
+): Link[] {
+  const workspace = activeWorkspace(library);
+  if (!workspace) {
+    return [];
+  }
+
+  const group = workspace.placements.edges[edge].find((entry) => entry.id === groupId);
+  if (!group) {
+    return [];
   }
 
   const catalogById = new Map(library.catalog.map((link) => [link.id, link]));
-  const allLinks = workspace.placements.edges[edge]
-    .map((id) => catalogById.get(id))
+
+  return sortByKey(group.links, (placement) => placement.orderKey)
+    .map((placement) => catalogById.get(placement.linkId))
     .filter((link): link is Link => link !== undefined);
+}
+
+export function resolveEdgeGroupFlyout(
+  library: Library,
+  edge: EdgePosition,
+  groupId: string,
+): ResolvedEdgeLinks {
+  const allLinks = resolveEdgeGroupLinks(library, edge, groupId);
 
   return {
     links: allLinks.slice(0, EDGE_PREVIEW_LIMIT),
@@ -32,30 +61,26 @@ export function resolveEdgeLinks(
   };
 }
 
-function resolveEdgeLinkList(
+export function resolveEdgeLinksOnRim(
   library: Library,
   edge: EdgePosition,
 ): Link[] {
-  const workspace = library.workspaces.find(
-    (w) => w.id === library.activeWorkspaceId,
-  );
+  const groups = resolveEdgeGroups(library, edge);
+  const seen = new Set<string>();
+  const links: Link[] = [];
 
-  if (!workspace) {
-    return [];
+  for (const group of groups) {
+    for (const link of resolveEdgeGroupLinks(library, edge, group.id)) {
+      if (seen.has(link.id)) {
+        continue;
+      }
+
+      seen.add(link.id);
+      links.push(link);
+    }
   }
 
-  const catalogById = new Map(library.catalog.map((link) => [link.id, link]));
-
-  return workspace.placements.edges[edge]
-    .map((id) => catalogById.get(id))
-    .filter((link): link is Link => link !== undefined);
-}
-
-export function resolveEdgeGroupLinks(
-  library: Library,
-  edge: EdgePosition,
-): Link[] {
-  return resolveEdgeLinkList(library, edge);
+  return links;
 }
 
 export function resolveWorkspacePlacedLinks(library: Library): Link[] {
@@ -72,18 +97,15 @@ export function resolveWorkspacePlacedLinks(library: Library): Link[] {
   const links: Link[] = [];
 
   for (const edge of ["left", "top", "bottom"] as const) {
-    for (const linkId of workspace.placements.edges[edge]) {
-      if (seen.has(linkId)) {
-        continue;
-      }
+    for (const group of resolveEdgeGroups(library, edge)) {
+      for (const link of resolveEdgeGroupLinks(library, edge, group.id)) {
+        if (seen.has(link.id)) {
+          continue;
+        }
 
-      const link = catalogById.get(linkId);
-      if (!link) {
-        continue;
+        seen.add(link.id);
+        links.push(link);
       }
-
-      seen.add(linkId);
-      links.push(link);
     }
   }
 
@@ -115,12 +137,10 @@ export function resolvePins(library: Library): Link[] {
 
   const catalogById = new Map(library.catalog.map((link) => [link.id, link]));
 
-  const stripPins = workspace.placements.pins
-    .filter(
-      (pin): pin is typeof pin & { position: { kind: "strip"; order: number } } =>
-        pin.position.kind === "strip",
-    )
-    .sort((a, b) => a.position.order - b.position.order);
+  const stripPins = sortByKey(
+    workspace.placements.pins.filter((pin) => pin.position.kind === "strip"),
+    (pin) => (pin.position.kind === "strip" ? pin.position.orderKey : ""),
+  );
 
   const seen = new Set<string>();
   const links: Link[] = [];

@@ -16,4 +16,26 @@ describe("addCatalogLink", () => {
     expect(added).toBeDefined();
     expect(added!.id).toBeTruthy();
   });
+
+  it("stores optional title and image on a new catalog link", async () => {
+    const store = createInMemoryLibraryStore();
+    const library = await loadOrSeedLibrary(store);
+
+    const updated = addCatalogLink(library, {
+      url: "https://example.com/app",
+      title: "Example App",
+      image: "https://example.com/icon.png",
+    });
+
+    const added = updated.catalog.find((link) => link.url === "https://example.com/app");
+    expect(added?.title).toBe("Example App");
+    expect(added?.image).toBe("https://example.com/icon.png");
+  });
+
+  it("rejects a catalog link without a URL", async () => {
+    const store = createInMemoryLibraryStore();
+    const library = await loadOrSeedLibrary(store);
+
+    expect(() => addCatalogLink(library, { url: "   " })).toThrow(/url is required/i);
+  });
 });

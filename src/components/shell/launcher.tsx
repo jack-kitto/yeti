@@ -7,7 +7,8 @@ import {
 } from "@/link-display/link-display";
 import type { Library, Link } from "@/library/types";
 import {
-  resolveEdgeLinksOnRim,
+  resolveEdgeGroupLinks,
+  resolveEdgeGroupName,
   resolveWorkspacePlacedLinks,
 } from "@/placement/placement";
 import { filterLinks } from "@/search/search";
@@ -46,7 +47,7 @@ function LauncherLinkCard({ link }: { link: Link }) {
 }
 
 export function Launcher({ library }: LauncherProps) {
-  const { open, edge, showFullCatalog, close, toggleCatalog } =
+  const { open, edge, edgeGroupId, showFullCatalog, close, toggleCatalog } =
     useLauncherStore();
   const [query, setQuery] = useState("");
 
@@ -61,12 +62,12 @@ export function Launcher({ library }: LauncherProps) {
       return library.catalog;
     }
 
-    if (edge) {
-      return resolveEdgeLinksOnRim(library, edge);
+    if (edge && edgeGroupId) {
+      return resolveEdgeGroupLinks(library, edge, edgeGroupId);
     }
 
     return resolveWorkspacePlacedLinks(library);
-  }, [library, edge, showFullCatalog]);
+  }, [library, edge, edgeGroupId, showFullCatalog]);
 
   const visibleLinks = useMemo(
     () => filterLinks(baseLinks, query),
@@ -77,10 +78,13 @@ export function Launcher({ library }: LauncherProps) {
     return null;
   }
 
+  const edgeGroupName =
+    edge && edgeGroupId ? resolveEdgeGroupName(library, edge, edgeGroupId) : null;
+
   const scopeLabel = showFullCatalog
     ? "Full catalog"
-    : edge
-      ? `${edge} edge`
+    : edgeGroupName
+      ? edgeGroupName
       : "Workspace";
 
   return (

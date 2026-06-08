@@ -1,4 +1,5 @@
 import { sortByKey } from "@/fractional-order/fractional-order";
+import { moveEdgeGroupToSlot } from "@/edge-order/edge-order";
 import type { EdgeGroup, EdgePosition, Library, Link } from "@/library/types";
 
 export const EDGE_PREVIEW_LIMIT = 8;
@@ -11,6 +12,52 @@ export type ResolvedEdgeLinks = {
 
 function activeWorkspace(library: Library) {
   return library.workspaces.find((w) => w.id === library.activeWorkspaceId);
+}
+
+export function reorderEdgeGroupOnRim(
+  library: Library,
+  edge: EdgePosition,
+  groupId: string,
+  targetSlotIndex: number,
+): Library {
+  const workspace = activeWorkspace(library);
+  if (!workspace) {
+    return library;
+  }
+
+  const reordered = moveEdgeGroupToSlot(
+    workspace.placements.edges[edge],
+    groupId,
+    targetSlotIndex,
+  );
+
+  return {
+    ...library,
+    workspaces: library.workspaces.map((entry) =>
+      entry.id === workspace.id
+        ? {
+            ...entry,
+            placements: {
+              ...entry.placements,
+              edges: {
+                ...entry.placements.edges,
+                [edge]: reordered,
+              },
+            },
+          }
+        : entry,
+    ),
+  };
+}
+
+export function resolveEdgeGroupName(
+  library: Library,
+  edge: EdgePosition,
+  groupId: string,
+): string | null {
+  const workspace = activeWorkspace(library);
+  const group = workspace?.placements.edges[edge].find((entry) => entry.id === groupId);
+  return group?.name ?? null;
 }
 
 export function resolveEdgeGroups(

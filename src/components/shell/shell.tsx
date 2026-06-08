@@ -2,9 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { applyTheme } from "@/theme/theme";
-import { useApplyLibraryPatch, useLibrary } from "@/hooks/use-library";
+import { useApplyLibraryPatch, useLibrary, useSaveLibrary } from "@/hooks/use-library";
+import { reorderEdgeGroupOnRim } from "@/placement/placement";
+import type { EdgePosition } from "@/library/types";
 import { CommandBar } from "./command-bar";
-import { EdgeMenu } from "./edge-menu";
+import { EdgeRim } from "./edge-rim";
 import { Launcher } from "./launcher";
 import { PinStrip } from "./pin-strip";
 import { WorkspaceSwitcher } from "./workspace-switcher";
@@ -13,6 +15,16 @@ export function Shell() {
   const shellRef = useRef<HTMLDivElement>(null);
   const { data: library, isLoading } = useLibrary();
   const applyLibraryPatch = useApplyLibraryPatch();
+  const saveLibraryMutation = useSaveLibrary();
+
+  function handleReorderGroup(edge: EdgePosition, groupId: string, targetSlotIndex: number) {
+    if (!library) {
+      return;
+    }
+
+    const updated = reorderEdgeGroupOnRim(library, edge, groupId, targetSlotIndex);
+    saveLibraryMutation.mutate(updated);
+  }
 
   const activeWorkspace = library?.workspaces.find(
     (w) => w.id === library.activeWorkspaceId,
@@ -40,9 +52,27 @@ export function Shell() {
         aria-hidden
       />
 
-      <EdgeMenu edge="left" library={library} />
-      <EdgeMenu edge="top" library={library} />
-      <EdgeMenu edge="bottom" library={library} />
+      <EdgeRim
+        edge="left"
+        library={library}
+        onReorderGroup={(groupId, targetSlotIndex) =>
+          handleReorderGroup("left", groupId, targetSlotIndex)
+        }
+      />
+      <EdgeRim
+        edge="top"
+        library={library}
+        onReorderGroup={(groupId, targetSlotIndex) =>
+          handleReorderGroup("top", groupId, targetSlotIndex)
+        }
+      />
+      <EdgeRim
+        edge="bottom"
+        library={library}
+        onReorderGroup={(groupId, targetSlotIndex) =>
+          handleReorderGroup("bottom", groupId, targetSlotIndex)
+        }
+      />
       <div className="absolute inset-y-0 right-0 w-3" aria-label="Right edge" />
 
       <Launcher library={library} />
@@ -62,7 +92,7 @@ export function Shell() {
         />
         <PinStrip library={library} />
         <p className="max-w-md text-center text-sm opacity-80">
-          Hover an edge for links. {activeWorkspace.name} workspace active.
+          Hover an edge handle for links. {activeWorkspace.name} workspace active.
         </p>
       </main>
     </div>

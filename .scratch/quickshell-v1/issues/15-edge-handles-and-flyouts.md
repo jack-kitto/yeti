@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,12 +14,12 @@ Supersedes the v1 implementation in issue 02.
 
 ## Acceptance criteria
 
-- [ ] Each edge group shows a visible handle icon on its edge (image → emoji → initials fallback)
-- [ ] Flyout opens from the handle anchor on hover; closes on pointer leave unless pinned
-- [ ] Viewport-responsive slot layout; drag on rim reorders with snap and insert-on-occupied
-- [ ] Flyout shows up to 8 links; "see more" opens launcher for that edge group
-- [ ] Left, top, bottom edges share the same interaction model
-- [ ] Clicking a flyout link opens a new tab
+- [x] Each edge group shows a visible handle icon on its edge (image → emoji → initials fallback)
+- [x] Flyout opens from the handle anchor on hover; closes on pointer leave unless pinned
+- [x] Viewport-responsive slot layout; drag on rim reorders with snap and insert-on-occupied
+- [x] Flyout shows up to 8 links; "see more" opens launcher for that edge group
+- [x] Left, top, bottom edges share the same interaction model
+- [x] Clicking a flyout link opens a new tab
 
 ## Blocked by
 

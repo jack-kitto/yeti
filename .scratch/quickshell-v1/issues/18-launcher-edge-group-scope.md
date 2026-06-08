@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,10 +12,10 @@ Re-wire edge flyout → launcher after issue 15 changes handle/flyout components
 
 ## Acceptance criteria
 
-- [ ] "See more" opens launcher filtered to the invoking edge group's links
-- [ ] Launcher header or scope label shows the edge group name
-- [ ] Full catalog toggle still works
-- [ ] In-launcher filter still narrows visible links
+- [x] "See more" opens launcher filtered to the invoking edge group's links
+- [x] Launcher header or scope label shows the edge group name
+- [x] Full catalog toggle still works
+- [x] In-launcher filter still narrows visible links
 
 ## Blocked by
 

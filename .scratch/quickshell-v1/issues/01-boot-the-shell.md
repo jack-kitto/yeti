@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -18,11 +18,11 @@ Add Library module unit tests (Vitest + fake-indexeddb or injectable in-memory a
 
 ## Acceptance criteria
 
-- [ ] App runs on localhost with a spatial shell layout (canvas + four edge zones), no dashboard chrome
-- [ ] First visit seeds the starter template into IndexedDB; subsequent visits load persisted data
-- [ ] Active workspace theme (palette, background image URL, glass styling) applies to the shell
-- [ ] Workspace switcher on canvas toggles Work ↔ Personal; theme updates on switch
-- [ ] Library module tests cover load, save, patch, and starter seed invariants
+- [x] App runs on localhost with a spatial shell layout (canvas + four edge zones), no dashboard chrome
+- [x] First visit seeds the starter template into IndexedDB; subsequent visits load persisted data
+- [x] Active workspace theme (palette, background image URL, glass styling) applies to the shell
+- [x] Workspace switcher on canvas toggles Work ↔ Personal; theme updates on switch
+- [x] Library module tests cover load, save, patch, and starter seed invariants
 
 ## Blocked by
 

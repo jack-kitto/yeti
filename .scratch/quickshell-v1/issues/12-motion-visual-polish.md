@@ -22,7 +22,9 @@ This slice requires human review of visual and motion quality before v1 is consi
 
 ## Blocked by
 
-- `.scratch/quickshell-v1/issues/15-edge-handles-and-flyouts.md`
-- `.scratch/quickshell-v1/issues/03-canvas-pin-strip.md`
-- `.scratch/quickshell-v1/issues/05-launcher-overlay.md`
+- `.scratch/quickshell-v1/issues/25-canvas-rim-shell.md`
 - `.scratch/quickshell-v1/issues/06-config-link-catalog.md`
+
+## Comments
+
+Canvas deformation shell (issue 25) is in progress — motion polish should wait until rim pocket behavior is stable. Launcher enter/exit and pin strip are already shipped (issues 03, 05).

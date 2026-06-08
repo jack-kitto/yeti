@@ -26,3 +26,7 @@ Add Search module unit tests.
 ## Blocked by
 
 - `.scratch/quickshell-v1/issues/01-boot-the-shell.md`
+
+## Comments
+
+Behavior complete. UI moved from canvas input to bottom-rim search pocket (issue 25); canvas variant remains in `CommandBar` for tests but is not mounted in the live shell.

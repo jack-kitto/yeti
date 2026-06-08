@@ -24,5 +24,8 @@ Include **library reset** — "Reset to starter template" with confirmation (sam
 
 ## Blocked by
 
-- `.scratch/quickshell-v1/issues/01-boot-the-shell.md`
 - `.scratch/quickshell-v1/issues/17-command-bar-actions-and-reset.md`
+
+## Comments
+
+Issue 01 is done. Right-rim **config** surface opens via the canvas shell (issue 25) but `ShellConfigPanel` is still a placeholder stub — this issue replaces it with real catalog CRUD.

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { applyPatch, getLibrary, loadOrSeedLibrary, saveLibrary } from "./library";
+import { STARTER_CATALOG } from "./starter-template";
 import { createInMemoryLibraryStore } from "./store";
+import { EDGE_PREVIEW_LIMIT } from "@/placement/placement";
 
 describe("loadOrSeedLibrary", () => {
   it("returns starter template with Work and Personal workspaces when store is empty", async () => {
@@ -20,6 +22,17 @@ describe("loadOrSeedLibrary", () => {
 
     expect(work.theme.backgroundUrl).not.toBe(personal.theme.backgroundUrl);
     expect(work.theme.palette.background).not.toBe(personal.theme.palette.background);
+  });
+
+  it("seeds a large catalog with enough left-edge links to open the launcher", async () => {
+    const store = createInMemoryLibraryStore();
+
+    const library = await loadOrSeedLibrary(store);
+    const work = library.workspaces.find((workspace) => workspace.name === "Work")!;
+
+    expect(library.catalog.length).toBe(STARTER_CATALOG.length);
+    expect(library.catalog.length).toBeGreaterThanOrEqual(30);
+    expect(work.placements.edges.left.length).toBeGreaterThan(EDGE_PREVIEW_LIMIT);
   });
 
   it("does not re-seed when the store already has a library", async () => {

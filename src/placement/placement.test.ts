@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { EDGE_PREVIEW_LIMIT, resolveEdgeLinks, resolvePins } from "./placement";
+import {
+  EDGE_PREVIEW_LIMIT,
+  resolveEdgeGroupLinks,
+  resolveEdgeLinks,
+  resolvePins,
+  resolveWorkspacePlacedLinks,
+} from "./placement";
 import type { Library, PinPosition } from "@/library/types";
 
 function makeLibrary(leftLinkIds: string[]): Library {
@@ -58,6 +64,41 @@ describe("resolveEdgeLinks", () => {
     expect(result.links[7].id).toBe("link-7");
     expect(result.totalCount).toBe(10);
     expect(result.hasMore).toBe(true);
+  });
+});
+
+describe("resolveEdgeGroupLinks", () => {
+  it("returns every link on an edge without flyout truncation", () => {
+    const ids = Array.from({ length: 10 }, (_, i) => `link-${i}`);
+    const library = makeLibrary(ids);
+
+    const result = resolveEdgeGroupLinks(library, "left");
+
+    expect(result.map((l) => l.id)).toEqual(ids);
+  });
+});
+
+describe("resolveWorkspacePlacedLinks", () => {
+  it("returns all placed links across edges and pins in the active workspace", () => {
+    const library = makeLibrary(["alpha", "beta"]);
+    library.workspaces[0].placements.edges.top = ["gamma"];
+    library.catalog.push({
+      id: "gamma",
+      url: "https://gamma.example.com",
+      title: "gamma",
+    });
+    library.workspaces[0].placements.pins = [
+      { linkId: "delta", position: { kind: "strip", order: 0 } },
+    ];
+    library.catalog.push({
+      id: "delta",
+      url: "https://delta.example.com",
+      title: "delta",
+    });
+
+    const result = resolveWorkspacePlacedLinks(library);
+
+    expect(result.map((l) => l.id)).toEqual(["alpha", "beta", "gamma", "delta"]);
   });
 });
 

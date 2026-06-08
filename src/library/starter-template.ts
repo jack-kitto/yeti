@@ -4,25 +4,30 @@ function link(id: string, url: string, title: string): Link {
   return { id, url, title };
 }
 
+type WorkspacePlacementsInput = {
+  left: string[];
+  top: string[];
+  bottom: string[];
+  pins: string[];
+};
+
 function workspace(
   id: string,
   name: string,
   theme: Theme,
-  linkIds: string[],
+  placements: WorkspacePlacementsInput,
 ): Workspace {
-  const [first, second, third, fourth, fifth, sixth] = linkIds;
-
   return {
     id,
     name,
     theme,
     placements: {
       edges: {
-        left: [first, second, third].filter(Boolean) as string[],
-        top: [fourth, fifth].filter(Boolean) as string[],
-        bottom: [sixth, first].filter(Boolean) as string[],
+        left: placements.left,
+        top: placements.top,
+        bottom: placements.bottom,
       },
-      pins: linkIds.slice(0, 4).map((linkId, order) => ({
+      pins: placements.pins.map((linkId, order) => ({
         linkId,
         position: { kind: "strip" as const, order },
       })),
@@ -56,23 +61,91 @@ const personalTheme: Theme = {
   borderRadius: 20,
 };
 
-export function createStarterLibrary(): Library {
-  const catalog: Link[] = [
-    link("github", "https://github.com", "GitHub"),
-    link("mdn", "https://developer.mozilla.org", "MDN"),
-    link("localhost", "http://localhost:3000", "Localhost"),
-    link("railway", "https://railway.app", "Railway"),
-    link("vercel", "https://vercel.com", "Vercel"),
-    link("npm", "https://www.npmjs.com", "npm"),
-  ];
+export const STARTER_CATALOG: Link[] = [
+  link("github", "https://github.com", "GitHub"),
+  link("mdn", "https://developer.mozilla.org", "MDN"),
+  link("localhost", "http://localhost:3000", "Localhost"),
+  link("railway", "https://railway.app", "Railway"),
+  link("vercel", "https://vercel.com", "Vercel"),
+  link("npm", "https://www.npmjs.com", "npm"),
+  link("docker", "https://www.docker.com", "Docker"),
+  link("stackoverflow", "https://stackoverflow.com", "Stack Overflow"),
+  link("typescript", "https://www.typescriptlang.org", "TypeScript"),
+  link("react", "https://react.dev", "React"),
+  link("nextjs", "https://nextjs.org", "Next.js"),
+  link("tailwind", "https://tailwindcss.com", "Tailwind CSS"),
+  link("figma", "https://www.figma.com", "Figma"),
+  link("linear", "https://linear.app", "Linear"),
+  link("notion", "https://www.notion.so", "Notion"),
+  link("supabase", "https://supabase.com", "Supabase"),
+  link("planetscale", "https://planetscale.com", "PlanetScale"),
+  link("prisma", "https://www.prisma.io", "Prisma"),
+  link("turborepo", "https://turbo.build", "Turborepo"),
+  link("bun", "https://bun.sh", "Bun"),
+  link("deno", "https://deno.com", "Deno"),
+  link("cloudflare", "https://www.cloudflare.com", "Cloudflare"),
+  link("fly", "https://fly.io", "Fly.io"),
+  link("render", "https://render.com", "Render"),
+  link("heroku", "https://www.heroku.com", "Heroku"),
+  link("aws", "https://aws.amazon.com", "AWS"),
+  link("gcp", "https://cloud.google.com", "Google Cloud"),
+  link("stripe", "https://stripe.com", "Stripe"),
+  link("sentry", "https://sentry.io", "Sentry"),
+  link("datadog", "https://www.datadoghq.com", "Datadog"),
+  link("posthog", "https://posthog.com", "PostHog"),
+  link("raycast", "https://www.raycast.com", "Raycast"),
+  link("arc", "https://arc.net", "Arc Browser"),
+  link("obsidian", "https://obsidian.md", "Obsidian"),
+  link("hackernews", "https://news.ycombinator.com", "Hacker News"),
+  link("reddit", "https://www.reddit.com/r/programming", "r/programming"),
+  link("vitest", "https://vitest.dev", "Vitest"),
+  link("playwright", "https://playwright.dev", "Playwright"),
+  link("storybook", "https://storybook.js.org", "Storybook"),
+  link("shadcn", "https://ui.shadcn.com", "shadcn/ui"),
+];
 
-  const work = workspace("work", "Work", workTheme, catalog.map((l) => l.id));
-  const personal = workspace(
-    "personal",
-    "Personal",
-    personalTheme,
-    catalog.map((l) => l.id),
-  );
+export function createStarterLibrary(): Library {
+  const catalog = STARTER_CATALOG;
+
+  const work = workspace("work", "Work", workTheme, {
+    left: [
+      "github",
+      "mdn",
+      "localhost",
+      "railway",
+      "vercel",
+      "npm",
+      "docker",
+      "stackoverflow",
+      "typescript",
+      "react",
+      "nextjs",
+      "tailwind",
+    ],
+    top: ["figma", "linear", "notion", "supabase", "planetscale", "prisma"],
+    bottom: ["turborepo", "bun", "deno", "cloudflare", "fly"],
+    pins: ["github", "localhost", "vercel", "linear", "prisma", "sentry"],
+  });
+
+  const personal = workspace("personal", "Personal", personalTheme, {
+    left: [
+      "hackernews",
+      "reddit",
+      "obsidian",
+      "arc",
+      "raycast",
+      "notion",
+      "figma",
+      "storybook",
+      "shadcn",
+      "playwright",
+      "vitest",
+      "posthog",
+    ],
+    top: ["github", "mdn", "typescript", "react"],
+    bottom: ["railway", "vercel", "npm", "docker"],
+    pins: ["hackernews", "obsidian", "arc", "raycast", "notion"],
+  });
 
   return {
     catalog,

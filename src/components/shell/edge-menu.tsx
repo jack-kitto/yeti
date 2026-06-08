@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { resolveEdgeLinks } from "@/placement/placement";
 import type { EdgePosition, Library } from "@/library/types";
+import { useLauncherStore } from "@/store/launcher-store";
 import { LinkItem } from "./link-item";
 
 type EdgeMenuProps = {
@@ -37,6 +38,7 @@ const edgeLayout: Record<
 export function EdgeMenu({ edge, library }: EdgeMenuProps) {
   const [hovered, setHovered] = useState(false);
   const [pinned, setPinned] = useState(false);
+  const openFromEdge = useLauncherStore((state) => state.openFromEdge);
   const open = hovered || pinned;
 
   const { links, hasMore } = resolveEdgeLinks(library, edge);
@@ -67,9 +69,7 @@ export function EdgeMenu({ edge, library }: EdgeMenuProps) {
             <button
               type="button"
               className="mt-1 rounded-[var(--qs-border-radius)] px-2 py-1.5 text-left text-sm text-[color:var(--qs-color-accent)] hover:bg-black/5"
-              onClick={() => {
-                /* launcher lands in issue 05 */
-              }}
+              onClick={() => openFromEdge(edge)}
             >
               See more…
             </button>

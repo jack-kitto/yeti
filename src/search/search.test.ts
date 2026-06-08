@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { searchLinks, searchWorkspaces } from "./search";
+import { filterLinks, searchLinks, searchWorkspaces } from "./search";
 import type { Library, Link } from "@/library/types";
 
 function link(id: string, title: string): Link {
@@ -81,6 +81,20 @@ describe("searchLinks", () => {
 
     expect(results).toHaveLength(1);
     expect(results[0].link.id).toBe("github");
+  });
+});
+
+describe("filterLinks", () => {
+  it("returns all links when the query is empty", () => {
+    const links = [link("github", "GitHub"), link("mdn", "MDN")];
+
+    expect(filterLinks(links, "")).toEqual(links);
+  });
+
+  it("narrows links with fuzzy matching", () => {
+    const links = [link("github", "GitHub"), link("mdn", "MDN")];
+
+    expect(filterLinks(links, "git").map((l) => l.id)).toEqual(["github"]);
   });
 });
 

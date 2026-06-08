@@ -69,6 +69,14 @@ export function searchLinks(library: Library, query: string): LinkSearchResult[]
   return [...workspaceResults, ...catalogResults];
 }
 
+export function filterLinks(links: Link[], query: string): Link[] {
+  if (!query.trim()) {
+    return links;
+  }
+
+  return links.filter((link) => fuzzyMatch(query, resolveLinkTitle(link)));
+}
+
 export function searchWorkspaces(
   library: Library,
   query: string,

@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,11 +12,11 @@ Open from "see more" on an edge flyout, pre-filtered to that **edge**'s link gro
 
 ## Acceptance criteria
 
-- [ ] "See more" on an edge flyout opens the launcher filtered to that edge's group
-- [ ] Launcher defaults to active workspace links; toggle expands to full catalog
-- [ ] In-launcher search/filter narrows visible links
-- [ ] Launcher feels like an app launcher (grid, overlay), not a settings page
-- [ ] Clicking a launcher link opens a new tab
+- [x] "See more" on an edge flyout opens the launcher filtered to that edge's group
+- [x] Launcher defaults to active workspace links; toggle expands to full catalog
+- [x] In-launcher search/filter narrows visible links
+- [x] Launcher feels like an app launcher (grid, overlay), not a settings page
+- [x] Clicking a launcher link opens a new tab
 
 ## Blocked by
 

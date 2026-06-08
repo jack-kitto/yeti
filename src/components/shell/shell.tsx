@@ -5,6 +5,7 @@ import { applyTheme } from "@/theme/theme";
 import { useApplyLibraryPatch, useLibrary } from "@/hooks/use-library";
 import { CommandBar } from "./command-bar";
 import { EdgeMenu } from "./edge-menu";
+import { Launcher } from "./launcher";
 import { PinStrip } from "./pin-strip";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 
@@ -43,6 +44,8 @@ export function Shell() {
       <EdgeMenu edge="top" library={library} />
       <EdgeMenu edge="bottom" library={library} />
       <div className="absolute inset-y-0 right-0 w-3" aria-label="Right edge" />
+
+      <Launcher library={library} />
 
       <main className="relative flex min-h-screen flex-col items-center justify-center gap-4 px-8">
         <WorkspaceSwitcher

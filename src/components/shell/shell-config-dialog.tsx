@@ -10,6 +10,7 @@ import { ShellConfigCatalog } from "./shell-config-catalog";
 import { ShellConfigLibrary } from "./shell-config-library";
 import { ShellConfigPlacements } from "./shell-config-placements";
 import { ShellConfigPins } from "./shell-config-pins";
+import { ShellConfigWorkspaces } from "./shell-config-workspaces";
 
 type ShellConfigDialogProps = {
   library: Library;
@@ -20,6 +21,7 @@ const SECTIONS: { id: ConfigSection; label: string; description: string }[] = [
   { id: "links", label: "Links", description: "Add and edit catalog links" },
   { id: "edges", label: "Edges", description: "Edge groups and placements" },
   { id: "pins", label: "Pins", description: "Canvas pin strip" },
+  { id: "workspaces", label: "Workspaces", description: "Workspaces and themes" },
   { id: "library", label: "Library", description: "Reset and maintenance" },
 ];
 
@@ -31,6 +33,8 @@ function sectionContent(section: ConfigSection, library: Library) {
       return <ShellConfigPlacements library={library} />;
     case "pins":
       return <ShellConfigPins library={library} />;
+    case "workspaces":
+      return <ShellConfigWorkspaces library={library} />;
     case "library":
       return <ShellConfigLibrary />;
   }

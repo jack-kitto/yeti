@@ -862,6 +862,76 @@ body {
   margin-top: 2px;
 }
 
+.shell-config-form-actions-start {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.shell-config-workspace-select {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.shell-config-workspace-badge {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--qs-color-accent) 20%, var(--qs-color-surface));
+  color: color-mix(in srgb, var(--qs-color-text) 82%, transparent);
+}
+
+.shell-config-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.shell-config-color-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.shell-config-color-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shell-config-color-input input[type="color"] {
+  width: 36px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 8px;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.shell-config-color-input .shell-config-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.shell-config-range {
+  width: 100%;
+  accent-color: var(--qs-color-accent);
+}
+
 .shell-config-submit,
 .shell-config-reset {
   border: 0;

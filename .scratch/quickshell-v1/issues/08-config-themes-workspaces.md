@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,12 +14,16 @@ Extend the **config panel** with workspace and theme management.
 
 ## Acceptance criteria
 
-- [ ] User can create, rename, and delete workspaces from config
-- [ ] User can edit active workspace theme: palette, background image URL, glass/surface styling
-- [ ] Theme changes apply immediately when editing the currently active workspace
-- [ ] Switching workspace after edit shows that workspace's saved theme
-- [ ] Cannot delete the last remaining workspace (or sensible guard exists)
+- [x] User can create, rename, and delete workspaces from config
+- [x] User can edit active workspace theme: palette, background image URL, glass/surface styling
+- [x] Theme changes apply immediately when editing the currently active workspace
+- [x] Switching workspace after edit shows that workspace's saved theme
+- [x] Cannot delete the last remaining workspace (or sensible guard exists)
 
 ## Blocked by
 
 - `.scratch/quickshell-v1/issues/06-config-link-catalog.md`
+
+## Comments
+
+Implemented via `src/workspace/workspaces.ts` (CRUD + 6 tests), `src/theme/workspace-theme.ts` (theme patch + 3 tests), library/hooks persistence, and `ShellConfigWorkspaces` config section.

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ConfigSection = "links" | "edges" | "pins" | "library";
+export type ConfigSection = "links" | "edges" | "pins" | "workspaces" | "library";
 
 type ConfigState = {
   open: boolean;

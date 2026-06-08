@@ -10,6 +10,7 @@ const MENU_ITEMS = [
   { section: "links" as const, label: "Links", hint: "Catalog" },
   { section: "edges" as const, label: "Edges", hint: "Groups" },
   { section: "pins" as const, label: "Pins", hint: "Canvas" },
+  { section: "workspaces" as const, label: "Workspaces", hint: "Themes" },
   { section: "library" as const, label: "Library", hint: "Reset" },
 ];
 

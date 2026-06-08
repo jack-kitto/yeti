@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addCatalogLink } from "./catalog";
+import { addCatalogLink, updateCatalogLink } from "./catalog";
 import { loadOrSeedLibrary } from "./library";
 import { createInMemoryLibraryStore } from "./store";
 
@@ -37,5 +37,27 @@ describe("addCatalogLink", () => {
     const library = await loadOrSeedLibrary(store);
 
     expect(() => addCatalogLink(library, { url: "   " })).toThrow(/url is required/i);
+  });
+});
+
+describe("updateCatalogLink", () => {
+  it("updates an existing catalog link", async () => {
+    const store = createInMemoryLibraryStore();
+    const library = addCatalogLink(await loadOrSeedLibrary(store), {
+      url: "https://example.com/old",
+      title: "Old title",
+    });
+    const linkId = library.catalog.find((link) => link.url === "https://example.com/old")!.id;
+
+    const updated = updateCatalogLink(library, linkId, {
+      url: "https://example.com/new",
+      title: "New title",
+      image: "https://example.com/new.png",
+    });
+
+    const link = updated.catalog.find((entry) => entry.id === linkId);
+    expect(link?.url).toBe("https://example.com/new");
+    expect(link?.title).toBe("New title");
+    expect(link?.image).toBe("https://example.com/new.png");
   });
 });

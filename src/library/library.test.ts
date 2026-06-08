@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  addCatalogLink,
   applyPatch,
   getLibrary,
   loadOrSeedLibrary,
@@ -114,5 +115,19 @@ describe("applyPatch", () => {
 
     expect(updated.activeWorkspaceId).toBe(personalId);
     expect((await getLibrary(store))?.activeWorkspaceId).toBe(personalId);
+  });
+});
+
+describe("catalog mutations via store", () => {
+  it("persists a newly added catalog link", async () => {
+    const store = createInMemoryLibraryStore();
+    await loadOrSeedLibrary(store);
+    const beforeCount = (await getLibrary(store))!.catalog.length;
+
+    await addCatalogLink(store, { url: "https://example.com/persisted", title: "Persisted" });
+
+    const loaded = await getLibrary(store);
+    expect(loaded?.catalog).toHaveLength(beforeCount + 1);
+    expect(loaded?.catalog.some((link) => link.title === "Persisted")).toBe(true);
   });
 });

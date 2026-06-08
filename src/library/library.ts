@@ -1,5 +1,10 @@
 import { createStarterLibrary } from "./starter-template";
-import type { Library, LibraryPatch, LibraryStore } from "./types";
+import {
+  addCatalogLink as addCatalogLinkToLibrary,
+  deleteCatalogLink as deleteCatalogLinkFromLibrary,
+  updateCatalogLink as updateCatalogLinkInLibrary,
+} from "./catalog";
+import type { CatalogLinkInput, CatalogLinkPatch, Library, LibraryPatch, LibraryStore } from "./types";
 
 export function validateLibrary(library: Library): void {
   for (const workspace of library.workspaces) {
@@ -65,4 +70,44 @@ export async function applyPatch(
   validateLibrary(next);
   await store.write(next);
   return next;
+}
+
+export async function addCatalogLink(
+  store: LibraryStore,
+  input: CatalogLinkInput,
+): Promise<Library> {
+  const library = await store.read();
+  if (!library) {
+    throw new Error("Library not initialized");
+  }
+
+  const next = addCatalogLinkToLibrary(library, input);
+  return saveLibrary(store, next);
+}
+
+export async function updateCatalogLink(
+  store: LibraryStore,
+  linkId: string,
+  patch: CatalogLinkPatch,
+): Promise<Library> {
+  const library = await store.read();
+  if (!library) {
+    throw new Error("Library not initialized");
+  }
+
+  const next = updateCatalogLinkInLibrary(library, linkId, patch);
+  return saveLibrary(store, next);
+}
+
+export async function deleteCatalogLink(
+  store: LibraryStore,
+  linkId: string,
+): Promise<Library> {
+  const library = await store.read();
+  if (!library) {
+    throw new Error("Library not initialized");
+  }
+
+  const next = deleteCatalogLinkFromLibrary(library, linkId);
+  return saveLibrary(store, next);
 }

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { computeEdgeSlotCenters, nearestSlotIndex } from "./edge-slots";
+import {
+  computeEdgeSlotCenters,
+  computeMaxEdgeSlotCount,
+  insertIndexToSlotIndex,
+  nearestSlotIndex,
+  slotIndexToInsertIndex,
+} from "./edge-slots";
 
 describe("computeEdgeSlotCenters", () => {
   it("places one handle at the center of the rim", () => {
@@ -14,6 +20,21 @@ describe("computeEdgeSlotCenters", () => {
     expect(centers[1]).toBeLessThan(centers[2]);
     expect(centers[1] - centers[0]).toBeGreaterThanOrEqual(48);
     expect(centers[2] - centers[1]).toBeGreaterThanOrEqual(48);
+  });
+});
+
+describe("computeMaxEdgeSlotCount", () => {
+  it("derives the maximum slots from rim length and minimum spacing", () => {
+    expect(computeMaxEdgeSlotCount(600, 48)).toBe(12);
+    expect(computeMaxEdgeSlotCount(48, 48)).toBe(1);
+  });
+});
+
+describe("slot index mapping", () => {
+  it("maps physical slots to edge-order insert indices", () => {
+    expect(slotIndexToInsertIndex(0, 3, 12)).toBe(0);
+    expect(slotIndexToInsertIndex(11, 3, 12)).toBe(2);
+    expect(insertIndexToSlotIndex(1, 3, 12)).toBe(6);
   });
 });
 

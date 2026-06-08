@@ -9,7 +9,12 @@ import {
   type CSSProperties,
 } from "react";
 import { resolveEdgeHandleDisplay } from "@/edge-handle/edge-handle";
-import { nearestSlotIndex, computeEdgeSlotCenters } from "@/edge-slots/edge-slots";
+import {
+  computeEdgeSlotCenters,
+  computeMaxEdgeSlotCount,
+  nearestSlotIndex,
+  slotIndexToInsertIndex,
+} from "@/edge-slots/edge-slots";
 import type { Library } from "@/library/types";
 import { resolveEdgeGroupFlyout, resolveEdgeGroups } from "@/placement/placement";
 import { buildShellZones } from "@/shell-frame/build-zones";
@@ -230,8 +235,11 @@ export function ShellEdgeLayer({
 
   function finishDrag(groupId: string, axisPx: number) {
     const groups = resolveEdgeGroups(library, "left");
-    const slotCenters = computeEdgeSlotCenters(groups.length, window.innerHeight);
-    onReorderGroup(groupId, nearestSlotIndex(axisPx, slotCenters));
+    const maxSlots = computeMaxEdgeSlotCount(window.innerHeight);
+    const slotCenters = computeEdgeSlotCenters(maxSlots, window.innerHeight);
+    const targetSlot = nearestSlotIndex(axisPx, slotCenters);
+    const insertIndex = slotIndexToInsertIndex(targetSlot, groups.length, maxSlots);
+    onReorderGroup(groupId, insertIndex);
   }
 
   function renderRimHit(zoneId: string, className: string, style: CSSProperties) {

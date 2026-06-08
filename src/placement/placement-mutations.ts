@@ -1,6 +1,7 @@
 import { initialKey, insertBetween, sortByKey } from "@/fractional-order/fractional-order";
 import type {
   EdgeGroup,
+  EdgeGroupLinkPlacement,
   EdgePosition,
   Library,
   Workspace,
@@ -227,6 +228,118 @@ export function removeLinkFromEdgeGroup(
             : entry,
         ),
       },
+    },
+  }));
+}
+
+function moveLinkToSlot(
+  links: readonly EdgeGroupLinkPlacement[],
+  linkId: string,
+  targetSlotIndex: number,
+): EdgeGroupLinkPlacement[] {
+  const sorted = sortByKey([...links], (link) => link.orderKey);
+  const fromIndex = sorted.findIndex((link) => link.linkId === linkId);
+  if (fromIndex === -1) {
+    return [...links];
+  }
+
+  const targetIndex = Math.max(0, Math.min(targetSlotIndex, sorted.length - 1));
+  if (fromIndex === targetIndex) {
+    return [...links];
+  }
+
+  const reordered = [...sorted];
+  const [moved] = reordered.splice(fromIndex, 1);
+  reordered.splice(targetIndex, 0, moved);
+
+  const beforeKey = targetIndex === 0 ? null : reordered[targetIndex - 1].orderKey;
+  const afterKey =
+    targetIndex === reordered.length - 1 ? null : reordered[targetIndex + 1].orderKey;
+  const newOrderKey = insertBetween(beforeKey, afterKey);
+
+  return links.map((link) =>
+    link.linkId === linkId ? { ...link, orderKey: newOrderKey } : link,
+  );
+}
+
+export function moveLinkInEdgeGroup(
+  library: Library,
+  workspaceId: string,
+  edge: EdgePosition,
+  groupId: string,
+  linkId: string,
+  targetSlotIndex: number,
+): Library {
+  findWorkspace(library, workspaceId);
+
+  return updateWorkspace(library, workspaceId, (workspace) => ({
+    ...workspace,
+    placements: {
+      ...workspace.placements,
+      edges: {
+        ...workspace.placements.edges,
+        [edge]: workspace.placements.edges[edge].map((entry) =>
+          entry.id === groupId
+            ? {
+                ...entry,
+                links: moveLinkToSlot(entry.links, linkId, targetSlotIndex),
+              }
+            : entry,
+        ),
+      },
+    },
+  }));
+}
+
+export function addPinToStrip(
+  library: Library,
+  workspaceId: string,
+  linkId: string,
+): Library {
+  assertCatalogLink(library, linkId);
+
+  return updateWorkspace(library, workspaceId, (workspace) => {
+    if (workspace.placements.pins.some((pin) => pin.linkId === linkId)) {
+      throw new Error(`Duplicate pin for link "${linkId}" in workspace "${workspaceId}"`);
+    }
+
+    const stripPins = workspace.placements.pins.filter((pin) => pin.position.kind === "strip");
+
+    return {
+      ...workspace,
+      placements: {
+        ...workspace.placements,
+        pins: [
+          ...workspace.placements.pins,
+          {
+            linkId,
+            position: {
+              kind: "strip" as const,
+              orderKey: appendOrderKey(
+                stripPins.map((pin) =>
+                  pin.position.kind === "strip" ? pin.position : { orderKey: "" },
+                ),
+              ),
+            },
+          },
+        ],
+      },
+    };
+  });
+}
+
+export function removePinFromStrip(
+  library: Library,
+  workspaceId: string,
+  linkId: string,
+): Library {
+  findWorkspace(library, workspaceId);
+
+  return updateWorkspace(library, workspaceId, (workspace) => ({
+    ...workspace,
+    placements: {
+      ...workspace.placements,
+      pins: workspace.placements.pins.filter((pin) => pin.linkId !== linkId),
     },
   }));
 }

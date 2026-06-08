@@ -111,3 +111,15 @@ export async function deleteCatalogLink(
   const next = deleteCatalogLinkFromLibrary(library, linkId);
   return saveLibrary(store, next);
 }
+
+export async function mutateLibrary(
+  store: LibraryStore,
+  mutate: (library: Library) => Library,
+): Promise<Library> {
+  const library = await store.read();
+  if (!library) {
+    throw new Error("Library not initialized");
+  }
+
+  return saveLibrary(store, mutate(library));
+}

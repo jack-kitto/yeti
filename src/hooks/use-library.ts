@@ -6,6 +6,7 @@ import {
   applyPatch,
   deleteCatalogLink,
   loadOrSeedLibrary,
+  mutateLibrary,
   resetLibrary,
   saveLibrary,
   updateCatalogLink,
@@ -88,6 +89,17 @@ export function useDeleteCatalogLink() {
 
   return useMutation({
     mutationFn: (linkId: string) => deleteCatalogLink(store, linkId),
+    onSuccess: (library) => {
+      queryClient.setQueryData(["library"], library);
+    },
+  });
+}
+
+export function useMutateLibrary() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (mutate: (library: Library) => Library) => mutateLibrary(store, mutate),
     onSuccess: (library) => {
       queryClient.setQueryData(["library"], library);
     },

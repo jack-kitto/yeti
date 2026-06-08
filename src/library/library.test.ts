@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { addEdgeGroup } from "@/placement/placement-mutations";
 import {
   addCatalogLink,
   applyPatch,
   getLibrary,
   loadOrSeedLibrary,
+  mutateLibrary,
   resetLibrary,
   saveLibrary,
 } from "./library";
@@ -129,5 +131,23 @@ describe("catalog mutations via store", () => {
     const loaded = await getLibrary(store);
     expect(loaded?.catalog).toHaveLength(beforeCount + 1);
     expect(loaded?.catalog.some((link) => link.title === "Persisted")).toBe(true);
+  });
+});
+
+describe("mutateLibrary", () => {
+  it("persists arbitrary library mutations", async () => {
+    const store = createInMemoryLibraryStore();
+    const library = await loadOrSeedLibrary(store);
+    const beforeCount = library.workspaces.find((w) => w.id === library.activeWorkspaceId)!
+      .placements.edges.left.length;
+
+    await mutateLibrary(store, (current) =>
+      addEdgeGroup(current, current.activeWorkspaceId, "left", { name: "Config test" }),
+    );
+
+    const loaded = await getLibrary(store);
+    const leftCount = loaded!.workspaces.find((w) => w.id === loaded!.activeWorkspaceId)!
+      .placements.edges.left.length;
+    expect(leftCount).toBe(beforeCount + 1);
   });
 });

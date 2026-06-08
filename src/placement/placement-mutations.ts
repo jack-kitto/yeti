@@ -41,10 +41,14 @@ function updateWorkspace(
   };
 }
 
-function nextOrderKey(groups: readonly EdgeGroup[]): string {
-  const sorted = sortByKey([...groups], (group) => group.orderKey);
+function appendOrderKey(items: readonly { orderKey: string }[]): string {
+  const sorted = sortByKey([...items], (item) => item.orderKey);
   const last = sorted.at(-1);
   return last ? insertBetween(last.orderKey, null) : initialKey();
+}
+
+function nextGroupOrderKey(groups: readonly EdgeGroup[]): string {
+  return appendOrderKey(groups);
 }
 
 export function addEdgeGroup(
@@ -64,7 +68,7 @@ export function addEdgeGroup(
   const group: EdgeGroup = {
     id: createEdgeGroupId(),
     name,
-    orderKey: nextOrderKey(groups),
+    orderKey: nextGroupOrderKey(groups),
     links: [],
     ...(input.handleIcon?.trim() ? { handleIcon: input.handleIcon.trim() } : {}),
   };
@@ -149,6 +153,79 @@ export function deleteEdgeGroup(
       edges: {
         ...workspace.placements.edges,
         [edge]: workspace.placements.edges[edge].filter((entry) => entry.id !== groupId),
+      },
+    },
+  }));
+}
+
+function assertCatalogLink(library: Library, linkId: string): void {
+  if (!library.catalog.some((link) => link.id === linkId)) {
+    throw new Error(`Catalog link "${linkId}" not found`);
+  }
+}
+
+export function addLinkToEdgeGroup(
+  library: Library,
+  workspaceId: string,
+  edge: EdgePosition,
+  groupId: string,
+  linkId: string,
+): Library {
+  assertCatalogLink(library, linkId);
+  findWorkspace(library, workspaceId);
+
+  return updateWorkspace(library, workspaceId, (workspace) => {
+    const group = findEdgeGroup(workspace, edge, groupId);
+    if (group.links.some((placement) => placement.linkId === linkId)) {
+      throw new Error(`Link "${linkId}" is already placed in edge group "${groupId}"`);
+    }
+
+    return {
+      ...workspace,
+      placements: {
+        ...workspace.placements,
+        edges: {
+          ...workspace.placements.edges,
+          [edge]: workspace.placements.edges[edge].map((entry) =>
+            entry.id === groupId
+              ? {
+                  ...entry,
+                  links: [
+                    ...entry.links,
+                    { linkId, orderKey: appendOrderKey(entry.links) },
+                  ],
+                }
+              : entry,
+          ),
+        },
+      },
+    };
+  });
+}
+
+export function removeLinkFromEdgeGroup(
+  library: Library,
+  workspaceId: string,
+  edge: EdgePosition,
+  groupId: string,
+  linkId: string,
+): Library {
+  findWorkspace(library, workspaceId);
+
+  return updateWorkspace(library, workspaceId, (workspace) => ({
+    ...workspace,
+    placements: {
+      ...workspace.placements,
+      edges: {
+        ...workspace.placements.edges,
+        [edge]: workspace.placements.edges[edge].map((entry) =>
+          entry.id === groupId
+            ? {
+                ...entry,
+                links: entry.links.filter((placement) => placement.linkId !== linkId),
+              }
+            : entry,
+        ),
       },
     },
   }));

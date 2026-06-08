@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addCatalogLink, updateCatalogLink } from "./catalog";
+import { addCatalogLink, deleteCatalogLink, updateCatalogLink } from "./catalog";
 import { loadOrSeedLibrary } from "./library";
 import { createInMemoryLibraryStore } from "./store";
 
@@ -59,5 +59,39 @@ describe("updateCatalogLink", () => {
     expect(link?.url).toBe("https://example.com/new");
     expect(link?.title).toBe("New title");
     expect(link?.image).toBe("https://example.com/new.png");
+  });
+});
+
+describe("deleteCatalogLink", () => {
+  it("removes a link from the catalog and all workspace placements", async () => {
+    const store = createInMemoryLibraryStore();
+    const seeded = await loadOrSeedLibrary(store);
+    const withLink = addCatalogLink(seeded, {
+      url: "https://example.com/remove-me",
+      title: "Remove me",
+    });
+    const linkId = withLink.catalog.find((link) => link.title === "Remove me")!.id;
+    const work = withLink.workspaces.find((workspace) => workspace.name === "Work")!;
+
+    work.placements.edges.left[0].links.push({
+      linkId,
+      orderKey: "z99",
+    });
+    work.placements.pins.push({
+      linkId,
+      position: { kind: "strip", orderKey: "z98" },
+    });
+
+    const updated = deleteCatalogLink(withLink, linkId);
+
+    expect(updated.catalog.some((link) => link.id === linkId)).toBe(false);
+    for (const workspace of updated.workspaces) {
+      for (const edge of ["left", "top", "bottom"] as const) {
+        for (const group of workspace.placements.edges[edge]) {
+          expect(group.links.some((placement) => placement.linkId === linkId)).toBe(false);
+        }
+      }
+      expect(workspace.placements.pins.some((pin) => pin.linkId === linkId)).toBe(false);
+    }
   });
 });

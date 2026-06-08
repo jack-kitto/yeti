@@ -54,3 +54,34 @@ export function updateCatalogLink(
     catalog,
   };
 }
+
+export function deleteCatalogLink(library: Library, linkId: string): Library {
+  if (!library.catalog.some((link) => link.id === linkId)) {
+    throw new Error(`Catalog link "${linkId}" not found`);
+  }
+
+  return {
+    ...library,
+    catalog: library.catalog.filter((link) => link.id !== linkId),
+    workspaces: library.workspaces.map((workspace) => ({
+      ...workspace,
+      placements: {
+        edges: {
+          left: workspace.placements.edges.left.map((group) => ({
+            ...group,
+            links: group.links.filter((placement) => placement.linkId !== linkId),
+          })),
+          top: workspace.placements.edges.top.map((group) => ({
+            ...group,
+            links: group.links.filter((placement) => placement.linkId !== linkId),
+          })),
+          bottom: workspace.placements.edges.bottom.map((group) => ({
+            ...group,
+            links: group.links.filter((placement) => placement.linkId !== linkId),
+          })),
+        },
+        pins: workspace.placements.pins.filter((pin) => pin.linkId !== linkId),
+      },
+    })),
+  };
+}

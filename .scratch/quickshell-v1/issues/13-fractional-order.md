@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,9 +12,9 @@ See `docs/adr/0002-fractional-order-for-placements.md`. Add unit tests for inser
 
 ## Acceptance criteria
 
-- [ ] Module exposes a small public API for creating initial keys, inserting between two keys, and sorting items by key
-- [ ] Unit tests cover insert-between and stable sort behavior
-- [ ] ADR-0002 is accepted and referenced from module docs or CONTEXT.md terms
+- [x] Module exposes a small public API for creating initial keys, inserting between two keys, and sorting items by key
+- [x] Unit tests cover insert-between and stable sort behavior
+- [x] ADR-0002 is accepted and referenced from module docs or CONTEXT.md terms
 
 ## Blocked by
 

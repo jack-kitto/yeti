@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: wontfix
 
 ## Parent
 
@@ -16,13 +16,17 @@ Add Placement and Link display unit tests.
 
 ## Acceptance criteria
 
-- [ ] Hovering left, top, or bottom edge opens a flyout showing that edge's link group from the active workspace
-- [ ] Flyout closes on pointer leave; click handle pins flyout open until dismissed
-- [ ] Each flyout shows at most 8 links; "see more" appears when group has more than 8
-- [ ] Link display resolves title and image with correct fallbacks
-- [ ] Clicking any flyout link opens `target="_blank"`
-- [ ] Placement and Link display modules have unit tests
+- [x] Hovering left, top, or bottom edge opens a flyout showing that edge's link group from the active workspace
+- [x] Flyout closes on pointer leave; click handle pins flyout open until dismissed
+- [x] Each flyout shows at most 8 links; "see more" appears when group has more than 8
+- [x] Link display resolves title and image with correct fallbacks
+- [x] Clicking any flyout link opens `target="_blank"`
+- [x] Placement and Link display modules have unit tests
 
 ## Blocked by
 
 - `.scratch/quickshell-v1/issues/01-boot-the-shell.md`
+
+## Comments
+
+Superseded by grill session (2025-06). The shipped v1 used invisible edge zones and centered flyouts — not the intended **edge group** / **edge handle** model. Replaced by issues 13–15 and 18. Link display and basic placement tests from this slice remain valid; edge UI and schema do not.

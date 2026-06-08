@@ -24,8 +24,11 @@ workspaces:
     name: ...
     theme: { palette, backgroundUrl, ... }
     placements:
-      edges: { left: [linkIds], top: [...], bottom: [...] }
-      pins: [{ linkId, position: strip | { x, y } }]
+      edgeGroups:
+        left: [{ id, name, icon, order, linkIds: [{ id, order }] }]
+        top: [...]
+        bottom: [...]
+      pins: [{ linkId, position: strip | { x, y }, order }]
 shortcuts: ...
 activeWorkspaceId: ...
 ```
@@ -43,3 +46,4 @@ Add Snapshot round-trip unit tests.
 ## Blocked by
 
 - `.scratch/quickshell-v1/issues/06-config-link-catalog.md`
+- `.scratch/quickshell-v1/issues/14-edge-groups-model.md`

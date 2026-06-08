@@ -21,3 +21,7 @@ Open from "see more" on an edge flyout, pre-filtered to that **edge**'s link gro
 ## Blocked by
 
 - `.scratch/quickshell-v1/issues/02-edge-link-menus.md`
+
+## Comments
+
+Initial slice done. Issue 18 updates launcher scope from edge position → **edge group** after issue 15 lands.

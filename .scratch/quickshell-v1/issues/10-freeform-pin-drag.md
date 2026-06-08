@@ -21,3 +21,4 @@ Pins default to the **pin strip**. Drag a pin off the strip to a freeform `{x, y
 ## Blocked by
 
 - `.scratch/quickshell-v1/issues/03-canvas-pin-strip.md`
+- `.scratch/quickshell-v1/issues/14-edge-groups-model.md`

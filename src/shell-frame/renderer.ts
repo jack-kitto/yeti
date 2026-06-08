@@ -1,4 +1,3 @@
-import type { EdgePosition } from "@/library/types";
 import type { RenderPocket, ShellLayout } from "./layout";
 
 export type ShellThemeColors = {
@@ -63,13 +62,35 @@ function addLeftPocket(
   path.quadraticCurveTo(x, y1, x, y1 - r);
 }
 
-function generateShellPath(layout: ShellLayout, pocket: RenderPocket): Path2D {
+function addRightPocket(
+  path: Path2D,
+  x: number,
+  y1: number,
+  y2: number,
+  depth: number,
+  r: number,
+) {
+  path.lineTo(x, y1 - r);
+  path.quadraticCurveTo(x, y1, x - r, y1);
+  path.lineTo(x - depth + r, y1);
+  path.quadraticCurveTo(x - depth, y1, x - depth, y1 + r);
+  path.lineTo(x - depth, y2 - r);
+  path.quadraticCurveTo(x - depth, y2, x - depth + r, y2);
+  path.lineTo(x - r, y2);
+  path.quadraticCurveTo(x, y2, x, y2 + r);
+}
+
+/** Inner viewport boundary — pockets bulge inward over the canvas. */
+function generateInnerBoundary(
+  layout: ShellLayout,
+  pocket: RenderPocket,
+): Path2D {
   const { panelX: x, panelY: y, panelRight: right, panelBottom: bottom, shellRadius: rr } =
     layout;
   const path = new Path2D();
   path.moveTo(x + rr, y);
 
-  if (pocket.active && pocket.edge === "top") {
+  if (pocket.active && pocket.rim === "top") {
     const x1 = pocket.anchor - pocket.span;
     const x2 = pocket.anchor + pocket.span;
     path.lineTo(x1 - pocket.radius, y);
@@ -80,10 +101,20 @@ function generateShellPath(layout: ShellLayout, pocket: RenderPocket): Path2D {
   }
 
   path.quadraticCurveTo(right, y, right, y + rr);
-  path.lineTo(right, bottom - rr);
+
+  if (pocket.active && pocket.rim === "right") {
+    const y1 = pocket.anchor - pocket.span;
+    const y2 = pocket.anchor + pocket.span;
+    path.lineTo(right, y1 - pocket.radius);
+    addRightPocket(path, right, y1, y2, pocket.depth, pocket.radius);
+    path.lineTo(right, bottom - rr);
+  } else {
+    path.lineTo(right, bottom - rr);
+  }
+
   path.quadraticCurveTo(right, bottom, right - rr, bottom);
 
-  if (pocket.active && pocket.edge === "bottom") {
+  if (pocket.active && pocket.rim === "bottom") {
     const x1 = pocket.anchor - pocket.span;
     const x2 = pocket.anchor + pocket.span;
     path.lineTo(x2 + pocket.radius, bottom);
@@ -95,7 +126,7 @@ function generateShellPath(layout: ShellLayout, pocket: RenderPocket): Path2D {
 
   path.quadraticCurveTo(x, bottom, x, bottom - rr);
 
-  if (pocket.active && pocket.edge === "left") {
+  if (pocket.active && pocket.rim === "left") {
     const y1 = pocket.anchor - pocket.span;
     const y2 = pocket.anchor + pocket.span;
     path.lineTo(x, y2 + pocket.radius);
@@ -107,6 +138,23 @@ function generateShellPath(layout: ShellLayout, pocket: RenderPocket): Path2D {
 
   path.quadraticCurveTo(x, y, x + rr, y);
   path.closePath();
+  return path;
+}
+
+/** Viewport ring shell: outer screen edge minus inner canvas hole (even-odd). */
+function generateFrameShellPath(layout: ShellLayout, pocket: RenderPocket): Path2D {
+  const { w, h } = layout;
+  const path = new Path2D();
+
+  path.moveTo(0, 0);
+  path.lineTo(w, 0);
+  path.lineTo(w, h);
+  path.lineTo(0, h);
+  path.closePath();
+
+  const inner = generateInnerBoundary(layout, pocket);
+  path.addPath(inner);
+
   return path;
 }
 
@@ -131,54 +179,32 @@ export function drawShell(
 
   ctx.clearRect(0, 0, layout.w, layout.h);
 
-  const ambient = ctx.createRadialGradient(
-    layout.w * 0.5,
-    layout.h * 0.45,
-    40,
-    layout.w * 0.5,
-    layout.h * 0.45,
-    layout.w * 0.55,
-  );
-  ambient.addColorStop(0, "rgba(255, 255, 255, 0.08)");
-  ambient.addColorStop(1, "rgba(255, 255, 255, 0)");
-  ctx.fillStyle = ambient;
-  ctx.fillRect(0, 0, layout.w, layout.h);
-
-  const path = generateShellPath(layout, pocket);
+  const path = generateFrameShellPath(layout, pocket);
 
   ctx.save();
   ctx.shadowColor = theme.shadow;
   ctx.shadowBlur = 42;
   ctx.shadowOffsetY = 18;
-  ctx.fillStyle = "rgba(8, 11, 20, 0.12)";
-  ctx.fill(path);
+  ctx.fillStyle = "rgba(8, 11, 20, 0.14)";
+  ctx.fill(path, "evenodd");
   ctx.restore();
 
-  const fill = ctx.createLinearGradient(
-    layout.panelX,
-    layout.panelY,
-    layout.panelRight,
-    layout.panelBottom,
-  );
+  const fill = ctx.createLinearGradient(0, 0, layout.w, layout.h);
   fill.addColorStop(0, theme.glassStops[0]);
   fill.addColorStop(0.45, theme.glassStops[1]);
   fill.addColorStop(1, theme.glassStops[2]);
   ctx.fillStyle = fill;
-  ctx.fill(path);
+  ctx.fill(path, "evenodd");
 
   ctx.save();
-  ctx.clip(path);
-  const gloss = ctx.createLinearGradient(
-    layout.panelX,
-    layout.panelY,
-    layout.panelX,
-    layout.panelBottom,
-  );
+  ctx.clip(path, "evenodd");
+
+  const gloss = ctx.createLinearGradient(0, 0, 0, layout.h);
   gloss.addColorStop(0, "rgba(255, 255, 255, 0.1)");
   gloss.addColorStop(0.2, "rgba(255, 255, 255, 0.04)");
   gloss.addColorStop(1, "rgba(255, 255, 255, 0.015)");
   ctx.fillStyle = gloss;
-  ctx.fillRect(layout.panelX, layout.panelY, layout.panelW, layout.panelH);
+  ctx.fillRect(0, 0, layout.w, layout.h);
   ctx.restore();
 
   ctx.strokeStyle = theme.strokeOuter;

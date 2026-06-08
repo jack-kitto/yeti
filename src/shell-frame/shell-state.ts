@@ -1,9 +1,9 @@
-import type { EdgePosition } from "@/library/types";
 import type { MenuSize, ShellZoneLayout } from "./layout";
+import type { ShellRim } from "./rim";
 
 export type ShellAnimationSnapshot = {
-  activeGroupId: string | null;
-  previousGroupId: string | null;
+  activeZoneId: string | null;
+  previousZoneId: string | null;
   closing: boolean;
   pinned: boolean;
   t: number;
@@ -13,8 +13,8 @@ export type ShellAnimationSnapshot = {
   targetSpan: number;
   depth: number;
   targetDepth: number;
-  renderEdge: EdgePosition;
-  lastEdge: EdgePosition;
+  renderRim: ShellRim;
+  lastRim: ShellRim;
   overIcon: boolean;
   overMenu: boolean;
 };
@@ -26,8 +26,8 @@ export type ShellState = ShellAnimationSnapshot & {
 
 export function createInitialShellState(): ShellState {
   return {
-    activeGroupId: null,
-    previousGroupId: null,
+    activeZoneId: null,
+    previousZoneId: null,
     closing: false,
     pinned: false,
     t: 0,
@@ -37,8 +37,8 @@ export function createInitialShellState(): ShellState {
     targetSpan: 100,
     depth: 140,
     targetDepth: 140,
-    renderEdge: "left",
-    lastEdge: "left",
+    renderRim: "left",
+    lastRim: "left",
     menuSizes: new Map(),
     overIcon: false,
     overMenu: false,
@@ -73,15 +73,24 @@ function emitShellState() {
   }
 }
 
+/** Hot-path animation fields — mutated each rAF without waking React. */
+export function patchAnimationState(patch: Partial<ShellAnimationSnapshot>) {
+  Object.assign(shellState, patch);
+}
+
 export function patchShellState(patch: Partial<ShellState>) {
   shellState = { ...shellState, ...patch };
   emitShellState();
 }
 
-export function setMenuSize(groupId: string, size: MenuSize) {
-  const next = new Map(shellState.menuSizes);
-  next.set(groupId, size);
-  patchShellState({ menuSizes: next });
+/** Updates cached menu dimensions without waking React (read in rAF only). */
+export function setMenuSize(groupId: string, size: MenuSize): boolean {
+  const existing = shellState.menuSizes.get(groupId);
+  if (existing?.width === size.width && existing?.height === size.height) {
+    return false;
+  }
+  shellState.menuSizes.set(groupId, size);
+  return true;
 }
 
 export function resetShellState() {

@@ -10,13 +10,22 @@ import {
 } from "@/command-bar/command-bar";
 import { useResetLibrary } from "@/hooks/use-library";
 import type { Library } from "@/library/types";
+import { BUILTIN_SURFACE } from "@/shell-frame/rim";
+import { getLatestShellZones } from "@/shell-frame/shell-state";
+import { activateZone } from "@/shell-frame/shell-zones";
 
 type CommandBarProps = {
   library: Library;
   onSwitchWorkspace: (workspaceId: string) => void;
+  variant?: "canvas" | "pocket";
+  onFocusChange?: (focused: boolean) => void;
+  onContentChange?: () => void;
 };
 
-function resultKey(result: CommandBarResult): string {
+function resultKey(result: CommandBarResult | undefined): string {
+  if (!result) {
+    return "none";
+  }
   if (result.kind === "workspace") {
     return result.workspaceId;
   }
@@ -26,8 +35,26 @@ function resultKey(result: CommandBarResult): string {
   return result.actionId;
 }
 
-export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
+function clampSelection(index: number, resultCount: number): number {
+  if (resultCount === 0) {
+    return -1;
+  }
+  if (index >= 0 && index < resultCount) {
+    return index;
+  }
+  return 0;
+}
+
+export function CommandBar({
+  library,
+  onSwitchWorkspace,
+  variant = "canvas",
+  onFocusChange,
+  onContentChange,
+}: CommandBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const onContentChangeRef = useRef(onContentChange);
+  onContentChangeRef.current = onContentChange;
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const resetLibraryMutation = useResetLibrary();
@@ -39,10 +66,17 @@ export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
 
   const trimmedQuery = query.trim();
   const showResults = trimmedQuery.length > 0 && results.length > 0;
+  const isPocket = variant === "pocket";
+  const highlightedIndex = clampSelection(selectedIndex, results.length);
+  const highlightedResult = highlightedIndex >= 0 ? results[highlightedIndex] : undefined;
 
   useEffect(() => {
     setSelectedIndex(initialCommandBarSelection(results.length));
   }, [results]);
+
+  useEffect(() => {
+    onContentChangeRef.current?.();
+  }, [showResults, results.length]);
 
   useEffect(() => {
     function handleFocusShortcut(event: KeyboardEvent) {
@@ -51,6 +85,7 @@ export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
       }
 
       event.preventDefault();
+      activateZone(BUILTIN_SURFACE.BOTTOM_SEARCH, getLatestShellZones());
       inputRef.current?.focus();
       inputRef.current?.select();
     }
@@ -114,13 +149,148 @@ export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
       return;
     }
 
-    if (event.key === "Enter" && selectedIndex >= 0) {
+    if (event.key === "Enter" && highlightedIndex >= 0) {
       event.preventDefault();
-      const result = results[selectedIndex];
+      const result = results[highlightedIndex];
       if (result) {
         executeResult(result);
       }
     }
+  }
+
+  function renderResultRow(
+    result: CommandBarResult,
+    index: number,
+    selected: number,
+    pocketRow: boolean,
+  ) {
+    const isSelected = index === selected;
+    const id = `command-bar-result-${resultKey(result)}`;
+    const rowClass = pocketRow
+      ? `shell-search-result${isSelected ? " selected" : ""}`
+      : `flex w-full items-center justify-between rounded-[var(--qs-border-radius)] px-3 py-2 text-left text-sm ${
+          isSelected
+            ? "bg-[color:var(--qs-color-accent)]/15 ring-1 ring-[color:var(--qs-color-accent)]/40"
+            : "hover:bg-black/5"
+        }`;
+
+    const preventBlur = pocketRow
+      ? (event: React.MouseEvent) => event.preventDefault()
+      : undefined;
+
+    if (result.kind === "workspace") {
+      return (
+        <button
+          type="button"
+          id={id}
+          role="option"
+          aria-selected={isSelected}
+          className={rowClass}
+          onMouseDown={preventBlur}
+          onMouseEnter={() => setSelectedIndex(index)}
+          onClick={() => executeResult(result)}
+        >
+          <span>Switch to {result.name}</span>
+          <span className="shell-search-result-meta">workspace</span>
+        </button>
+      );
+    }
+
+    if (result.kind === "action") {
+      return (
+        <button
+          type="button"
+          id={id}
+          role="option"
+          aria-selected={isSelected}
+          className={rowClass}
+          onMouseDown={preventBlur}
+          onMouseEnter={() => setSelectedIndex(index)}
+          onClick={() => executeResult(result)}
+        >
+          <span>{result.label}</span>
+          <span className="shell-search-result-meta">action</span>
+        </button>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        id={id}
+        role="option"
+        aria-selected={isSelected}
+        className={rowClass}
+        onMouseDown={preventBlur}
+        onMouseEnter={() => setSelectedIndex(index)}
+        onClick={() => executeResult(result)}
+      >
+        <span>{result.title}</span>
+        <span className="shell-search-result-meta">
+          {result.source === "workspace" ? "placed" : "catalog"}
+        </span>
+      </button>
+    );
+  }
+
+  if (isPocket) {
+    return (
+      <div className="shell-search-pocket">
+        {showResults ? (
+          <ul
+            id="command-bar-results"
+            role="listbox"
+            className="shell-search-results"
+          >
+            {results.map((result, index) => (
+              <li key={resultKey(result)}>
+                {renderResultRow(result, index, highlightedIndex, true)}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        <div className="shell-search-pill">
+          <span className="shell-search-pill-icon" aria-hidden>
+            ⌕
+          </span>
+          <input
+            ref={inputRef}
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={handleInputKeyDown}
+            onFocus={() => onFocusChange?.(true)}
+            onBlur={() => onFocusChange?.(false)}
+            placeholder="Search links…"
+            aria-label="Command bar"
+            aria-expanded={showResults}
+            aria-controls="command-bar-results"
+            aria-activedescendant={
+              highlightedResult
+                ? `command-bar-result-${resultKey(highlightedResult)}`
+                : undefined
+            }
+            role="combobox"
+            aria-autocomplete="list"
+            className="shell-search-input"
+          />
+          {trimmedQuery.length > 0 ? (
+            <button
+              type="button"
+              className="shell-search-clear"
+              aria-label="Clear search"
+              onClick={() => {
+                setQuery("");
+                inputRef.current?.focus();
+              }}
+            >
+              ×
+            </button>
+          ) : null}
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -131,13 +301,15 @@ export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         onKeyDown={handleInputKeyDown}
+        onFocus={() => onFocusChange?.(true)}
+        onBlur={() => onFocusChange?.(false)}
         placeholder="Search links… (: for actions)"
         aria-label="Command bar"
         aria-expanded={showResults}
         aria-controls="command-bar-results"
         aria-activedescendant={
-          showResults && selectedIndex >= 0
-            ? `command-bar-result-${resultKey(results[selectedIndex])}`
+          highlightedResult
+            ? `command-bar-result-${resultKey(highlightedResult)}`
             : undefined
         }
         role="combobox"
@@ -151,70 +323,11 @@ export function CommandBar({ library, onSwitchWorkspace }: CommandBarProps) {
           role="listbox"
           className="absolute left-0 right-0 top-full z-30 mt-2 max-h-64 overflow-y-auto rounded-[var(--qs-border-radius)] border border-white/20 bg-[color:var(--qs-color-surface)]/95 p-1 shadow-lg backdrop-blur-md"
         >
-          {results.map((result, index) => {
-            const selected = index === selectedIndex;
-            const id = `command-bar-result-${resultKey(result)}`;
-
-            if (result.kind === "workspace") {
-              return (
-                <li key={result.workspaceId} id={id} role="option" aria-selected={selected}>
-                  <button
-                    type="button"
-                    className={`flex w-full items-center justify-between rounded-[var(--qs-border-radius)] px-3 py-2 text-left text-sm ${
-                      selected
-                        ? "bg-[color:var(--qs-color-accent)]/15 ring-1 ring-[color:var(--qs-color-accent)]/40"
-                        : "hover:bg-black/5"
-                    }`}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                    onClick={() => executeResult(result)}
-                  >
-                    <span>Switch to {result.name}</span>
-                    <span className="text-xs opacity-60">workspace</span>
-                  </button>
-                </li>
-              );
-            }
-
-            if (result.kind === "action") {
-              return (
-                <li key={result.actionId} id={id} role="option" aria-selected={selected}>
-                  <button
-                    type="button"
-                    className={`flex w-full items-center justify-between rounded-[var(--qs-border-radius)] px-3 py-2 text-left text-sm ${
-                      selected
-                        ? "bg-[color:var(--qs-color-accent)]/15 ring-1 ring-[color:var(--qs-color-accent)]/40"
-                        : "hover:bg-black/5"
-                    }`}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                    onClick={() => executeResult(result)}
-                  >
-                    <span>{result.label}</span>
-                    <span className="text-xs opacity-60">action</span>
-                  </button>
-                </li>
-              );
-            }
-
-            return (
-              <li key={result.linkId} id={id} role="option" aria-selected={selected}>
-                <button
-                  type="button"
-                  className={`flex w-full items-center justify-between rounded-[var(--qs-border-radius)] px-3 py-2 text-left text-sm ${
-                    selected
-                      ? "bg-[color:var(--qs-color-accent)]/15 ring-1 ring-[color:var(--qs-color-accent)]/40"
-                      : "hover:bg-black/5"
-                  }`}
-                  onMouseEnter={() => setSelectedIndex(index)}
-                  onClick={() => executeResult(result)}
-                >
-                  <span>{result.title}</span>
-                  <span className="text-xs opacity-60">
-                    {result.source === "workspace" ? "placed" : "catalog"}
-                  </span>
-                </button>
-              </li>
-            );
-          })}
+          {results.map((result, index) => (
+            <li key={resultKey(result)}>
+              {renderResultRow(result, index, highlightedIndex, false)}
+            </li>
+          ))}
         </ul>
       ) : null}
     </div>

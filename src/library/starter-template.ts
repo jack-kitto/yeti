@@ -160,8 +160,6 @@ export function createStarterLibrary(): Library {
         handleIcon: "📚",
         links: ["mdn", "stackoverflow", "railway"],
       },
-    ],
-    top: [
       {
         id: "work-product",
         name: "Product",
@@ -172,23 +170,17 @@ export function createStarterLibrary(): Library {
         id: "work-backend",
         name: "Backend",
         handleIcon: "🗄",
-        links: ["supabase", "planetscale", "prisma"],
-      },
-    ],
-    bottom: [
-      {
-        id: "work-runtime",
-        name: "Runtime",
-        handleIcon: "⚡",
-        links: ["turborepo", "bun", "deno"],
+        links: ["supabase", "planetscale", "prisma", "turborepo", "bun", "deno"],
       },
       {
         id: "work-hosting",
         name: "Hosting",
         handleIcon: "☁️",
-        links: ["cloudflare", "fly"],
+        links: ["cloudflare", "fly", "render"],
       },
     ],
+    top: [],
+    bottom: [],
     pins: ["github", "localhost", "vercel", "linear", "prisma", "sentry"],
   });
 
@@ -212,16 +204,12 @@ export function createStarterLibrary(): Library {
         handleIcon: "✅",
         links: ["playwright", "vitest", "posthog"],
       },
-    ],
-    top: [
       {
         id: "personal-learn",
         name: "Learn",
         handleIcon: "📖",
         links: ["github", "mdn", "typescript", "react"],
       },
-    ],
-    bottom: [
       {
         id: "personal-ship",
         name: "Ship",
@@ -229,6 +217,8 @@ export function createStarterLibrary(): Library {
         links: ["railway", "vercel", "npm", "docker"],
       },
     ],
+    top: [],
+    bottom: [],
     pins: ["hackernews", "obsidian", "arc", "raycast", "notion"],
   });
 

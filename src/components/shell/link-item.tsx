@@ -15,7 +15,7 @@ export function LinkItem({ link, showTitle = true }: LinkItemProps) {
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 rounded-[var(--qs-border-radius)] px-2 py-1.5 text-sm transition hover:bg-black/5"
+      className="shell-link-item flex items-center gap-2 rounded-[10px] px-2 py-1.5 text-sm"
       title={title}
     >
       {imageUrl ? (

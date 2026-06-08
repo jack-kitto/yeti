@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import { useApplyLibraryPatch, useLibrary, useSaveLibrary } from "@/hooks/use-library";
 import { applyTheme } from "@/theme/theme";
 import { reorderEdgeGroupOnRim } from "@/placement/placement";
-import type { EdgePosition } from "@/library/types";
 import { getShellLayout } from "@/shell-frame/layout";
-import { CommandBar } from "./command-bar";
 import { Launcher } from "./launcher";
 import { PinStrip } from "./pin-strip";
 import { ShellCanvas } from "./shell-canvas";
@@ -56,16 +54,12 @@ export function Shell() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  function handleReorderGroup(
-    edge: EdgePosition,
-    groupId: string,
-    targetSlotIndex: number,
-  ) {
+  function handleReorderGroup(groupId: string, targetSlotIndex: number) {
     if (!library) {
       return;
     }
 
-    const updated = reorderEdgeGroupOnRim(library, edge, groupId, targetSlotIndex);
+    const updated = reorderEdgeGroupOnRim(library, "left", groupId, targetSlotIndex);
     saveLibraryMutation.mutate(updated);
   }
 
@@ -80,7 +74,13 @@ export function Shell() {
   return (
     <div className="relative h-screen w-screen overflow-hidden">
       <ShellCanvas theme={activeWorkspace.theme} />
-      <ShellEdgeLayer library={library} onReorderGroup={handleReorderGroup} />
+      <ShellEdgeLayer
+        library={library}
+        onReorderGroup={handleReorderGroup}
+        onSwitchWorkspace={(workspaceId) =>
+          applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
+        }
+      />
 
       <main
         className="pointer-events-none absolute z-10 flex flex-col items-center justify-center gap-4 px-8"
@@ -95,12 +95,6 @@ export function Shell() {
           <WorkspaceSwitcher
             library={library}
             onSwitch={(workspaceId) =>
-              applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
-            }
-          />
-          <CommandBar
-            library={library}
-            onSwitchWorkspace={(workspaceId) =>
               applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
             }
           />

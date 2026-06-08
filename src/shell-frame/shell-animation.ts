@@ -1,6 +1,6 @@
 import { getRenderPocket, getShellLayout } from "./layout";
 import { drawShell, resizeShellCanvas } from "./renderer";
-import { getShellState, patchShellState } from "./shell-state";
+import { getShellState, patchAnimationState } from "./shell-state";
 import type { ShellThemeColors } from "./renderer";
 const SPEED_T = 0.16;
 const SPEED_ANCHOR = 0.22;
@@ -29,7 +29,7 @@ export function startShellAnimation(
     resizeShellCanvas(canvas);
     const layout = getShellLayout();
     const state = getShellState();
-    const targetT = state.activeGroupId || state.closing ? 1 : 0;
+    const targetT = state.activeZoneId || state.closing ? 1 : 0;
 
     const nextT = state.t + (targetT - state.t) * SPEED_T;
     const nextAnchor = state.anchor + (state.targetAnchor - state.anchor) * SPEED_ANCHOR;
@@ -54,7 +54,7 @@ export function startShellAnimation(
       }
     }
 
-    patchShellState({
+    patchAnimationState({
       t: settledT,
       anchor: nextAnchor,
       span: nextSpan,

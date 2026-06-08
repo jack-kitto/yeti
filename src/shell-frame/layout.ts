@@ -158,7 +158,10 @@ export function getTargetPocketForZone(
 
   if (zone.kind === "config") {
     const span = Math.max(menuSize.height * 0.5 + 28, 120);
-    const depth = Math.max(menuSize.width + layout.pocketInset * 2 + 8, 280);
+    const depth = Math.min(
+      Math.max(menuSize.width + layout.pocketInset * 2 + 8, 180),
+      220,
+    );
     return {
       rim: "right",
       anchor: layout.panelY + layout.panelH * 0.5,

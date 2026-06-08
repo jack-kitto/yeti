@@ -6,6 +6,7 @@ import { applyTheme } from "@/theme/theme";
 import { reorderEdgeGroupOnRim } from "@/placement/placement";
 import { getShellLayout } from "@/shell-frame/layout";
 import { Launcher } from "./launcher";
+import { ShellConfigDialog } from "./shell-config-dialog";
 import { PinStrip } from "./pin-strip";
 import { ShellCanvas } from "./shell-canvas";
 import { ShellEdgeLayer } from "./shell-edge-layer";
@@ -103,6 +104,10 @@ export function Shell() {
       </main>
 
       <Launcher library={library} />
+      <ShellConfigDialog
+        library={library}
+        workspaceName={activeWorkspace.name}
+      />
     </div>
   );
 }

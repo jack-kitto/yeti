@@ -39,7 +39,7 @@ import {
 import { useLauncherStore } from "@/store/launcher-store";
 import { CommandBar } from "./command-bar";
 import { LinkItem } from "./link-item";
-import { ShellConfigPanel } from "./shell-config-panel";
+import { ShellConfigMenu } from "./shell-config-menu";
 import { ShellDashboard } from "./shell-dashboard";
 
 const DRAG_THRESHOLD_PX = 6;
@@ -62,7 +62,7 @@ function defaultMenuSize(zoneId: string) {
     return { width: 340, height: 48 };
   }
   if (zoneId === BUILTIN_SURFACE.RIGHT_CONFIG) {
-    return { width: 280, height: 360 };
+    return { width: 148, height: 220 };
   }
   return { width: 170, height: 130 };
 }
@@ -333,10 +333,7 @@ export function ShellEdgeLayer({
               onMouseEnter={() => setZoneHover("menu", true)}
               onMouseLeave={() => leaveZoneHover("menu")}
             >
-              <ShellConfigPanel
-                library={library}
-                workspaceName={activeWorkspace?.name ?? "Workspace"}
-              />
+              <ShellConfigMenu workspaceName={activeWorkspace?.name ?? "Workspace"} />
             </div>
           );
         }

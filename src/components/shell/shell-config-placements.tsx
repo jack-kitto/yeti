@@ -7,18 +7,15 @@ import type { EdgePosition, Library } from "@/library/types";
 import {
   addEdgeGroup,
   addLinkToEdgeGroup,
-  addPinToStrip,
   deleteEdgeGroup,
   moveLinkInEdgeGroup,
   removeLinkFromEdgeGroup,
-  removePinFromStrip,
   updateEdgeGroup,
 } from "@/placement/placement-mutations";
 import {
   reorderEdgeGroupOnRim,
   resolveEdgeGroupLinks,
   resolveEdgeGroups,
-  resolvePins,
 } from "@/placement/placement";
 
 const EDGES: EdgePosition[] = ["left", "top", "bottom"];
@@ -45,7 +42,6 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
   const [groupForm, setGroupForm] = useState<GroupFormState>(EMPTY_GROUP_FORM);
   const [newGroupForm, setNewGroupForm] = useState<GroupFormState>(EMPTY_GROUP_FORM);
   const [linkToAdd, setLinkToAdd] = useState("");
-  const [pinToAdd, setPinToAdd] = useState("");
 
   const groups = useMemo(() => resolveEdgeGroups(library, edge), [library, edge]);
   const selectedGroup =
@@ -53,7 +49,6 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
   const groupLinks = selectedGroup
     ? resolveEdgeGroupLinks(library, edge, selectedGroup.id)
     : [];
-  const pins = useMemo(() => resolvePins(library), [library]);
 
   useEffect(() => {
     if (groups.length === 0) {
@@ -179,19 +174,6 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
     );
   }
 
-  function handleAddPin(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!pinToAdd) {
-      return;
-    }
-    mutateLibrary.mutate((current) => addPinToStrip(current, workspaceId, pinToAdd));
-    setPinToAdd("");
-  }
-
-  function handleRemovePin(linkId: string) {
-    mutateLibrary.mutate((current) => removePinFromStrip(current, workspaceId, linkId));
-  }
-
   const catalogOptions = useMemo(
     () =>
       [...library.catalog].sort((left, right) =>
@@ -200,17 +182,13 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
     [library.catalog],
   );
 
-  const pinnedIds = new Set(pins.map((link) => link.id));
   const currentGroupSlotIndex = selectedGroup
     ? groups.findIndex((group) => group.id === selectedGroup.id)
     : -1;
 
   return (
-    <>
-      <section className="shell-config-section">
-        <h2 className="shell-config-heading">Edge groups</h2>
-
-        <div className="shell-config-edge-tabs" role="tablist" aria-label="Edge">
+    <div className="shell-config-dialog-section">
+      <div className="shell-config-edge-tabs" role="tablist" aria-label="Edge">
           {EDGES.map((edgeName) => (
             <button
               key={edgeName}
@@ -302,7 +280,7 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
               </div>
             </div>
 
-            <div className="shell-config-scroll">
+            <div className="shell-config-dialog-scroll">
               <ul className="shell-config-catalog">
                 {groupLinks.map((link, index) => (
                   <li key={link.id} className="shell-config-catalog-item">
@@ -387,48 +365,6 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
             Add edge group
           </button>
         </form>
-      </section>
-
-      <section className="shell-config-section">
-        <h2 className="shell-config-heading">Pin strip</h2>
-        <div className="shell-config-scroll">
-          <ul className="shell-config-catalog">
-            {pins.map((link) => (
-              <li key={link.id} className="shell-config-catalog-item">
-                <div className="shell-config-catalog-copy">
-                  <span className="shell-config-catalog-title">{resolveLinkTitle(link)}</span>
-                </div>
-                <button
-                  type="button"
-                  className="shell-config-action shell-config-action-danger"
-                  onClick={() => handleRemovePin(link.id)}
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <form className="shell-config-form" onSubmit={handleAddPin}>
-          <select
-            value={pinToAdd}
-            onChange={(event) => setPinToAdd(event.target.value)}
-            className="shell-config-input"
-          >
-            <option value="">Choose a catalog link…</option>
-            {catalogOptions
-              .filter((link) => !pinnedIds.has(link.id))
-              .map((link) => (
-                <option key={link.id} value={link.id}>
-                  {resolveLinkTitle(link)}
-                </option>
-              ))}
-          </select>
-          <button type="submit" className="shell-config-submit" disabled={!pinToAdd}>
-            Pin to canvas
-          </button>
-        </form>
-      </section>
-    </>
+    </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { applyTheme } from "@/theme/theme";
 import { useApplyLibraryPatch, useLibrary } from "@/hooks/use-library";
+import { EdgeMenu } from "./edge-menu";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 
 export function Shell() {
@@ -36,12 +37,9 @@ export function Shell() {
         aria-hidden
       />
 
-      <div className="absolute inset-y-0 left-0 w-3" aria-label="Left edge" />
-      <div className="absolute inset-x-0 top-0 h-3" aria-label="Top edge" />
-      <div
-        className="absolute inset-x-0 bottom-0 h-3"
-        aria-label="Bottom edge"
-      />
+      <EdgeMenu edge="left" library={library} />
+      <EdgeMenu edge="top" library={library} />
+      <EdgeMenu edge="bottom" library={library} />
       <div className="absolute inset-y-0 right-0 w-3" aria-label="Right edge" />
 
       <main className="relative flex min-h-screen flex-col items-center justify-center gap-6 px-8">
@@ -52,8 +50,7 @@ export function Shell() {
           }
         />
         <p className="max-w-md text-center text-sm opacity-80">
-          {activeWorkspace.name} workspace — canvas and command bar land in
-          later slices.
+          Hover an edge for links. {activeWorkspace.name} workspace active.
         </p>
       </main>
     </div>

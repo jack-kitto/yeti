@@ -55,3 +55,5 @@ export type LibraryStore = {
   read(): Promise<Library | null>;
   write(library: Library): Promise<void>;
 };
+
+export type EdgePosition = "left" | "top" | "bottom";

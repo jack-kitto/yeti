@@ -7,6 +7,7 @@ import {
   createWorkspace,
   deleteCatalogLink,
   deleteWorkspace,
+  importLibrarySnapshotFromUrl,
   loadOrSeedLibrary,
   mutateLibrary,
   renameWorkspace,
@@ -161,6 +162,17 @@ export function useUpdateWorkspaceTheme() {
       workspaceId: string;
       patch: ThemePatch;
     }) => updateWorkspaceThemeInLibrary(store, workspaceId, patch),
+    onSuccess: (library) => {
+      queryClient.setQueryData(["library"], library);
+    },
+  });
+}
+
+export function useImportLibrarySnapshot() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (url: string) => importLibrarySnapshotFromUrl(store, url),
     onSuccess: (library) => {
       queryClient.setQueryData(["library"], library);
     },

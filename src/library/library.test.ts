@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { addEdgeGroup } from "@/placement/placement-mutations";
+import { serializeSnapshot } from "@/snapshot/snapshot";
+import { addCatalogLink as addCatalogLinkToLibrary } from "./catalog";
 import {
   addCatalogLink,
   applyPatch,
   getLibrary,
+  importLibrarySnapshot,
   loadOrSeedLibrary,
   mutateLibrary,
   resetLibrary,
@@ -149,5 +152,36 @@ describe("mutateLibrary", () => {
     const leftCount = loaded!.workspaces.find((w) => w.id === loaded!.activeWorkspaceId)!
       .placements.edges.left.length;
     expect(leftCount).toBe(beforeCount + 1);
+  });
+});
+
+describe("importLibrarySnapshot", () => {
+  it("replaces the stored library with a deserialized snapshot", async () => {
+    const store = createInMemoryLibraryStore();
+    const seeded = await loadOrSeedLibrary(store);
+    const snapshotLibrary = addCatalogLinkToLibrary(seeded, {
+      url: "https://example.com/from-snapshot",
+      title: "From snapshot",
+    });
+    const yaml = serializeSnapshot(snapshotLibrary);
+    await saveLibrary(store, { ...seeded, catalog: [] });
+
+    const imported = await importLibrarySnapshot(store, yaml);
+    const loaded = await getLibrary(store);
+
+    expect(imported.catalog.some((link) => link.title === "From snapshot")).toBe(true);
+    expect(loaded).toEqual(imported);
+  });
+
+  it("leaves the library unchanged when snapshot YAML is invalid", async () => {
+    const store = createInMemoryLibraryStore();
+    const seeded = await loadOrSeedLibrary(store);
+
+    await expect(importLibrarySnapshot(store, "version: 99")).rejects.toThrow(
+      /unsupported snapshot version/i,
+    );
+
+    const loaded = await getLibrary(store);
+    expect(loaded).toEqual(seeded);
   });
 });

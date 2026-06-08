@@ -4,6 +4,7 @@ import {
   deleteCatalogLink as deleteCatalogLinkFromLibrary,
   updateCatalogLink as updateCatalogLinkInLibrary,
 } from "./catalog";
+import { deserializeSnapshot, importSnapshotFromUrl } from "@/snapshot/snapshot";
 import { updateWorkspaceTheme } from "@/theme/workspace-theme";
 import {
   createWorkspace as createWorkspaceInLibrary,
@@ -185,4 +186,20 @@ export async function updateWorkspaceThemeInLibrary(
   }
 
   return saveLibrary(store, updateWorkspaceTheme(library, workspaceId, patch));
+}
+
+export async function importLibrarySnapshot(
+  store: LibraryStore,
+  yaml: string,
+): Promise<Library> {
+  const library = deserializeSnapshot(yaml);
+  return saveLibrary(store, library);
+}
+
+export async function importLibrarySnapshotFromUrl(
+  store: LibraryStore,
+  url: string,
+): Promise<Library> {
+  const library = await importSnapshotFromUrl(url);
+  return saveLibrary(store, library);
 }

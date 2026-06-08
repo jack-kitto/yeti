@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,11 +12,11 @@ Wire default `⌘⇧K` (or library shortcut binding) to focus the command bar in
 
 ## Acceptance criteria
 
-- [ ] Arrow keys and `j`/`k` cycle selection through command bar results
-- [ ] `Enter` executes the highlighted row (open link or switch workspace)
-- [ ] `Esc` clears or dismisses results
-- [ ] Selection highlight is visible; first result selected when results appear
-- [ ] Default shortcut focuses command bar without browser conflict
+- [x] Arrow keys and `j`/`k` cycle selection through command bar results
+- [x] `Enter` executes the highlighted row (open link or switch workspace)
+- [x] `Esc` clears or dismisses results
+- [x] Selection highlight is visible; first result selected when results appear
+- [x] Default shortcut focuses command bar without browser conflict
 
 ## Blocked by
 

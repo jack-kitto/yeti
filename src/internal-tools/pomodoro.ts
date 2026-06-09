@@ -6,6 +6,7 @@ import type {
 } from "./types";
 
 export const DEFAULT_SPLIT_ID = "classic";
+export const CUSTOM_SPLIT_ID = "custom";
 
 export const BUILTIN_FOCUS_SPLITS: FocusSplit[] = [
   {
@@ -22,12 +23,28 @@ export const BUILTIN_FOCUS_SPLITS: FocusSplit[] = [
     shortBreakMinutes: 3,
     longBreakMinutes: 10,
   },
+  {
+    id: "deep",
+    label: "Deep focus",
+    workMinutes: 50,
+    shortBreakMinutes: 10,
+    longBreakMinutes: 20,
+  },
 ];
 
+export function resolveFocusSplit(
+  splitId: string,
+  tools?: Pick<WorkspaceInternalTools, "customFocusSplit">,
+): FocusSplit {
+  if (splitId === CUSTOM_SPLIT_ID && tools?.customFocusSplit) {
+    return tools.customFocusSplit;
+  }
+
+  return BUILTIN_FOCUS_SPLITS.find((split) => split.id === splitId) ?? BUILTIN_FOCUS_SPLITS[0];
+}
+
 export function getFocusSplit(splitId: string): FocusSplit {
-  return (
-    BUILTIN_FOCUS_SPLITS.find((split) => split.id === splitId) ?? BUILTIN_FOCUS_SPLITS[0]
-  );
+  return resolveFocusSplit(splitId);
 }
 
 export function createDefaultPomodoroState(): PomodoroState {
@@ -38,6 +55,7 @@ export function createDefaultPomodoroState(): PomodoroState {
     endsAt: null,
     chimeEnabled: false,
     activeTaskId: null,
+    completedWorkSessions: 0,
   };
 }
 
@@ -45,6 +63,7 @@ export function createDefaultWorkspaceInternalTools(): WorkspaceInternalTools {
   return {
     pomodoro: createDefaultPomodoroState(),
     tasks: [],
+    customFocusSplit: null,
   };
 }
 
@@ -84,7 +103,39 @@ export function resetPomodoro(state: PomodoroState): PomodoroState {
     ...createDefaultPomodoroState(),
     splitId: state.splitId,
     chimeEnabled: state.chimeEnabled,
+    activeTaskId: state.activeTaskId,
   };
+}
+
+const WORK_SESSIONS_BEFORE_LONG_BREAK = 4;
+
+export function advancePomodoroPhase(state: PomodoroState): PomodoroState {
+  if (state.phase === "work") {
+    const completedWorkSessions = state.completedWorkSessions + 1;
+    const nextPhase: PomodoroPhase =
+      completedWorkSessions % WORK_SESSIONS_BEFORE_LONG_BREAK === 0
+        ? "longBreak"
+        : "shortBreak";
+
+    return {
+      ...state,
+      phase: nextPhase,
+      running: false,
+      endsAt: null,
+      completedWorkSessions,
+    };
+  }
+
+  return {
+    ...state,
+    phase: "work",
+    running: false,
+    endsAt: null,
+  };
+}
+
+export function isPomodoroPhaseComplete(state: PomodoroState, now: Date): boolean {
+  return state.running && remainingSeconds(state, now) === 0;
 }
 
 export function remainingSeconds(state: PomodoroState, now: Date): number {

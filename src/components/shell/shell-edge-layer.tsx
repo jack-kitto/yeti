@@ -589,10 +589,8 @@ export function ShellEdgeLayer({
         >
           {toolId === "pomodoro" ? (
             <PomodoroFlyout
-              pomodoro={internalTools.pomodoro}
-              onChange={(pomodoro) =>
-                onUpdateInternalTools({ ...internalTools, pomodoro })
-              }
+              internalTools={internalTools}
+              onChange={onUpdateInternalTools}
             />
           ) : (
             <TasksFlyout

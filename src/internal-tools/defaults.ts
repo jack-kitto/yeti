@@ -5,13 +5,21 @@ import { normalizeWorkspacePlacementsInLibrary } from "@/library/migrate-placeme
 import { createDefaultWorkspaceInternalTools } from "./pomodoro";
 
 export function ensureWorkspaceInternalTools(workspace: Workspace): Workspace {
-  if (workspace.internalTools) {
-    return workspace;
-  }
+  const defaults = createDefaultWorkspaceInternalTools();
+  const internalTools = workspace.internalTools ?? defaults;
 
   return {
     ...workspace,
-    internalTools: createDefaultWorkspaceInternalTools(),
+    internalTools: {
+      ...defaults,
+      ...internalTools,
+      pomodoro: {
+        ...defaults.pomodoro,
+        ...internalTools.pomodoro,
+        completedWorkSessions: internalTools.pomodoro.completedWorkSessions ?? 0,
+      },
+      customFocusSplit: internalTools.customFocusSplit ?? null,
+    },
   };
 }
 

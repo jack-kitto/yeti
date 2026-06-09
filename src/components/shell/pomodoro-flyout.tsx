@@ -2,21 +2,24 @@
 
 import { useEffect, useState } from "react";
 import {
+  advancePomodoroPhase,
   formatTimerSeconds,
-  getFocusSplit,
+  isPomodoroPhaseComplete,
   pausePomodoro,
   remainingSeconds,
   resetPomodoro,
+  resolveFocusSplit,
   startPomodoro,
 } from "@/internal-tools/pomodoro";
-import type { PomodoroState } from "@/internal-tools/types";
+import type { PomodoroState, WorkspaceInternalTools } from "@/internal-tools/types";
 
 type PomodoroFlyoutProps = {
-  pomodoro: PomodoroState;
-  onChange: (pomodoro: PomodoroState) => void;
+  internalTools: WorkspaceInternalTools;
+  onChange: (internalTools: WorkspaceInternalTools) => void;
 };
 
-export function PomodoroFlyout({ pomodoro, onChange }: PomodoroFlyoutProps) {
+export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps) {
+  const pomodoro = internalTools.pomodoro;
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -28,7 +31,18 @@ export function PomodoroFlyout({ pomodoro, onChange }: PomodoroFlyoutProps) {
     return () => window.clearInterval(timer);
   }, [pomodoro.running]);
 
-  const split = getFocusSplit(pomodoro.splitId);
+  useEffect(() => {
+    if (!isPomodoroPhaseComplete(pomodoro, now)) {
+      return;
+    }
+
+    onChange({
+      ...internalTools,
+      pomodoro: advancePomodoroPhase(pomodoro),
+    });
+  }, [internalTools, now, onChange, pomodoro]);
+
+  const split = resolveFocusSplit(pomodoro.splitId, internalTools);
   const idleSeconds =
     pomodoro.phase === "work"
       ? split.workMinutes * 60
@@ -48,7 +62,12 @@ export function PomodoroFlyout({ pomodoro, onChange }: PomodoroFlyoutProps) {
           <button
             type="button"
             className="shell-flyout-more"
-            onClick={() => onChange(pausePomodoro(pomodoro))}
+            onClick={() =>
+              onChange({
+                ...internalTools,
+                pomodoro: pausePomodoro(pomodoro),
+              })
+            }
           >
             Pause
           </button>
@@ -56,7 +75,12 @@ export function PomodoroFlyout({ pomodoro, onChange }: PomodoroFlyoutProps) {
           <button
             type="button"
             className="shell-flyout-more"
-            onClick={() => onChange(startPomodoro(pomodoro, new Date()))}
+            onClick={() =>
+              onChange({
+                ...internalTools,
+                pomodoro: startPomodoro(pomodoro, new Date(), split),
+              })
+            }
           >
             Start
           </button>
@@ -64,7 +88,12 @@ export function PomodoroFlyout({ pomodoro, onChange }: PomodoroFlyoutProps) {
         <button
           type="button"
           className="shell-flyout-dismiss"
-          onClick={() => onChange(resetPomodoro(pomodoro))}
+          onClick={() =>
+            onChange({
+              ...internalTools,
+              pomodoro: resetPomodoro(pomodoro),
+            })
+          }
         >
           Reset
         </button>

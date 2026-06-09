@@ -25,6 +25,7 @@ export type PomodoroState = {
   endsAt: string | null;
   chimeEnabled: boolean;
   activeTaskId: string | null;
+  completedWorkSessions: number;
 };
 
 export type FocusTask = {
@@ -39,4 +40,5 @@ export type FocusTask = {
 export type WorkspaceInternalTools = {
   pomodoro: PomodoroState;
   tasks: FocusTask[];
+  customFocusSplit: FocusSplit | null;
 };

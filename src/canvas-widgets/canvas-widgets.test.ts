@@ -92,8 +92,10 @@ describe("listEnabledCanvasWidgets", () => {
           endsAt: null,
           chimeEnabled: false,
           activeTaskId: null,
+          completedWorkSessions: 0,
         },
         tasks: [],
+        customFocusSplit: null,
       },
       canvasWidgets: { clock: true, welcome: false, quote: true, nowPlaying: false },
     });

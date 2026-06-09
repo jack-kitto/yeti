@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  advancePomodoroPhase,
+  BUILTIN_FOCUS_SPLITS,
   formatTimerSeconds,
   getFocusSplit,
   pausePomodoro,
   remainingSeconds,
   resetPomodoro,
+  resolveFocusSplit,
   startPomodoro,
 } from "./pomodoro";
 import { createDefaultPomodoroState } from "./pomodoro";
@@ -71,5 +74,75 @@ describe("formatTimerSeconds", () => {
 describe("getFocusSplit", () => {
   it("falls back to the classic split for unknown ids", () => {
     expect(getFocusSplit("missing").id).toBe("classic");
+  });
+});
+
+describe("BUILTIN_FOCUS_SPLITS", () => {
+  it("includes a deep focus preset up to 50 minutes work and 10 minutes break", () => {
+    expect(BUILTIN_FOCUS_SPLITS).toContainEqual(
+      expect.objectContaining({
+        id: "deep",
+        workMinutes: 50,
+        shortBreakMinutes: 10,
+      }),
+    );
+  });
+});
+
+describe("resolveFocusSplit", () => {
+  it("returns a workspace custom split when custom is selected", () => {
+    const custom = {
+      id: "custom",
+      label: "My split",
+      workMinutes: 40,
+      shortBreakMinutes: 8,
+      longBreakMinutes: 16,
+    };
+
+    expect(
+      resolveFocusSplit("custom", {
+        customFocusSplit: custom,
+      }),
+    ).toEqual(custom);
+  });
+});
+
+describe("advancePomodoroPhase", () => {
+  it("moves from work to short break after a work interval", () => {
+    const advanced = advancePomodoroPhase(createDefaultPomodoroState());
+
+    expect(advanced).toMatchObject({
+      phase: "shortBreak",
+      running: false,
+      endsAt: null,
+      completedWorkSessions: 1,
+    });
+  });
+
+  it("uses a long break after four completed work sessions", () => {
+    const state = {
+      ...createDefaultPomodoroState(),
+      completedWorkSessions: 3,
+    };
+
+    const advanced = advancePomodoroPhase(state);
+
+    expect(advanced.phase).toBe("longBreak");
+    expect(advanced.completedWorkSessions).toBe(4);
+  });
+
+  it("returns to work after a break interval", () => {
+    const advanced = advancePomodoroPhase({
+      ...createDefaultPomodoroState(),
+      phase: "shortBreak",
+      running: true,
+      endsAt: "2026-06-09T12:05:00.000Z",
+    });
+
+    expect(advanced).toMatchObject({
+      phase: "work",
+      running: false,
+      endsAt: null,
+    });
   });
 });

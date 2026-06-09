@@ -2,14 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   addEdgeGroup,
   addLinkToEdgeGroup,
-  addPinToStrip,
   deleteEdgeGroup,
   moveLinkInEdgeGroup,
   removeLinkFromEdgeGroup,
-  removePinFromStrip,
   updateEdgeGroup,
 } from "./placement-mutations";
-import { resolveEdgeGroupLinks, resolveEdgeGroups, resolvePins } from "./placement";
+import { resolveEdgeGroupLinks, resolveEdgeGroups } from "./placement";
 import { loadOrSeedLibrary } from "@/library/library";
 import { addCatalogLink } from "@/library/catalog";
 
@@ -194,36 +192,5 @@ describe("edge group link placements", () => {
       secondId,
       firstId,
     ]);
-  });
-});
-
-describe("pin strip placements", () => {
-  it("adds a catalog link to the pin strip", async () => {
-    const seeded = await libraryWithFreshLink();
-    const linkId = seeded.catalog.find((link) => link.url.includes("fresh-link"))!.id;
-
-    const updated = addPinToStrip(seeded, seeded.activeWorkspaceId, linkId);
-
-    expect(resolvePins(updated).some((link) => link.id === linkId)).toBe(true);
-  });
-
-  it("rejects duplicate pins for the same link in a workspace", async () => {
-    const seeded = await libraryWithFreshLink();
-    const linkId = seeded.catalog.find((link) => link.url.includes("fresh-link"))!.id;
-    const withPin = addPinToStrip(seeded, seeded.activeWorkspaceId, linkId);
-
-    expect(() => addPinToStrip(withPin, seeded.activeWorkspaceId, linkId)).toThrow(
-      /duplicate pin/i,
-    );
-  });
-
-  it("removes a link from the pin strip", async () => {
-    const seeded = await libraryWithFreshLink();
-    const linkId = seeded.catalog.find((link) => link.url.includes("fresh-link"))!.id;
-    const withPin = addPinToStrip(seeded, seeded.activeWorkspaceId, linkId);
-
-    const updated = removePinFromStrip(withPin, seeded.activeWorkspaceId, linkId);
-
-    expect(resolvePins(updated).some((link) => link.id === linkId)).toBe(false);
   });
 });

@@ -80,7 +80,6 @@ export function deleteCatalogLink(library: Library, linkId: string): Library {
             links: group.links.filter((placement) => placement.linkId !== linkId),
           })),
         },
-        pins: workspace.placements.pins.filter((pin) => pin.linkId !== linkId),
       },
     })),
   };

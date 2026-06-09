@@ -15,7 +15,6 @@ export const DEFAULT_WORKSPACE_THEME: Theme = {
 
 const EMPTY_PLACEMENTS: WorkspacePlacements = {
   edges: { left: [], top: [], bottom: [] },
-  pins: [],
 };
 
 function createWorkspaceId(): string {

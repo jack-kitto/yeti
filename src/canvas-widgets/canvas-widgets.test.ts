@@ -83,7 +83,7 @@ describe("listEnabledCanvasWidgets", () => {
         glassOpacity: 0.5,
         borderRadius: 12,
       },
-      placements: { edges: { left: [], top: [], bottom: [] }, pins: [] },
+      placements: { edges: { left: [], top: [], bottom: [] } },
       internalTools: {
         pomodoro: {
           splitId: "classic",

@@ -77,10 +77,6 @@ describe("deleteCatalogLink", () => {
       linkId,
       orderKey: "z99",
     });
-    work.placements.pins.push({
-      linkId,
-      position: { kind: "strip", orderKey: "z98" },
-    });
 
     const updated = deleteCatalogLink(withLink, linkId);
 
@@ -91,7 +87,6 @@ describe("deleteCatalogLink", () => {
           expect(group.links.some((placement) => placement.linkId === linkId)).toBe(false);
         }
       }
-      expect(workspace.placements.pins.some((pin) => pin.linkId === linkId)).toBe(false);
     }
   });
 });

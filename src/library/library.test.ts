@@ -36,6 +36,15 @@ describe("loadOrSeedLibrary", () => {
     expect(work.theme.palette.background).not.toBe(personal.theme.palette.background);
   });
 
+  it("seeds workspaces without pin placements", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+
+    for (const workspace of library.workspaces) {
+      expect(workspace.placements).toEqual({ edges: workspace.placements.edges });
+      expect("pins" in workspace.placements).toBe(false);
+    }
+  });
+
   it("seeds a large catalog with enough left-edge links to open the launcher", async () => {
     const store = createInMemoryLibraryStore();
 
@@ -67,18 +76,6 @@ describe("loadOrSeedLibrary", () => {
 });
 
 describe("saveLibrary and getLibrary", () => {
-  it("rejects a library with duplicate pins for the same link in a workspace", async () => {
-    const store = createInMemoryLibraryStore();
-    const library = await loadOrSeedLibrary(store);
-    const workspace = library.workspaces[0];
-    workspace.placements.pins.push({
-      linkId: workspace.placements.pins[0].linkId,
-      position: { kind: "strip", orderKey: "z9" },
-    });
-
-    await expect(saveLibrary(store, library)).rejects.toThrow(/duplicate pin/i);
-  });
-
   it("persists the library so a later read returns the same data", async () => {
     const store = createInMemoryLibraryStore();
     const library = await loadOrSeedLibrary(store);

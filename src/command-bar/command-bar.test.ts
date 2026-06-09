@@ -44,7 +44,6 @@ function makeLibrary(): Library {
             top: [],
             bottom: [],
           },
-          pins: [],
         },
       },
       {
@@ -62,7 +61,6 @@ function makeLibrary(): Library {
         },
         placements: {
           edges: { left: [], top: [], bottom: [] },
-          pins: [],
         },
       },
     ],

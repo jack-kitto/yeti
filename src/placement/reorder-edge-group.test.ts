@@ -27,7 +27,6 @@ function makeLibrary(groups: EdgeGroup[]): Library {
         },
         placements: {
           edges: { left: groups, top: [], bottom: [] },
-          pins: [],
         },
       },
     ],

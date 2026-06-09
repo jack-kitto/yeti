@@ -36,7 +36,6 @@ function makeLibrary(): Library {
             top: [],
             bottom: [],
           },
-          pins: [],
         },
         internalTools: defaultInternalToolsForTests(),
         canvasWidgets: createDefaultCanvasWidgets(),

@@ -156,55 +156,5 @@ export function resolveWorkspacePlacedLinks(library: Library): Link[] {
     }
   }
 
-  for (const pin of workspace.placements.pins) {
-    if (seen.has(pin.linkId)) {
-      continue;
-    }
-
-    const link = catalogById.get(pin.linkId);
-    if (!link) {
-      continue;
-    }
-
-    seen.add(pin.linkId);
-    links.push(link);
-  }
-
-  return links;
-}
-
-export function resolvePins(library: Library): Link[] {
-  const workspace = library.workspaces.find(
-    (w) => w.id === library.activeWorkspaceId,
-  );
-
-  if (!workspace) {
-    return [];
-  }
-
-  const catalogById = new Map(library.catalog.map((link) => [link.id, link]));
-
-  const stripPins = sortByKey(
-    workspace.placements.pins.filter((pin) => pin.position.kind === "strip"),
-    (pin) => (pin.position.kind === "strip" ? pin.position.orderKey : ""),
-  );
-
-  const seen = new Set<string>();
-  const links: Link[] = [];
-
-  for (const pin of stripPins) {
-    if (seen.has(pin.linkId)) {
-      continue;
-    }
-
-    const link = catalogById.get(pin.linkId);
-    if (!link) {
-      continue;
-    }
-
-    seen.add(pin.linkId);
-    links.push(link);
-  }
-
   return links;
 }

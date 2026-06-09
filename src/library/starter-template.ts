@@ -38,7 +38,6 @@ type WorkspacePlacementsInput = {
   left: EdgeGroupInput[];
   top: EdgeGroupInput[];
   bottom: EdgeGroupInput[];
-  pins: string[];
 };
 
 function workspace(
@@ -47,8 +46,6 @@ function workspace(
   theme: Theme,
   placements: WorkspacePlacementsInput,
 ): Workspace {
-  const pinKeys = rebalanceKeys(placements.pins.length);
-
   return {
     id,
     name,
@@ -59,10 +56,6 @@ function workspace(
         top: orderedEdgeGroups(placements.top),
         bottom: orderedEdgeGroups(placements.bottom),
       },
-      pins: placements.pins.map((linkId, index) => ({
-        linkId,
-        position: { kind: "strip" as const, orderKey: pinKeys[index] },
-      })),
     },
     internalTools: createDefaultWorkspaceInternalTools(),
     canvasWidgets: createDefaultCanvasWidgets(),
@@ -186,7 +179,6 @@ export function createStarterLibrary(): Library {
     ],
     top: [],
     bottom: [],
-    pins: ["github", "localhost", "vercel", "linear", "prisma", "sentry"],
   });
 
   const personal = workspace("personal", "Personal", personalTheme, {
@@ -224,7 +216,6 @@ export function createStarterLibrary(): Library {
     ],
     top: [],
     bottom: [],
-    pins: ["hackernews", "obsidian", "arc", "raycast", "notion"],
   });
 
   return {

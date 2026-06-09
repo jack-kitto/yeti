@@ -50,13 +50,8 @@ export type EdgePlacements = {
   bottom: EdgeGroup[];
 };
 
-export type PinPosition =
-  | { kind: "strip"; orderKey: FractionalOrderKey }
-  | { kind: "freeform"; x: number; y: number };
-
 export type WorkspacePlacements = {
   edges: EdgePlacements;
-  pins: { linkId: string; position: PinPosition }[];
 };
 
 export type Workspace = {

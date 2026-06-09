@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { stringify } from "yaml";
 import { loadOrSeedLibrary } from "@/library/library";
 import { createInMemoryLibraryStore } from "@/library/store";
-import { addPinToStrip } from "@/placement/placement-mutations";
 import {
   deserializeSnapshot,
   importSnapshotFromUrl,
@@ -44,36 +44,29 @@ describe("deserializeSnapshot", () => {
     expect(() => deserializeSnapshot(yaml)).toThrow(/unsupported snapshot version/i);
   });
 
-  it("round-trips strip and freeform pin placements", async () => {
+  it("drops legacy pin placements when importing a snapshot", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
-    const workspaceId = library.activeWorkspaceId;
-    const stripLink = library.catalog.find((link) => link.id === "mdn")!;
-    const freeformLink = library.catalog.find((link) => link.id === "docker")!;
-    const withStrip = addPinToStrip(library, workspaceId, stripLink.id);
-    const withFreeform = {
-      ...withStrip,
-      workspaces: withStrip.workspaces.map((workspace) =>
-        workspace.id === workspaceId
-          ? {
-              ...workspace,
-              placements: {
-                ...workspace.placements,
-                pins: [
-                  ...workspace.placements.pins,
-                  {
-                    linkId: freeformLink.id,
-                    position: { kind: "freeform" as const, x: 0.42, y: 0.18 },
-                  },
-                ],
-              },
-            }
-          : workspace,
-      ),
-    };
+    const snapshot = libraryToSnapshot(library);
+    snapshot.workspaces[0]!.placements.pins = [
+      { linkId: "github", position: "strip", order: "a0" },
+    ];
 
-    const restored = deserializeSnapshot(serializeSnapshot(withFreeform));
+    const restored = deserializeSnapshot(stringify(snapshot));
 
-    expect(restored).toEqual(withFreeform);
+    expect(restored.workspaces[0]?.placements).toEqual({
+      edges: restored.workspaces[0]!.placements.edges,
+    });
+    expect("pins" in restored.workspaces[0]!.placements).toBe(false);
+  });
+
+  it("does not write pin placements to exported snapshots", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+
+    const snapshot = libraryToSnapshot(library);
+
+    for (const workspace of snapshot.workspaces) {
+      expect(workspace.placements).not.toHaveProperty("pins");
+    }
   });
 });
 

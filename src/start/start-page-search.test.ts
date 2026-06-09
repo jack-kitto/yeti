@@ -27,7 +27,6 @@ function makeLibrary(catalog: Link[]): Library {
         },
         placements: {
           edges: { left: [], top: [], bottom: [] },
-          pins: [],
         },
         internalTools: {
           pomodoro: { orderKey: initialKey(), splitId: "classic" },

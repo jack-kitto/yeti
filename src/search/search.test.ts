@@ -48,7 +48,6 @@ function makeLibrary(
             top: [],
             bottom: [],
           },
-          pins: [],
         },
       },
     ],
@@ -127,8 +126,9 @@ describe("searchWorkspaces", () => {
       theme: library.workspaces[0].theme,
       placements: {
         edges: { left: [], top: [], bottom: [] },
-        pins: [],
       },
+      internalTools: library.workspaces[0].internalTools,
+      canvasWidgets: library.workspaces[0].canvasWidgets,
     });
 
     const results = searchWorkspaces(library, "pers");

@@ -15,7 +15,6 @@ describe("createWorkspace", () => {
     expect(created).toBeDefined();
     expect(created!.id).toBeTruthy();
     expect(created!.placements.edges.left).toEqual([]);
-    expect(created!.placements.pins).toEqual([]);
     expect(created!.theme.palette.background).toBeTruthy();
     expect(updated.activeWorkspaceId).toBe(library.activeWorkspaceId);
   });

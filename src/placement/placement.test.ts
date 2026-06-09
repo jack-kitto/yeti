@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey, insertBetween } from "@/fractional-order/fractional-order";
-import type { EdgeGroup, Library, PinPosition } from "@/library/types";
+import type { EdgeGroup, Library } from "@/library/types";
 import {
   EDGE_PREVIEW_LIMIT,
   resolveEdgeGroupFlyout,
   resolveEdgeGroupLinks,
   resolveEdgeGroups,
-  resolvePins,
   resolveWorkspacePlacedLinks,
 } from "./placement";
 
@@ -69,7 +68,6 @@ function makeLibrary(edgeGroups: {
             top: edgeGroups.top ?? [],
             bottom: edgeGroups.bottom ?? [],
           },
-          pins: [],
         },
       },
     ],
@@ -150,102 +148,14 @@ describe("resolveEdgeGroupFlyout", () => {
 });
 
 describe("resolveWorkspacePlacedLinks", () => {
-  it("returns all placed links across edge groups and pins in the active workspace", () => {
+  it("returns all placed links across edge groups in the active workspace", () => {
     const library = makeLibrary({
       left: [edgeGroup("dev", "Dev tools", initialKey(), ["alpha", "beta"])],
       top: [edgeGroup("refs", "References", initialKey(), ["gamma"])],
     });
-    library.workspaces[0].placements.pins = [
-      { linkId: "delta", position: { kind: "strip", orderKey: initialKey() } },
-    ];
-    library.catalog.push({
-      id: "delta",
-      url: "https://delta.example.com",
-      title: "delta",
-    });
 
     const result = resolveWorkspacePlacedLinks(library);
 
-    expect(result.map((link) => link.id)).toEqual(["alpha", "beta", "gamma", "delta"]);
-  });
-});
-
-function makeLibraryWithPins(
-  pinEntries: { linkId: string; position: PinPosition }[],
-): Library {
-  const catalog = pinEntries.map(({ linkId }) => ({
-    id: linkId,
-    url: `https://${linkId}.example.com`,
-    title: linkId,
-  }));
-
-  return {
-    catalog,
-    workspaces: [
-      {
-        id: "work",
-        name: "Work",
-        theme: {
-          palette: {
-            background: "#000",
-            surface: "#111",
-            text: "#fff",
-            accent: "#f00",
-          },
-          glassOpacity: 0.7,
-          borderRadius: 16,
-        },
-        placements: {
-          edges: { left: [], top: [], bottom: [] },
-          pins: pinEntries,
-        },
-      },
-    ],
-    shortcuts: { focusCommandBar: "Meta+Shift+k", cycleWorkspace: "Control+Tab" },
-    focusRadio: createDefaultFocusRadio(),
-    activeWorkspaceId: "work",
-  };
-}
-
-describe("resolvePins", () => {
-  it("returns strip pins for the active workspace in fractional order", () => {
-    const first = initialKey();
-    const third = insertBetween(first, null);
-    const second = insertBetween(first, third);
-    const library = makeLibraryWithPins([
-      { linkId: "beta", position: { kind: "strip", orderKey: second } },
-      { linkId: "alpha", position: { kind: "strip", orderKey: first } },
-      { linkId: "gamma", position: { kind: "strip", orderKey: third } },
-    ]);
-
-    const result = resolvePins(library);
-
     expect(result.map((link) => link.id)).toEqual(["alpha", "beta", "gamma"]);
-  });
-
-  it("excludes freeform pins from the strip", () => {
-    const library = makeLibraryWithPins([
-      { linkId: "alpha", position: { kind: "strip", orderKey: initialKey() } },
-      { linkId: "beta", position: { kind: "freeform", x: 0.5, y: 0.5 } },
-    ]);
-
-    const result = resolvePins(library);
-
-    expect(result.map((link) => link.id)).toEqual(["alpha"]);
-  });
-
-  it("keeps only one pin per link when duplicates exist in placement data", () => {
-    const first = initialKey();
-    const third = insertBetween(first, null);
-    const second = insertBetween(first, third);
-    const library = makeLibraryWithPins([
-      { linkId: "alpha", position: { kind: "strip", orderKey: first } },
-      { linkId: "alpha", position: { kind: "strip", orderKey: third } },
-      { linkId: "beta", position: { kind: "strip", orderKey: second } },
-    ]);
-
-    const result = resolvePins(library);
-
-    expect(result.map((link) => link.id)).toEqual(["alpha", "beta"]);
   });
 });

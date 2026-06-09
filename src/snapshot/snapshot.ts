@@ -5,6 +5,7 @@ import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import type { FocusRadio } from "@/focus-radio/types";
 import type { FocusTask, PomodoroState } from "@/internal-tools/types";
 import { validateLibrary } from "@/library/library";
+import { normalizeWorkspacePlacements } from "@/library/migrate-placements";
 import type {
   EdgeGroup,
   EdgeGroupLinkPlacement,
@@ -13,7 +14,6 @@ import type {
   ShortcutBindings,
   Theme,
   Workspace,
-  WorkspacePlacements,
 } from "@/library/types";
 import type { CanvasWidgetConfig } from "@/canvas-widgets/types";
 
@@ -53,7 +53,7 @@ type SnapshotWorkspace = {
       top: SnapshotEdgeGroup[];
       bottom: SnapshotEdgeGroup[];
     };
-    pins: SnapshotPin[];
+    pins?: SnapshotPin[];
   };
   internalTools?: {
     pomodoro: PomodoroState;
@@ -100,35 +100,6 @@ function snapshotEdgeGroupToLibrary(group: SnapshotEdgeGroup): EdgeGroup {
   };
 }
 
-function pinToSnapshot(pin: WorkspacePlacements["pins"][number]): SnapshotPin {
-  if (pin.position.kind === "strip") {
-    return {
-      linkId: pin.linkId,
-      position: "strip",
-      order: pin.position.orderKey,
-    };
-  }
-
-  return {
-    linkId: pin.linkId,
-    position: { x: pin.position.x, y: pin.position.y },
-  };
-}
-
-function snapshotPinToLibrary(pin: SnapshotPin): WorkspacePlacements["pins"][number] {
-  if (pin.position === "strip") {
-    return {
-      linkId: pin.linkId,
-      position: { kind: "strip", orderKey: pin.order },
-    };
-  }
-
-  return {
-    linkId: pin.linkId,
-    position: { kind: "freeform", x: pin.position.x, y: pin.position.y },
-  };
-}
-
 export function libraryToSnapshot(library: Library): LibrarySnapshot {
   return {
     version: SNAPSHOT_VERSION,
@@ -155,7 +126,6 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
           top: workspace.placements.edges.top.map(edgeGroupToSnapshot),
           bottom: workspace.placements.edges.bottom.map(edgeGroupToSnapshot),
         },
-        pins: workspace.placements.pins.map(pinToSnapshot),
       },
       internalTools: workspace.internalTools,
       canvasWidgets: workspace.canvasWidgets,
@@ -190,14 +160,14 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
           glassOpacity: workspace.theme.glassOpacity,
           borderRadius: workspace.theme.borderRadius,
         },
-        placements: {
+        placements: normalizeWorkspacePlacements({
           edges: {
             left: workspace.placements.edgeGroups.left.map(snapshotEdgeGroupToLibrary),
             top: workspace.placements.edgeGroups.top.map(snapshotEdgeGroupToLibrary),
             bottom: workspace.placements.edgeGroups.bottom.map(snapshotEdgeGroupToLibrary),
           },
-          pins: workspace.placements.pins.map(snapshotPinToLibrary),
-        },
+          pins: workspace.placements.pins,
+        }),
         internalTools:
           workspace.internalTools ?? createDefaultWorkspaceInternalTools(),
         canvasWidgets: workspace.canvasWidgets ?? createDefaultCanvasWidgets(),

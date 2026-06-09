@@ -22,20 +22,7 @@ import type {
   ThemePatch,
 } from "./types";
 
-export function validateLibrary(library: Library): void {
-  for (const workspace of library.workspaces) {
-    const seen = new Set<string>();
-
-    for (const pin of workspace.placements.pins) {
-      if (seen.has(pin.linkId)) {
-        throw new Error(
-          `Duplicate pin for link "${pin.linkId}" in workspace "${workspace.id}"`,
-        );
-      }
-
-      seen.add(pin.linkId);
-    }
-  }
+export function validateLibrary(_library: Library): void {
 }
 
 export async function getLibrary(store: LibraryStore): Promise<Library | null> {

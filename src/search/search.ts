@@ -35,10 +35,6 @@ function getPlacedLinkIds(workspace: Workspace): Set<string> {
     }
   }
 
-  for (const pin of workspace.placements.pins) {
-    ids.add(pin.linkId);
-  }
-
   return ids;
 }
 

@@ -5,6 +5,7 @@ import {
   completeFocusTask,
   listBacklogTasks,
   listTodayTasks,
+  moveFocusTask,
   setFocusTaskToday,
   startFocusOnTask,
 } from "./tasks";
@@ -32,6 +33,16 @@ describe("focus tasks", () => {
     expect(listTodayTasks(updated)).toEqual([]);
     expect(listBacklogTasks(updated)).toMatchObject([{ id: "task-1", title: "Ship tasks" }]);
     expect(listTodayTasks(tools)).toHaveLength(1);
+  });
+
+  it("reorders tasks within the today list by slot index", () => {
+    let tools = createDefaultWorkspaceInternalTools();
+    tools = addFocusTask(tools, "First", "task-1");
+    tools = addFocusTask(tools, "Second", "task-2");
+
+    tools = moveFocusTask(tools, "task-2", 0);
+
+    expect(listTodayTasks(tools).map((task) => task.id)).toEqual(["task-2", "task-1"]);
   });
 
   it("sets the active task and starts a work pomodoro", () => {

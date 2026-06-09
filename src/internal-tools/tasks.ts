@@ -82,6 +82,44 @@ export function startFocusOnTask(
   };
 }
 
+export function moveFocusTask(
+  tools: WorkspaceInternalTools,
+  taskId: string,
+  targetSlotIndex: number,
+): WorkspaceInternalTools {
+  const task = tools.tasks.find((item) => item.id === taskId && !item.completed);
+  if (!task) {
+    return tools;
+  }
+
+  const sorted = listOpenTasks(tools, task.today);
+  const fromIndex = sorted.findIndex((item) => item.id === taskId);
+  if (fromIndex === -1) {
+    return tools;
+  }
+
+  const targetIndex = Math.max(0, Math.min(targetSlotIndex, sorted.length - 1));
+  if (fromIndex === targetIndex) {
+    return tools;
+  }
+
+  const reordered = [...sorted];
+  const [moved] = reordered.splice(fromIndex, 1);
+  reordered.splice(targetIndex, 0, moved);
+
+  const beforeKey = targetIndex === 0 ? null : reordered[targetIndex - 1].orderKey;
+  const afterKey =
+    targetIndex === reordered.length - 1 ? null : reordered[targetIndex + 1].orderKey;
+  const newOrderKey = insertBetween(beforeKey, afterKey);
+
+  return {
+    ...tools,
+    tasks: tools.tasks.map((item) =>
+      item.id === taskId ? { ...item, orderKey: newOrderKey } : item,
+    ),
+  };
+}
+
 export function setFocusTaskToday(
   tools: WorkspaceInternalTools,
   taskId: string,

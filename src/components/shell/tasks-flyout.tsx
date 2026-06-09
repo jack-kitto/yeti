@@ -10,6 +10,7 @@ import {
   completeFocusTask,
   listBacklogTasks,
   listTodayTasks,
+  moveFocusTask,
   setFocusTaskToday,
   startFocusOnTask,
 } from "@/internal-tools/tasks";
@@ -60,10 +61,28 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
       </div>
       <div className={TASKS_FLYOUT_LIST_SCROLL_CLASS}>
         <ul className="shell-tool-task-list">
-          {visibleTasks.map((task) => (
+          {visibleTasks.map((task, index) => (
             <li key={task.id} className="shell-tool-task-item">
               <span>{task.title}</span>
               <div className="shell-tool-task-actions">
+                <button
+                  type="button"
+                  className="shell-flyout-dismiss"
+                  aria-label={`Move ${task.title} up`}
+                  disabled={index === 0}
+                  onClick={() => onChange(moveFocusTask(internalTools, task.id, index - 1))}
+                >
+                  Up
+                </button>
+                <button
+                  type="button"
+                  className="shell-flyout-dismiss"
+                  aria-label={`Move ${task.title} down`}
+                  disabled={index === visibleTasks.length - 1}
+                  onClick={() => onChange(moveFocusTask(internalTools, task.id, index + 1))}
+                >
+                  Down
+                </button>
                 <button
                   type="button"
                   className="shell-flyout-more"

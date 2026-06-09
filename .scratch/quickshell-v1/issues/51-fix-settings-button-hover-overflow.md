@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,10 +12,10 @@ The ghost variant applies `background: color-mix(...)` and `translateY(-1px)` on
 
 ## Acceptance criteria
 
-- [ ] Settings button hover/active state stays within optical bounds of the handle
-- [ ] No visible background rectangle overflowing into the canvas or past the top rim
-- [ ] Hover/focus remains discoverable (contrast or subtle ring acceptable)
-- [ ] Other ghost handles (right-rim tools) unaffected unless they share the same bug
+- [x] Settings button hover/active state stays within optical bounds of the handle
+- [x] No visible background rectangle overflowing into the canvas or past the top rim
+- [x] Hover/focus remains discoverable (contrast or subtle ring acceptable)
+- [x] Other ghost handles (right-rim tools) unaffected unless they share the same bug
 
 ## Blocked by
 

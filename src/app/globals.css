@@ -124,6 +124,17 @@ body {
 
 .shell-settings-btn {
   z-index: 5;
+  overflow: hidden;
+}
+
+.shell-settings-btn.shell-icon-btn-ghost:hover,
+.shell-settings-btn.shell-icon-btn-ghost.active {
+  transform: none;
+  background: color-mix(in srgb, var(--qs-color-surface) 20%, transparent);
+}
+
+.shell-settings-btn.shell-icon-btn-ghost:active {
+  transform: scale(0.96);
 }
 
 .shell-icon-glyph {

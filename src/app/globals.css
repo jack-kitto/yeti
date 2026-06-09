@@ -1956,6 +1956,11 @@ body {
   font-size: 13px;
 }
 
+.shell-tool-task-view-toggle {
+  display: flex;
+  gap: 6px;
+}
+
 .shell-tool-task-actions {
   display: flex;
   flex-shrink: 0;

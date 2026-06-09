@@ -8,7 +8,9 @@ import {
 import {
   addFocusTask,
   completeFocusTask,
+  listBacklogTasks,
   listTodayTasks,
+  setFocusTaskToday,
   startFocusOnTask,
 } from "@/internal-tools/tasks";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
@@ -18,9 +20,12 @@ type TasksFlyoutProps = {
   onChange: (internalTools: WorkspaceInternalTools) => void;
 };
 
+type TasksView = "today" | "backlog";
+
 export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
   const [draft, setDraft] = useState("");
-  const todayTasks = listTodayTasks(internalTools);
+  const [view, setView] = useState<TasksView>("today");
+  const visibleTasks = view === "today" ? listTodayTasks(internalTools) : listBacklogTasks(internalTools);
 
   function handleAdd(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,12 +40,39 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
   return (
     <div className="shell-tool-flyout">
       <p className="shell-flyout-title">Focus tasks</p>
+      <div className="shell-tool-task-view-toggle" role="group" aria-label="Task list view">
+        <button
+          type="button"
+          className="shell-flyout-more"
+          aria-pressed={view === "today"}
+          onClick={() => setView("today")}
+        >
+          Today
+        </button>
+        <button
+          type="button"
+          className="shell-flyout-more"
+          aria-pressed={view === "backlog"}
+          onClick={() => setView("backlog")}
+        >
+          Backlog
+        </button>
+      </div>
       <div className={TASKS_FLYOUT_LIST_SCROLL_CLASS}>
         <ul className="shell-tool-task-list">
-          {todayTasks.map((task) => (
+          {visibleTasks.map((task) => (
             <li key={task.id} className="shell-tool-task-item">
               <span>{task.title}</span>
               <div className="shell-tool-task-actions">
+                <button
+                  type="button"
+                  className="shell-flyout-more"
+                  onClick={() =>
+                    onChange(setFocusTaskToday(internalTools, task.id, view !== "today"))
+                  }
+                >
+                  {view === "today" ? "Backlog" : "Today"}
+                </button>
                 <button
                   type="button"
                   className="shell-flyout-more"

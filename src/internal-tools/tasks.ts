@@ -3,8 +3,16 @@ import { resolveFocusSplit, startPomodoro } from "./pomodoro";
 import type { FocusTask, WorkspaceInternalTools } from "./types";
 
 export function listTodayTasks(tools: WorkspaceInternalTools): FocusTask[] {
+  return listOpenTasks(tools, true);
+}
+
+export function listBacklogTasks(tools: WorkspaceInternalTools): FocusTask[] {
+  return listOpenTasks(tools, false);
+}
+
+function listOpenTasks(tools: WorkspaceInternalTools, today: boolean): FocusTask[] {
   return sortByKey(
-    tools.tasks.filter((task) => task.today && !task.completed),
+    tools.tasks.filter((task) => task.today === today && !task.completed),
     (task) => task.orderKey,
   );
 }
@@ -71,6 +79,22 @@ export function startFocusOnTask(
       now,
       split,
     ),
+  };
+}
+
+export function setFocusTaskToday(
+  tools: WorkspaceInternalTools,
+  taskId: string,
+  today: boolean,
+): WorkspaceInternalTools {
+  const task = tools.tasks.find((item) => item.id === taskId && !item.completed);
+  if (!task || task.today === today) {
+    return tools;
+  }
+
+  return {
+    ...tools,
+    tasks: tools.tasks.map((item) => (item.id === taskId ? { ...item, today } : item)),
   };
 }
 

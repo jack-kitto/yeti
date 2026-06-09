@@ -31,3 +31,5 @@ Include **library reset** — "Reset to starter template" with confirmation (sam
 Issue 01 is done. Right-rim **config** surface opens via the canvas shell (issue 25) but `ShellConfigPanel` is still a placeholder stub — this issue replaces it with real catalog CRUD.
 
 Implemented via `src/library/catalog.ts` (pure mutations + tests), store wrappers, React Query hooks, and `ShellConfigPanel` catalog UI.
+
+**Entry point evolving (issue 26):** Catalog and all config sections now live in a centered settings dialog opened from the right-rim compact menu. Product direction removes right-rim settings entirely — command bar `:settings` + left-edge control. Functionality here is done; only the chrome entry moves.

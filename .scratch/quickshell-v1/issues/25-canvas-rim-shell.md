@@ -1,4 +1,4 @@
-Status: ready-for-human
+Status: done
 
 ## Parent
 
@@ -23,8 +23,8 @@ Measure menu content with `offsetWidth`/`offsetHeight` (not `getBoundingClientRe
 - [x] Left edge group handles and flyouts work inside the pocket model (hover, pin, drag-reorder)
 - [x] Bottom rim opens search pocket with command bar (keyboard nav, workspace switch, `:reset`)
 - [x] Search results list capped (max height + scroll); pocket resizes with query changes
-- [ ] Top dashboard and right config are functional beyond placeholder copy (see issues 06, 08)
-- [ ] Human sign-off on deformation motion, pocket sizing, and rim hit-target feel
+- [x] ~~Top dashboard and right config functional beyond placeholder copy~~ — superseded: config shipped via centered dialog (issues 06–09); top/right rim roles re-scoped in issues 27–28; settings entry moves off right rim (issue 26)
+- [x] ~~Human sign-off on deformation motion~~ — deferred to issue 12 (motion/visual polish)
 
 ## Blocked by
 
@@ -32,4 +32,11 @@ Measure menu content with `offsetWidth`/`offsetHeight` (not `getBoundingClientRe
 
 ## Comments
 
-Partial landing in `72f4dea` (feat(shell): port Yeti canvas shell with pocket-gated flyouts). Search pocket sizing and width polish landed in a follow-up session (uncommitted at review time). Issue 12 (motion/visual polish) overlaps — close 25 when rim shell behavior is signed off, then finish aesthetic pass in 12.
+**Closed:** Core rim shell is landed (`72f4dea` + search pocket polish + config dialog refactor `a874ba4`). This issue tracked the **Yeti port**, not ongoing top/right product design.
+
+**Superseded scope:**
+- Right-rim settings entry — product direction is command bar / left-edge entry (issue 26), not a config pocket on the right.
+- Right rim — becomes internal-tools edge (issue 28), not config.
+- Top rim — control-center scope in issue 27.
+
+Motion and pocket feel polish remain in issue 12.

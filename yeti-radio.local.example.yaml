@@ -1,0 +1,13 @@
+# BYO focus radio — copy to yeti-radio.local.yaml (gitignored) for personal station seed.
+# Imported into library radio preferences when the file exists (dev/local use only).
+#
+# kind: stream | youtube
+# favorite: optional; pinned to top of media tab picker
+
+stations:
+  - label: Example Lofi
+    kind: stream
+    url: https://example.com/stream.mp3
+    description: Optional note
+    imageUrl: https://example.com/logo.png
+    favorite: true

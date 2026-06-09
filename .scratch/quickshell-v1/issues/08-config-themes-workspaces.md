@@ -27,3 +27,5 @@ Extend the **config panel** with workspace and theme management.
 ## Comments
 
 Implemented via `src/workspace/workspaces.ts` (CRUD + 6 tests), `src/theme/workspace-theme.ts` (theme patch + 3 tests), library/hooks persistence, and `ShellConfigWorkspaces` config section.
+
+**Follow-up (grill 2025-06):** Default theme palette should auto-extract from background image via [extract-colors](https://github.com/Namide/extract-colors); manual token overrides in settings remain. New issue or extend theme slice when implementing.

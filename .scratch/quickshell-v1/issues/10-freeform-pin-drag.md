@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: wontfix
 
 ## Parent
 
@@ -22,3 +22,7 @@ Pins default to the **pin strip**. Drag a pin off the strip to a freeform `{x, y
 
 - `.scratch/quickshell-v1/issues/03-canvas-pin-strip.md`
 - `.scratch/quickshell-v1/issues/14-edge-groups-model.md`
+
+## Comments
+
+**Superseded (grill 2025-06):** Freeform pins removed with pin strip. See `CONTEXT.md` v1 exclusions.

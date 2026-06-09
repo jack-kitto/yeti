@@ -1,4 +1,4 @@
-Status: done
+Status: wontfix
 
 ## Parent
 
@@ -17,6 +17,10 @@ Resolve **pins** from the active workspace **placements**. New pins land in the 
 - [x] Clicking a pin opens a new tab
 - [x] Only one pin per link per workspace is possible
 - [x] Pin order reflects workspace placement data from the library
+
+## Comments
+
+**Superseded (grill 2025-06):** Canvas pins and pin strip **removed** from product model. Links surface via edge groups, command bar, and launcher. Remove pin strip UI and pin placements during issue 32 / canvas refactor. See `CONTEXT.md`.
 
 ## Blocked by
 

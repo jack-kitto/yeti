@@ -30,3 +30,5 @@ Add Search module unit tests.
 ## Comments
 
 Behavior complete. UI moved from canvas input to bottom-rim search pocket (issue 25); canvas variant remains in `CommandBar` for tests but is not mounted in the live shell.
+
+Keyboard navigation may change per issue 31 (remove j/k from results; type-to-focus).

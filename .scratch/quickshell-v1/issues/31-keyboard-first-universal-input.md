@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -15,11 +15,11 @@ Preserve existing: `Enter` execute, `Esc` clear/dismiss, `:` action mode, worksp
 
 ## Acceptance criteria
 
-- [ ] Typing a printable key (with no conflicting focus in an input) opens/focuses command bar and appends to query
-- [ ] `j` and `k` insert into the search field; they do not move selection
-- [ ] `↑`/`↓` and `Tab`/`Shift+Tab` move highlight through results
-- [ ] `⌘⇧K` (or configured binding) still focuses command bar explicitly
-- [ ] Unit or integration test covers navigation key behavior where practical
+- [x] Typing a printable key (with no conflicting focus in an input) opens/focuses command bar and appends to query
+- [x] `j` and `k` insert into the search field; they do not move selection
+- [x] `↑`/`↓` and `Tab`/`Shift+Tab` move highlight through results
+- [x] `⌘⇧K` (or configured binding) still focuses command bar explicitly
+- [x] Unit or integration test covers navigation key behavior where practical
 
 ## Blocked by
 

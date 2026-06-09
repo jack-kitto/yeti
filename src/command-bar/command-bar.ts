@@ -119,6 +119,41 @@ export function moveCommandBarSelection(
   return (currentIndex - 1 + resultCount) % resultCount;
 }
 
+export function resolveCommandBarListNavigation(
+  key: string,
+  shiftKey: boolean,
+): "up" | "down" | null {
+  if (key === "ArrowDown") {
+    return "down";
+  }
+  if (key === "ArrowUp") {
+    return "up";
+  }
+  if (key === "Tab") {
+    return shiftKey ? "up" : "down";
+  }
+  return null;
+}
+
+export function shouldCaptureTypeToFocusKey(
+  event: Pick<KeyboardEvent, "key" | "ctrlKey" | "metaKey" | "altKey">,
+): boolean {
+  if (event.ctrlKey || event.metaKey || event.altKey) {
+    return false;
+  }
+  return event.key.length === 1;
+}
+
+export function isTextEntryElement(element: Element | null): boolean {
+  if (!element) {
+    return false;
+  }
+  if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+    return true;
+  }
+  return element instanceof HTMLElement && element.isContentEditable;
+}
+
 const SHORTCUT_ALIASES: Record<string, string> = {
   Ctrl: "Control",
   Command: "Meta",

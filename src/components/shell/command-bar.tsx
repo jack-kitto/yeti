@@ -4,7 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   buildCommandBarRows,
   initialCommandBarSelection,
+  isTextEntryElement,
   moveCommandBarSelection,
+  resolveCommandBarListNavigation,
+  shouldCaptureTypeToFocusKey,
   shortcutMatchesEvent,
   type CommandBarResult,
 } from "@/command-bar/command-bar";
@@ -96,6 +99,25 @@ export function CommandBar({
     return () => window.removeEventListener("keydown", handleFocusShortcut);
   }, [library.shortcuts.focusCommandBar]);
 
+  useEffect(() => {
+    function handleTypeToFocus(event: KeyboardEvent) {
+      if (!shouldCaptureTypeToFocusKey(event)) {
+        return;
+      }
+      if (isTextEntryElement(document.activeElement)) {
+        return;
+      }
+
+      event.preventDefault();
+      activateZone(BUILTIN_SURFACE.BOTTOM_SEARCH, getLatestShellZones());
+      inputRef.current?.focus();
+      setQuery((current) => current + event.key);
+    }
+
+    window.addEventListener("keydown", handleTypeToFocus);
+    return () => window.removeEventListener("keydown", handleTypeToFocus);
+  }, []);
+
   function executeResult(result: CommandBarResult) {
     if (result.kind === "workspace") {
       onSwitchWorkspace(result.workspaceId);
@@ -140,18 +162,11 @@ export function CommandBar({
       return;
     }
 
-    if (event.key === "ArrowDown" || event.key === "j") {
+    const direction = resolveCommandBarListNavigation(event.key, event.shiftKey);
+    if (direction) {
       event.preventDefault();
       setSelectedIndex((current) =>
-        moveCommandBarSelection(current, "down", results.length),
-      );
-      return;
-    }
-
-    if (event.key === "ArrowUp" || event.key === "k") {
-      event.preventDefault();
-      setSelectedIndex((current) =>
-        moveCommandBarSelection(current, "up", results.length),
+        moveCommandBarSelection(current, direction, results.length),
       );
       return;
     }

@@ -93,7 +93,7 @@ describe("importSnapshotFromUrl", () => {
       }),
     );
 
-    const imported = await importSnapshotFromUrl("https://example.com/quickshell.yaml");
+    const imported = await importSnapshotFromUrl("https://example.com/yeti.yaml");
 
     expect(imported).toEqual(library);
   });

@@ -165,3 +165,7 @@ Third-party radio (SomaFM, Techno.FM, etc.) is **not bundled** — **focus radio
 ## First run
 
 Yeti ships with an **opinionated starter template** (Omarchy-style) — tasteful defaults, not a blank slate. Pre-built **Work** and **Personal** workspaces with distinct themes (warm/minimal vs dark/relaxed), ~6–8 sample dev links per workspace on the left **edge**. Obvious placeholders users replace via config. Everything removable.
+
+## Repo and package names
+
+The GitHub repo may remain `quickshell-start` until hosting is renamed; the npm `package.json` name is `yeti`. Product-facing strings and IndexedDB use **Yeti** / `yeti`.

@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -21,10 +21,10 @@ Scope (locked grill 2025-06):
 ## Acceptance criteria
 
 - [x] Human confirms scope (full consistency minus repo folder)
-- [ ] User-facing strings say "Yeti" not "Quickshell"
-- [ ] `CONTEXT.md` opens with Yeti as the product name
-- [ ] No broken imports or build from rename pass
-- [ ] ADR or CONTEXT note if repo URL / package name stay `quickshell` temporarily
+- [x] User-facing strings say "Yeti" not "Quickshell"
+- [x] `CONTEXT.md` opens with Yeti as the product name
+- [x] No broken imports or build from rename pass
+- [x] ADR or CONTEXT note if repo URL / package name stay `quickshell` temporarily
 
 ## Blocked by
 

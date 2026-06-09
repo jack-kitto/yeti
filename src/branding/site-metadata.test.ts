@@ -1,0 +1,8 @@
+import { describe, expect, it } from "vitest";
+import { siteMetadata } from "./site-metadata";
+
+describe("site metadata", () => {
+  it("sets the browser tab title to Yeti", () => {
+    expect(siteMetadata.title).toBe("Yeti");
+  });
+});

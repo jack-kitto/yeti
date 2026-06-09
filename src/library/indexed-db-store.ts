@@ -1,13 +1,12 @@
 import { openDB } from "idb";
+import { LIBRARY_DB_NAME } from "@/branding/branding";
 import type { Library, LibraryStore } from "./types";
-
-const DB_NAME = "quickshell";
 const STORE_NAME = "library";
 const LIBRARY_KEY = "library";
 
 export function createIndexedDbLibraryStore(): LibraryStore {
   async function getDb() {
-    return openDB(DB_NAME, 1, {
+    return openDB(LIBRARY_DB_NAME, 1, {
       upgrade(db) {
         db.createObjectStore(STORE_NAME);
       },

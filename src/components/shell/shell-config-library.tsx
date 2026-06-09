@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useImportLibrarySnapshot, useResetLibrary } from "@/hooks/use-library";
 import type { Library } from "@/library/types";
 import { serializeSnapshot } from "@/snapshot/snapshot";
+import {
+  SNAPSHOT_DOWNLOAD_FILENAME,
+  SNAPSHOT_URL_PLACEHOLDER,
+} from "@/branding/branding";
 
 type ShellConfigLibraryProps = {
   library: Library;
@@ -21,7 +25,7 @@ export function ShellConfigLibrary({ library }: ShellConfigLibraryProps) {
     const objectUrl = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = objectUrl;
-    anchor.download = "quickshell-snapshot.yaml";
+    anchor.download = SNAPSHOT_DOWNLOAD_FILENAME;
     anchor.click();
     URL.revokeObjectURL(objectUrl);
   }
@@ -81,7 +85,7 @@ export function ShellConfigLibrary({ library }: ShellConfigLibraryProps) {
             type="url"
             value={importUrl}
             onChange={(event) => setImportUrl(event.target.value)}
-            placeholder="https://raw.githubusercontent.com/…/quickshell.yaml"
+            placeholder={SNAPSHOT_URL_PLACEHOLDER}
             className="shell-config-input"
           />
           <button

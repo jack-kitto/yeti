@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import { createStarterLibrary } from "@/library/starter-template";
 import { deserializeSnapshot, serializeSnapshot } from "@/snapshot/snapshot";
 import { createDefaultFocusRadio } from "./config";
+import {
+  resolveFocusRadioNowPlaying,
+  resolveFocusRadioOutputVolume,
+} from "./playback";
 import { buildFocusRadioStationPickerRows } from "./station-picker";
 import {
   addFocusRadioStation,
@@ -149,6 +153,41 @@ describe("updateFocusRadioPlayback", () => {
       muted: true,
       playing: true,
     });
+  });
+});
+
+describe("resolveFocusRadioOutputVolume", () => {
+  it("returns zero when muted and otherwise clamps volume", () => {
+    expect(resolveFocusRadioOutputVolume({ volume: 0.8, muted: true })).toBe(0);
+    expect(resolveFocusRadioOutputVolume({ volume: 1.5, muted: false })).toBe(1);
+    expect(resolveFocusRadioOutputVolume({ volume: -0.2, muted: false })).toBe(0);
+  });
+});
+
+describe("resolveFocusRadioNowPlaying", () => {
+  it("returns the active station when playback has a station id", async () => {
+    let library = addFocusRadioStation(createStarterLibrary(), {
+      label: "Lofi Girl",
+      url: "https://stream.example.com/lofi.mp3",
+      kind: "stream",
+      imageUrl: "https://img.example.com/lofi.png",
+    }, "lofi");
+    library = updateFocusRadioPlayback(library, {
+      stationId: "lofi",
+      playing: true,
+    });
+
+    expect(resolveFocusRadioNowPlaying(library)).toEqual({
+      id: "lofi",
+      label: "Lofi Girl",
+      kind: "stream",
+      url: "https://stream.example.com/lofi.mp3",
+      imageUrl: "https://img.example.com/lofi.png",
+    });
+  });
+
+  it("returns null when no station is selected", () => {
+    expect(resolveFocusRadioNowPlaying(createStarterLibrary())).toBeNull();
   });
 });
 

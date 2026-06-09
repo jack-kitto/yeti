@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { resolveFocusRadioNowPlaying } from "@/focus-radio/playback";
 import { buildFocusRadioStationPickerRows } from "@/focus-radio/station-picker";
 import { updateFocusRadioPlayback } from "@/focus-radio/stations";
 import { useMutateLibrary } from "@/hooks/use-library";
@@ -14,15 +15,98 @@ export function ControlCenterMediaTab({ library }: ControlCenterMediaTabProps) {
   const mutateLibrary = useMutateLibrary();
   const [query, setQuery] = useState("");
   const rows = buildFocusRadioStationPickerRows(library, query);
+  const playback = library.focusRadio.playback;
+  const nowPlaying = resolveFocusRadioNowPlaying(library);
+
+  function patchPlayback(patch: Parameters<typeof updateFocusRadioPlayback>[1]) {
+    mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, patch));
+  }
 
   function handleSelectStation(stationId: string) {
-    mutateLibrary.mutate((current) =>
-      updateFocusRadioPlayback(current, { stationId }),
-    );
+    patchPlayback({ stationId });
+  }
+
+  function handleTogglePlay() {
+    if (!nowPlaying) {
+      const firstStation = rows[0];
+      if (!firstStation) {
+        return;
+      }
+      patchPlayback({ stationId: firstStation.id, playing: true });
+      return;
+    }
+
+    patchPlayback({ playing: !playback.playing });
+  }
+
+  function handleVolumeChange(volume: number) {
+    patchPlayback({ volume, muted: false });
+  }
+
+  function handleToggleMute() {
+    patchPlayback({ muted: !playback.muted });
   }
 
   return (
     <div className="shell-dashboard-media">
+      {nowPlaying ? (
+        <div className="shell-dashboard-media-now-playing">
+          {nowPlaying.imageUrl ? (
+            <img
+              src={nowPlaying.imageUrl}
+              alt=""
+              className="shell-dashboard-media-now-playing-artwork"
+            />
+          ) : (
+            <span
+              className="shell-dashboard-media-now-playing-artwork shell-dashboard-media-artwork-fallback"
+              aria-hidden
+            >
+              {nowPlaying.label.slice(0, 1)}
+            </span>
+          )}
+          <div className="shell-dashboard-media-now-playing-meta">
+            <p className="shell-dashboard-media-now-playing-label">{nowPlaying.label}</p>
+            <p className="shell-dashboard-media-now-playing-kind">{nowPlaying.kind}</p>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="shell-dashboard-media-controls">
+        <button
+          type="button"
+          className="shell-dashboard-media-play"
+          onClick={handleTogglePlay}
+          disabled={!nowPlaying && rows.length === 0}
+          aria-label={playback.playing ? "Pause" : "Play"}
+        >
+          {playback.playing ? "Pause" : "Play"}
+        </button>
+
+        <label className="shell-dashboard-media-volume">
+          <span className="shell-dashboard-media-volume-label">Volume</span>
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.01}
+            value={playback.volume}
+            onChange={(event) => handleVolumeChange(Number(event.target.value))}
+            aria-label="Volume"
+          />
+        </label>
+
+        <button
+          type="button"
+          className="shell-dashboard-media-mute"
+          onClick={handleToggleMute}
+          aria-pressed={playback.muted}
+          aria-label={playback.muted ? "Unmute" : "Mute"}
+        >
+          {playback.muted ? "Unmute" : "Mute"}
+        </button>
+      </div>
+
       <input
         type="search"
         value={query}

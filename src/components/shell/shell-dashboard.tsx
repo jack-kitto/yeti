@@ -5,6 +5,7 @@ import { buildControlCenterWorkspaceRows } from "@/control-center/workspaces";
 import type { Library } from "@/library/types";
 import { ControlCenterCalendarTab } from "./control-center-calendar-tab";
 import { ControlCenterMediaTab } from "./control-center-media-tab";
+import { FocusRadioStreamPlayer } from "./focus-radio-stream-player";
 
 const TABS = [
   { id: "workspaces", label: "Workspaces" },
@@ -74,6 +75,7 @@ export function ShellDashboard({ library, onSwitchWorkspace }: ShellDashboardPro
 
   return (
     <div className="shell-dashboard">
+      <FocusRadioStreamPlayer library={library} />
       <nav className="shell-dashboard-tabs" aria-label="Control center">
         {TABS.map((tab) => (
           <button

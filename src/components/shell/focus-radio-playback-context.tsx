@@ -92,15 +92,49 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   const attemptPlayRef = useRef<() => void>(() => {});
   const handleStreamFailureRef = useRef<() => void>(() => {});
 
+  const ensureStreamAnalyser = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || analyserRef.current) {
+      return;
+    }
+
+    const mediaElement = audio as HTMLMediaElement & {
+      captureStream?: () => MediaStream;
+    };
+    if (typeof mediaElement.captureStream !== "function") {
+      return;
+    }
+
+    try {
+      const context = new AudioContext();
+      const analyser = context.createAnalyser();
+      analyser.fftSize = 32;
+      analyser.smoothingTimeConstant = 0.82;
+      const stream = mediaElement.captureStream();
+      const source = context.createMediaStreamSource(stream);
+      source.connect(analyser);
+      analyserRef.current = analyser;
+      audioContextRef.current = context;
+    } catch {
+      // Visualizer falls back to decorative animation.
+    }
+  }, []);
+
   attemptPlayRef.current = () => {
     const audio = audioRef.current;
     if (!audio) {
       return;
     }
 
-    void audio.play().catch(() => {
-      handleStreamFailureRef.current();
-    });
+    void audio
+      .play()
+      .then(() => {
+        ensureStreamAnalyser();
+        void audioContextRef.current?.resume();
+      })
+      .catch(() => {
+        handleStreamFailureRef.current();
+      });
   };
 
   const handleStreamFailure = useCallback(() => {
@@ -232,27 +266,6 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
     const timer = window.setInterval(refreshExternalGlance, 1500);
     return () => window.clearInterval(timer);
   }, [mutateLibrary, nowPlaying]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !streamUrl || !shouldPlayStream) {
-      return;
-    }
-
-    if (!analyserRef.current) {
-      const context = new AudioContext();
-      const analyser = context.createAnalyser();
-      analyser.fftSize = 32;
-      analyser.smoothingTimeConstant = 0.82;
-      const source = context.createMediaElementSource(audio);
-      source.connect(analyser);
-      analyser.connect(context.destination);
-      analyserRef.current = analyser;
-      audioContextRef.current = context;
-    }
-
-    void audioContextRef.current?.resume();
-  }, [shouldPlayStream, streamUrl]);
 
   const getStreamAnalyser = useCallback(() => analyserRef.current, []);
 

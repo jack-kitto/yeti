@@ -72,7 +72,7 @@ export function ShellConfigDialog({ library, workspaceName }: ShellConfigDialogP
       <button
         type="button"
         aria-label="Close settings"
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="shell-overlay-scrim"
         onClick={close}
       />
 

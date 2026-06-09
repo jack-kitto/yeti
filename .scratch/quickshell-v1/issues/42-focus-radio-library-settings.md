@@ -6,7 +6,7 @@ Status: done
 
 ## What to build
 
-**Focus radio** library schema and **settings** CRUD: global (not per-workspace) station list with `label`, `url`, `kind` (`stream` | `youtube`), optional `imageUrl`, reorder, and persistence of last station, volume, mute, and playing state. Optional gitignored local YAML seed for dev. Empty starter template; setup prompt when no stations.
+**Focus radio** library schema and **settings** CRUD: global (not per-workspace) station list with `label`, `url`, `kind` (`stream` | `youtube`), optional `imageUrl`, reorder, and persistence of last station, volume, mute, and playing state. Stations from library snapshot or settings only — no local file seeding. Empty starter template; setup prompt when no stations.
 
 ## Acceptance criteria
 

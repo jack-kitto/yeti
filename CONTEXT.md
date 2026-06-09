@@ -178,7 +178,7 @@ Canvas **pins** and **pin strip** removed — links surface via **edge groups**,
 
 **Agent host** (backlog, issue 29) — Yeti as a front door to the user's agent via **pluggable runtime adapters** (local-first; user-supplied keys for cloud). Focus planning/coaching, skill dispatch (`grill-with-docs`, `teach-me`, etc.), library snapshot push to GitHub, reminders/notifications. Command bar for quick dispatch; right-rim tool for multi-turn. Not v1; requires trust-boundary ADR before build.
 
-Third-party radio (SomaFM, Techno.FM, etc.) is **not bundled** — **focus radio** is BYO stream/YouTube URLs for the user's personal instance. Starter template ships with an empty station list. Developers may keep a gitignored `yeti-radio.local.yaml` to seed personal stations locally.
+Third-party radio (SomaFM, Techno.FM, etc.) is **not bundled** — **focus radio** is BYO stream/YouTube URLs for the user's personal instance. Starter template ships with an empty station list. Stations load from the **library** (snapshot import or settings CRUD) only — no local file seeding.
 
 ## First run
 

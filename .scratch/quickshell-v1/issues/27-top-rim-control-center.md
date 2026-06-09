@@ -26,7 +26,7 @@ v1 scope (locked unless human revises):
 - **Station picker UX** (locked): scrollable list + search/filter by label; optional **favorites** pin to top (user-flagged); active station highlighted
 - **Now playing** (locked): current station label (+ optional image) at top of media tab while playing
 - **Empty state** (locked): starter template has **no stations**; setup prompt + button to **settings** when list empty
-- **Local dev seed** (locked): optional gitignored `yeti-radio.local.yaml` at repo root — if present on load, import into library radio preferences (personal instance only; never committed). Committed `yeti-radio.local.example.yaml` documents schema
+- **Station source** (locked): library snapshot import or settings CRUD only — no local file seeding
 - **Focus radio persistence** (locked): global (not per-workspace) — last station, volume, and playing/paused state in **library** preferences; survives reload
 - **Focus radio controls** (locked): station picker, play/pause, volume slider, mute toggle — no visualizer/skip UI in v1
 - **Stream failure** (locked): retry same `stream` station once after ~3s, then try next user station; inline error + manual retry only if all fail

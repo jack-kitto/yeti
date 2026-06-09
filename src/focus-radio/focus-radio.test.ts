@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { createStarterLibrary } from "@/library/starter-template";
 import { deserializeSnapshot, serializeSnapshot } from "@/snapshot/snapshot";
 import { createDefaultFocusRadio } from "./config";
-import { applyFocusRadioLocalSeed, parseFocusRadioLocalSeed } from "./local-seed";
 import {
   addFocusRadioStation,
   listFocusRadioStations,
@@ -169,53 +168,5 @@ describe("focus radio snapshot", () => {
     const restored = deserializeSnapshot(serializeSnapshot(library));
 
     expect(restored.focusRadio).toEqual(library.focusRadio);
-  });
-});
-
-describe("parseFocusRadioLocalSeed", () => {
-  it("parses BYO station entries from local YAML", () => {
-    const stations = parseFocusRadioLocalSeed(`
-stations:
-  - label: Example Lofi
-    kind: stream
-    url: https://example.com/stream.mp3
-    favorite: true
-`);
-
-    expect(stations).toEqual([
-      {
-        label: "Example Lofi",
-        kind: "stream",
-        url: "https://example.com/stream.mp3",
-        favorite: true,
-      },
-    ]);
-  });
-});
-
-describe("applyFocusRadioLocalSeed", () => {
-  it("imports stations only when the library list is still empty", async () => {
-    const library = createStarterLibrary();
-    const yaml = `
-stations:
-  - label: Dev Lofi
-    kind: stream
-    url: https://example.com/stream.mp3
-`;
-
-    const seeded = applyFocusRadioLocalSeed(library, yaml);
-    const unchanged = applyFocusRadioLocalSeed(
-      addFocusRadioStation(library, {
-        label: "Existing",
-        url: "https://example.com/existing.mp3",
-        kind: "stream",
-      }),
-      yaml,
-    );
-
-    expect(listFocusRadioStations(seeded).map((station) => station.label)).toEqual(["Dev Lofi"]);
-    expect(listFocusRadioStations(unchanged).map((station) => station.label)).toEqual([
-      "Existing",
-    ]);
   });
 });

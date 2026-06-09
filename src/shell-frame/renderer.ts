@@ -156,7 +156,7 @@ function generateTopNotchFill(
   path.moveTo(x1 - r, 0);
   path.lineTo(x2 + r, 0);
   path.lineTo(x2 + r, y);
-  path.lineTo(x2, y + r);
+  path.quadraticCurveTo(x2, y, x2, y + r);
   path.lineTo(x2, y + d - r);
   path.quadraticCurveTo(x2, y + d, x2 - r, y + d);
   path.lineTo(x1 + r, y + d);
@@ -181,7 +181,7 @@ function generateBottomNotchFill(
   path.moveTo(x1 - r, layout.h);
   path.lineTo(x2 + r, layout.h);
   path.lineTo(x2 + r, y);
-  path.lineTo(x2, y - r);
+  path.quadraticCurveTo(x2, y, x2, y - r);
   path.lineTo(x2, y - d + r);
   path.quadraticCurveTo(x2, y - d, x2 - r, y - d);
   path.lineTo(x1 + r, y - d);

@@ -28,6 +28,7 @@ import {
   computeRightEdgeHoverBridge,
   computeStackedLeftRimTraps,
   computeStackedRimTraps,
+  computeTopDashboardRimHit,
   shouldEnableHoverBridge,
 } from "@/shell-frame/edge-hover-zones";
 import {
@@ -112,6 +113,19 @@ export function ShellEdgeLayer({
   } | null>(null);
   const openFromEdgeGroup = useLauncherStore((state) => state.openFromEdgeGroup);
   const shellState = useSyncExternalStore(subscribeShellState, getShellState, getShellState);
+  const dashboardMenuSize =
+    shellState.menuSizes.get(BUILTIN_SURFACE.TOP_DASHBOARD) ??
+    defaultMenuSize(BUILTIN_SURFACE.TOP_DASHBOARD);
+  const dashboardReveal =
+    shellState.activeZoneId === BUILTIN_SURFACE.TOP_DASHBOARD ||
+    (shellState.closing && shellState.previousZoneId === BUILTIN_SURFACE.TOP_DASHBOARD)
+      ? getFlyoutRevealProgress(shellState)
+      : 0;
+  const topDashboardHit = computeTopDashboardRimHit(
+    rimLayout,
+    dashboardMenuSize,
+    dashboardReveal > 0.04,
+  );
 
   const activeWorkspace = library.workspaces.find(
     (workspace) => workspace.id === library.activeWorkspaceId,
@@ -346,10 +360,10 @@ export function ShellEdgeLayer({
   return (
     <div className="pointer-events-none absolute inset-0 z-20">
       {renderRimHit(BUILTIN_SURFACE.TOP_DASHBOARD, "shell-rim-hit-top", {
-        top: 0,
-        left: 0,
-        right: 0,
-        height: rimLayout.frameTop,
+        top: topDashboardHit.top,
+        left: topDashboardHit.left,
+        width: topDashboardHit.width,
+        height: topDashboardHit.height,
       })}
       {renderRimHit(BUILTIN_SURFACE.BOTTOM_SEARCH, "shell-rim-hit-bottom", {
         bottom: 0,

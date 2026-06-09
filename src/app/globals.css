@@ -783,6 +783,8 @@ body {
   padding: 12px;
   background: color-mix(in srgb, var(--qs-color-text) 4%, transparent);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--qs-color-surface) 35%, transparent);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .shell-config-form-panel {
@@ -1034,6 +1036,9 @@ body {
   border: none;
   border-radius: 12px;
   padding: 8px 10px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   font: inherit;
   font-size: 13px;
   color: var(--qs-color-text);

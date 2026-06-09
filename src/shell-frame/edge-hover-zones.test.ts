@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   computeEdgeHoverBridge,
   computeStackedLeftRimTraps,
+  computeTopDashboardRimHit,
   EDGE_HANDLE_HIT_PX,
   shouldEnableHoverBridge,
 } from "./edge-hover-zones";
+import { getFlyoutRevealProgress, getShellLayout } from "./layout";
 
 describe("computeStackedLeftRimTraps", () => {
   it("creates stacked left-rim traps with at least 40px effective height", () => {
@@ -67,5 +69,26 @@ describe("shouldEnableHoverBridge", () => {
     expect(
       shouldEnableHoverBridge("group-a", "group-b", false, true, false, 1),
     ).toBe(false);
+  });
+});
+
+describe("computeTopDashboardRimHit", () => {
+  it("covers the pocket span with at least 40px height when resting", () => {
+    const layout = getShellLayout();
+    const hit = computeTopDashboardRimHit(layout, { width: 480, height: 260 }, false);
+
+    expect(hit.top).toBe(0);
+    expect(hit.height).toBeGreaterThanOrEqual(40);
+    expect(hit.width).toBe(Math.min(layout.panelW * 0.42, 480) * 2);
+    expect(hit.left + hit.width / 2).toBeCloseTo(layout.panelX + layout.panelW * 0.5, 0);
+  });
+
+  it("extends through the open pocket depth while the control center is expanded", () => {
+    const layout = getShellLayout();
+    const menuSize = { width: 480, height: 260 };
+    const hit = computeTopDashboardRimHit(layout, menuSize, true);
+    const pocketDepth = Math.max(menuSize.height + layout.pocketInset * 2 + 8, 220);
+
+    expect(hit.height).toBe(layout.panelY + pocketDepth + layout.pocketInset);
   });
 });

@@ -1,6 +1,8 @@
 import { EDGE_HANDLE_SIZE_PX } from "@/edge-slots/edge-slots";
+import type { MenuSize, ShellLayout } from "./layout";
 
 export const EDGE_HANDLE_HIT_PX = EDGE_HANDLE_SIZE_PX;
+export const BUILTIN_RIM_HIT_PX = EDGE_HANDLE_HIT_PX;
 
 export type HoverRect = {
   top: number;
@@ -152,4 +154,23 @@ export function shouldEnableHoverBridge(
     return false;
   }
   return overIcon || overMenu || revealProgress >= 0.04;
+}
+
+export function computeTopDashboardRimHit(
+  layout: ShellLayout,
+  menuSize: MenuSize,
+  expanded: boolean,
+): HoverRect {
+  const halfSpan = Math.min(layout.panelW * 0.42, 480);
+  const pocketDepth = Math.max(menuSize.height + layout.pocketInset * 2 + 8, 220);
+  const centerX = layout.panelX + layout.panelW * 0.5;
+  const restingHeight = Math.max(layout.frameTop, BUILTIN_RIM_HIT_PX);
+  const height = expanded ? layout.panelY + pocketDepth + layout.pocketInset : restingHeight;
+
+  return {
+    top: 0,
+    left: centerX - halfSpan,
+    width: halfSpan * 2,
+    height,
+  };
 }

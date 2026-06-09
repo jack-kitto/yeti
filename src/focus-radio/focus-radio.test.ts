@@ -5,6 +5,7 @@ import { createDefaultFocusRadio } from "./config";
 import {
   resolveFocusRadioNowPlaying,
   resolveFocusRadioOutputVolume,
+  shouldPlayFocusRadioStream,
   shouldPlayFocusRadioYoutube,
 } from "./playback";
 import { parseYoutubeVideoId } from "./youtube";
@@ -201,6 +202,20 @@ describe("parseYoutubeVideoId", () => {
     expect(parseYoutubeVideoId("https://youtu.be/dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
     expect(parseYoutubeVideoId("https://youtube.com/live/abc123XYZ_0")).toBe("abc123XYZ_0");
     expect(parseYoutubeVideoId("not-a-url")).toBeNull();
+  });
+});
+
+describe("focus radio background playback", () => {
+  it("derives playback intent from library state only", async () => {
+    let library = addFocusRadioStation(createStarterLibrary(), {
+      label: "Lofi",
+      url: "https://stream.example.com/lofi.mp3",
+      kind: "stream",
+    }, "lofi");
+    library = updateFocusRadioPlayback(library, { stationId: "lofi", playing: true });
+
+    expect(shouldPlayFocusRadioStream(library)).toBe(true);
+    expect(shouldPlayFocusRadioYoutube(library)).toBe(false);
   });
 });
 

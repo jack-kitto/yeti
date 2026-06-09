@@ -5,7 +5,6 @@ import { buildControlCenterWorkspaceRows } from "@/control-center/workspaces";
 import type { Library } from "@/library/types";
 import { ControlCenterCalendarTab } from "./control-center-calendar-tab";
 import { ControlCenterMediaTab } from "./control-center-media-tab";
-import { FocusRadioPlaybackProvider } from "./focus-radio-playback-context";
 
 const TABS = [
   { id: "workspaces", label: "Workspaces" },
@@ -74,33 +73,31 @@ export function ShellDashboard({ library, onSwitchWorkspace }: ShellDashboardPro
   const [activeTab, setActiveTab] = useState<TabId>("workspaces");
 
   return (
-    <FocusRadioPlaybackProvider library={library}>
-      <div className="shell-dashboard">
-        <nav className="shell-dashboard-tabs" aria-label="Control center">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`shell-dashboard-tab${activeTab === tab.id ? " active" : ""}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-        <div className="shell-dashboard-body">
-          {activeTab === "workspaces" ? (
-            <ControlCenterWorkspacesTab
-              library={library}
-              onSwitchWorkspace={onSwitchWorkspace}
-            />
-          ) : activeTab === "calendar" ? (
-            <ControlCenterCalendarTab library={library} active />
-          ) : (
-            <ControlCenterMediaTab library={library} />
-          )}
-        </div>
+    <div className="shell-dashboard">
+      <nav className="shell-dashboard-tabs" aria-label="Control center">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            className={`shell-dashboard-tab${activeTab === tab.id ? " active" : ""}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+      <div className="shell-dashboard-body">
+        {activeTab === "workspaces" ? (
+          <ControlCenterWorkspacesTab
+            library={library}
+            onSwitchWorkspace={onSwitchWorkspace}
+          />
+        ) : activeTab === "calendar" ? (
+          <ControlCenterCalendarTab library={library} active />
+        ) : (
+          <ControlCenterMediaTab library={library} />
+        )}
       </div>
-    </FocusRadioPlaybackProvider>
+    </div>
   );
 }

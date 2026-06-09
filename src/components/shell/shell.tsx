@@ -9,6 +9,7 @@ import { CanvasWidgetStack } from "./canvas-widget-stack";
 import { Launcher } from "./launcher";
 import { ShellConfigDialog } from "./shell-config-dialog";
 import { ShellCanvas } from "./shell-canvas";
+import { FocusRadioPlaybackProvider } from "./focus-radio-playback-context";
 import { ShellEdgeLayer } from "./shell-edge-layer";
 
 type PanelBounds = {
@@ -72,48 +73,50 @@ export function Shell() {
   }
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden">
-      <ShellCanvas theme={activeWorkspace.theme} />
-      <ShellEdgeLayer
-        library={library}
-        onReorderGroup={handleReorderGroup}
-        onSwitchWorkspace={(workspaceId) =>
-          applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
-        }
-        onUpdateInternalTools={(internalTools) =>
-          saveLibraryMutation.mutate({
-            ...library,
-            workspaces: library.workspaces.map((workspace) =>
-              workspace.id === library.activeWorkspaceId
-                ? { ...workspace, internalTools }
-                : workspace,
-            ),
-          })
-        }
-      />
+    <FocusRadioPlaybackProvider library={library}>
+      <div className="relative h-screen w-screen overflow-hidden">
+        <ShellCanvas theme={activeWorkspace.theme} />
+        <ShellEdgeLayer
+          library={library}
+          onReorderGroup={handleReorderGroup}
+          onSwitchWorkspace={(workspaceId) =>
+            applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
+          }
+          onUpdateInternalTools={(internalTools) =>
+            saveLibraryMutation.mutate({
+              ...library,
+              workspaces: library.workspaces.map((workspace) =>
+                workspace.id === library.activeWorkspaceId
+                  ? { ...workspace, internalTools }
+                  : workspace,
+              ),
+            })
+          }
+        />
 
-      <main
-        className="pointer-events-none absolute z-10 flex flex-col items-center px-8"
-        style={{
-          left: panelBounds.left,
-          top: panelBounds.top,
-          width: panelBounds.width,
-          height: panelBounds.height,
-        }}
-      >
-        <div
-          className="pointer-events-auto absolute left-0 flex w-full justify-center px-8"
-          style={{ top: "40%", transform: "translateY(-50%)" }}
+        <main
+          className="pointer-events-none absolute z-10 flex flex-col items-center px-8"
+          style={{
+            left: panelBounds.left,
+            top: panelBounds.top,
+            width: panelBounds.width,
+            height: panelBounds.height,
+          }}
         >
-          <CanvasWidgetStack workspace={activeWorkspace} />
-        </div>
-      </main>
+          <div
+            className="pointer-events-auto absolute left-0 flex w-full justify-center px-8"
+            style={{ top: "40%", transform: "translateY(-50%)" }}
+          >
+            <CanvasWidgetStack workspace={activeWorkspace} />
+          </div>
+        </main>
 
-      <Launcher library={library} />
-      <ShellConfigDialog
-        library={library}
-        workspaceName={activeWorkspace.name}
-      />
-    </div>
+        <Launcher library={library} />
+        <ShellConfigDialog
+          library={library}
+          workspaceName={activeWorkspace.name}
+        />
+      </div>
+    </FocusRadioPlaybackProvider>
   );
 }

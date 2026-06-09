@@ -1,5 +1,5 @@
-import { Shell } from "@/components/shell/shell";
+import { LandingPage } from "@/components/landing/landing-page";
 
-export default function Home() {
-  return <Shell />;
+export default function LandingRoute() {
+  return <LandingPage />;
 }

@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -16,10 +16,10 @@ Root `/` must no longer mount `Shell` directly. Existing bookmarks to `/` will h
 
 ## Acceptance criteria
 
-- [ ] Navigating to `/` shows landing content, not the shell or a loading gate
-- [ ] Navigating to `/home` mounts the full **shell** with existing behavior
-- [ ] `/start` route exists and renders (stub acceptable)
-- [ ] No regressions to shell functionality on `/home`
+- [x] Navigating to `/` shows landing content, not the shell or a loading gate
+- [x] Navigating to `/home` mounts the full **shell** with existing behavior
+- [x] `/start` route exists and renders (stub acceptable)
+- [x] No regressions to shell functionality on `/home`
 
 ## Blocked by
 
@@ -28,3 +28,5 @@ None — can start immediately
 ## Comments
 
 Tracer bullet 1 of 5 for issue 34.
+
+Shipped in `feat(routing): split landing, home station, and start page routes`.

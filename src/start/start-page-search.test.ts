@@ -1,0 +1,56 @@
+import { describe, expect, it } from "vitest";
+import { initialKey } from "@/fractional-order/fractional-order";
+import type { Library, Link } from "@/library/types";
+import { buildStartPageSearchResults } from "./start-page-search";
+
+function link(id: string, title: string): Link {
+  return { id, url: `https://${id}.example.com`, title };
+}
+
+function makeLibrary(catalog: Link[]): Library {
+  return {
+    catalog,
+    workspaces: [
+      {
+        id: "work",
+        name: "Work",
+        theme: {
+          palette: {
+            background: "#000",
+            surface: "#111",
+            text: "#fff",
+            accent: "#f00",
+          },
+          glassOpacity: 0.7,
+          borderRadius: 16,
+        },
+        placements: {
+          edges: { left: [], top: [], bottom: [] },
+          pins: [],
+        },
+        internalTools: {
+          pomodoro: { orderKey: initialKey(), splitId: "classic" },
+          tasks: { orderKey: initialKey(), items: [] },
+        },
+      },
+    ],
+    activeWorkspaceId: "work",
+    shortcuts: {},
+  };
+}
+
+describe("buildStartPageSearchResults", () => {
+  it("searches links only and ignores command bar action mode", () => {
+    const library = makeLibrary([link("gh", "GitHub")]);
+
+    expect(buildStartPageSearchResults(library, "git")).toEqual([
+      {
+        linkId: "gh",
+        url: "https://gh.example.com",
+        title: "GitHub",
+        source: "catalog",
+      },
+    ]);
+    expect(buildStartPageSearchResults(library, ":settings")).toEqual([]);
+  });
+});

@@ -5,12 +5,11 @@ import { useApplyLibraryPatch, useLibrary, useSaveLibrary } from "@/hooks/use-li
 import { applyTheme } from "@/theme/theme";
 import { reorderEdgeGroupOnRim } from "@/placement/placement";
 import { getShellLayout } from "@/shell-frame/layout";
+import { CanvasWidgetStack } from "./canvas-widget-stack";
 import { Launcher } from "./launcher";
 import { ShellConfigDialog } from "./shell-config-dialog";
-import { PinStrip } from "./pin-strip";
 import { ShellCanvas } from "./shell-canvas";
 import { ShellEdgeLayer } from "./shell-edge-layer";
-import { WorkspaceSwitcher } from "./workspace-switcher";
 
 type PanelBounds = {
   left: number;
@@ -94,7 +93,7 @@ export function Shell() {
       />
 
       <main
-        className="pointer-events-none absolute z-10 flex flex-col items-center justify-center gap-4 px-8"
+        className="pointer-events-none absolute z-10 flex flex-col items-center px-8"
         style={{
           left: panelBounds.left,
           top: panelBounds.top,
@@ -102,14 +101,11 @@ export function Shell() {
           height: panelBounds.height,
         }}
       >
-        <div className="pointer-events-auto flex w-full max-w-md flex-col items-center gap-4">
-          <WorkspaceSwitcher
-            library={library}
-            onSwitch={(workspaceId) =>
-              applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
-            }
-          />
-          <PinStrip library={library} />
+        <div
+          className="pointer-events-auto absolute left-0 flex w-full justify-center px-8"
+          style={{ top: "40%", transform: "translateY(-50%)" }}
+        >
+          <CanvasWidgetStack workspace={activeWorkspace} />
         </div>
       </main>
 

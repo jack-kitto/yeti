@@ -15,7 +15,7 @@ export const SHELL_ONLY_MODULES = [
   "src/components/shell/shell-config-dialog.tsx",
   "src/components/shell/launcher.tsx",
   "src/components/shell/shell-dashboard.tsx",
-  "src/components/shell/pin-strip.tsx",
+  "src/components/shell/canvas-widget-stack.tsx",
   "src/shell-frame/",
 ] as const;
 

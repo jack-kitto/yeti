@@ -5,7 +5,12 @@ import {
   TASKS_FLYOUT_FORM_CLASS,
   TASKS_FLYOUT_LIST_SCROLL_CLASS,
 } from "@/internal-tools/tasks-flyout-layout";
-import { addFocusTask, completeFocusTask, listTodayTasks } from "@/internal-tools/tasks";
+import {
+  addFocusTask,
+  completeFocusTask,
+  listTodayTasks,
+  startFocusOnTask,
+} from "@/internal-tools/tasks";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
 
 type TasksFlyoutProps = {
@@ -35,13 +40,22 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
           {todayTasks.map((task) => (
             <li key={task.id} className="shell-tool-task-item">
               <span>{task.title}</span>
-              <button
-                type="button"
-                className="shell-flyout-more"
-                onClick={() => onChange(completeFocusTask(internalTools, task.id))}
-              >
-                Done
-              </button>
+              <div className="shell-tool-task-actions">
+                <button
+                  type="button"
+                  className="shell-flyout-more"
+                  onClick={() => onChange(startFocusOnTask(internalTools, task.id, new Date()))}
+                >
+                  Start focus
+                </button>
+                <button
+                  type="button"
+                  className="shell-flyout-more"
+                  onClick={() => onChange(completeFocusTask(internalTools, task.id))}
+                >
+                  Done
+                </button>
+              </div>
             </li>
           ))}
         </ul>

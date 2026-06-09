@@ -1873,6 +1873,12 @@ body {
   min-height: 0;
 }
 
+.shell-tool-active-task {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
 .shell-tool-timer {
   margin: 0;
   font-size: 28px;
@@ -1948,6 +1954,12 @@ body {
   justify-content: space-between;
   gap: 8px;
   font-size: 13px;
+}
+
+.shell-tool-task-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
 }
 
 .shell-tool-task-form {

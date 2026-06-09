@@ -17,7 +17,8 @@ import {
   setPomodoroSplit,
   startPomodoro,
 } from "@/internal-tools/pomodoro";
-import type { PomodoroState, WorkspaceInternalTools } from "@/internal-tools/types";
+import { getActiveFocusTask } from "@/internal-tools/tasks";
+import type { WorkspaceInternalTools } from "@/internal-tools/types";
 
 type PomodoroFlyoutProps = {
   internalTools: WorkspaceInternalTools;
@@ -67,6 +68,7 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
     });
   }, [internalTools, now, onChange, pomodoro]);
 
+  const activeTask = getActiveFocusTask(internalTools);
   const split = resolveFocusSplit(pomodoro.splitId, internalTools);
   const idleSeconds =
     pomodoro.phase === "work"
@@ -79,6 +81,9 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
   return (
     <div className="shell-tool-flyout">
       <p className="shell-flyout-title">Pomodoro</p>
+      {activeTask ? (
+        <p className="shell-tool-active-task">{activeTask.title}</p>
+      ) : null}
       <p className="shell-tool-timer" aria-live="polite">
         {formatTimerSeconds(seconds)}
       </p>

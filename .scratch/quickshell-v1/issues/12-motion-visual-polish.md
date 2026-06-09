@@ -29,3 +29,5 @@ This slice requires human review of visual and motion quality before v1 is consi
 Canvas deformation shell (issue 25) is done. Settings UI is a centered dialog, not a right-rim flyout — polish that surface instead of legacy config-panel language.
 
 Top and right rim pockets may still change shape when issues 27–28 land; avoid over-investing in right-rim config styling (issue 26 removes it).
+
+**Refinement (2026-06):** Rim pocket open/close must expand from a point (both `span` and `depth` scaled by `t`), not pop to half-width on frame 1. Close animation must retreat inward (`t` → 0) before flyout unmount — tracked in `layout.test.ts` / `shell-animation.ts`.

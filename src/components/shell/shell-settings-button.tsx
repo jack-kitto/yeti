@@ -10,10 +10,10 @@ export function ShellSettingsButton() {
   return (
     <button
       type="button"
-      className="shell-icon-btn shell-settings-btn"
+      className="shell-icon-btn shell-icon-btn-ghost shell-settings-btn"
       style={{
-        left: layout.frameLeft * 0.5,
-        top: layout.panelBottom - layout.sidePadding * 0.45,
+        left: layout.w - layout.frameRight * 0.5,
+        top: layout.frameTop + layout.sidePadding * 0.35,
       }}
       aria-label="Settings"
       onClick={() => openSettings()}

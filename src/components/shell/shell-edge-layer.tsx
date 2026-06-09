@@ -479,7 +479,7 @@ export function ShellEdgeLayer({
                   }
                 }}
                 type="button"
-                className="shell-icon-btn"
+                className="shell-icon-btn shell-icon-btn-ghost"
                 style={{ left: zone.x, top: zone.y }}
                 aria-label={handle.label}
                 onMouseEnter={() => {

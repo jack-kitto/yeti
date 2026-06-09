@@ -106,7 +106,7 @@ _Avoid_: Button, tab, dock item
 The contextual panel of links for one **edge group**. Opens from the group's **edge handle** anchor (not the center of the screen edge). Shows up to **8 links** (user-ordered), then **see more** opens the **launcher** filtered to that group. Closes when the pointer leaves unless pinned.
 _Avoid_: Sidebar, dropdown, popover
 
-**Edge groups** on the left rim and **internal tools** on the **right rim** share the same handle/flyout interaction model. Left handle slot assignment is editable on the live shell (drag handle, snap to slot) and in **settings** (slot rail for precise layout).
+**Edge groups** on the left rim and **internal tools** on the **right rim** share the same handle/flyout interaction model. Link-group handles use the glass **shell-icon-btn** surface; **internal tool** handles on the narrow right rim use a ghost variant (glyph only, no card) to avoid canvas overflow. Left handle slot assignment is editable on the live shell (drag handle, snap to slot) and in **settings** (slot rail for precise layout).
 
 **Placement**:
 Where a catalog link surfaces within a workspace — in one or more **edge groups**, or unplaced. Placements are per-workspace; the same catalog link can be placed differently in Work vs Personal. Ordered placements use **fractional order**.
@@ -131,7 +131,7 @@ _Avoid_: Command, palette action, slash command
 Keyboard shortcuts are **configurable** with browser-safe defaults (e.g. `⌘⇧K` for command bar). All shortcuts are tab-scoped — they only work when the Yeti tab is active.
 
 **Settings**:
-A modal dialog for all configuration — workspace management, theme editing, link catalog CRUD, placement assignment, edge ordering, **canvas widget** toggles, **control center** options, library snapshot import/export, and destructive **library reset**. Opened via the **command bar action** `:settings` or a control at the bottom of the left rim. Not a rim pocket; the **right rim** is reserved for **internal tools**.
+A modal dialog for all configuration — workspace management, theme editing, link catalog CRUD, placement assignment, edge ordering, **canvas widget** toggles, **control center** options, library snapshot import/export, and destructive **library reset**. Opened via the **command bar action** `:settings` or a ghost control in the **top-right corner**. Not a rim pocket; the **right rim** is reserved for **internal tools**.
 _Avoid_: Config panel, preferences page, right-edge flyout
 
 **Library reset**:

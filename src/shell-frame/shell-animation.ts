@@ -29,7 +29,7 @@ export function startShellAnimation(
     resizeShellCanvas(canvas);
     const layout = getShellLayout();
     const state = getShellState();
-    const targetT = state.activeZoneId || state.closing ? 1 : 0;
+    const targetT = state.closing ? 0 : state.activeZoneId ? 1 : 0;
 
     const nextT = state.t + (targetT - state.t) * SPEED_T;
     const nextAnchor = state.anchor + (state.targetAnchor - state.anchor) * SPEED_ANCHOR;
@@ -39,19 +39,9 @@ export function startShellAnimation(
     let closing = state.closing;
     let settledT = nextT;
 
-    if (closing) {
-      const settled =
-        nextT > 0.995 &&
-        Math.abs(nextAnchor - state.targetAnchor) < 0.4 &&
-        Math.abs(nextSpan - state.targetSpan) < 0.4 &&
-        Math.abs(nextDepth - state.targetDepth) < 0.4;
-
-      if (settled) {
-        closing = false;
-        settledT = 0;
-      } else {
-        settledT = 1 - nextT;
-      }
+    if (closing && nextT < 0.02) {
+      closing = false;
+      settledT = 0;
     }
 
     patchAnimationState({
@@ -60,6 +50,7 @@ export function startShellAnimation(
       span: nextSpan,
       depth: nextDepth,
       closing,
+      ...(closing === false && state.closing ? { previousZoneId: null } : {}),
     });
 
     const pocket = getRenderPocket(layout, getShellState());

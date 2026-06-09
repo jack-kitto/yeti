@@ -55,3 +55,5 @@ Decide before implementation:
 Product direction (2025-06): mirror the left rim's spatial model for apps inside the shell. Config for external links stays in the settings dialog.
 
 **v1 tools locked:** pomodoro first, then tasks. Notes/stickies deferred.
+
+**Refinement (2026-06):** Right-rim tool handles use **ghost** styling (no glass card) — the narrow `frameRight` rim cannot fit the standard `shell-icon-btn` surface without overflowing into the canvas.

@@ -198,8 +198,9 @@ export function getRenderPocket(
   layout: ShellLayout,
   animation: ShellAnimationSnapshot,
 ): RenderPocket {
-  const depth = animation.depth * easeOutCubic(clamp(animation.t, 0, 1));
-  const span = animation.span;
+  const progress = easeOutCubic(clamp(animation.t, 0, 1));
+  const depth = animation.depth * progress;
+  const span = animation.span * progress;
   const radius = Math.min(layout.pocketCorner, depth * 0.28, span * 0.34);
   const rim = animation.renderRim;
   const isHorizontal = rim === "top" || rim === "bottom";
@@ -251,10 +252,7 @@ export const getFlyoutPosition = getSurfacePosition;
 export function getFlyoutRevealProgress(
   animation: ShellAnimationSnapshot,
 ): number {
-  if (animation.closing) {
-    return easeOutCubic(clamp(1 - animation.t, 0, 1));
-  }
-  if (!animation.activeZoneId) {
+  if (!animation.activeZoneId && !animation.closing) {
     return 0;
   }
   return easeOutCubic(clamp(animation.t, 0, 1));

@@ -19,6 +19,11 @@ import type { Library } from "@/library/types";
 import { resolveEdgeGroupFlyout, resolveEdgeGroups } from "@/placement/placement";
 import { buildShellZones } from "@/shell-frame/build-zones";
 import {
+  computeEdgeHoverBridge,
+  computeStackedLeftRimTraps,
+  shouldEnableHoverBridge,
+} from "@/shell-frame/edge-hover-zones";
+import {
   getFlyoutRevealProgress,
   getShellLayout,
   getSurfacePosition,
@@ -99,6 +104,22 @@ export function ShellEdgeLayer({
 
   const activeWorkspace = library.workspaces.find(
     (workspace) => workspace.id === library.activeWorkspaceId,
+  );
+
+  const leftEdgeZones = useMemo(
+    () => zones.filter((zone) => zone.kind === "edge-group"),
+    [zones],
+  );
+
+  const leftRimTraps = useMemo(
+    () =>
+      computeStackedLeftRimTraps({
+        handleCentersY: leftEdgeZones.map((zone) => zone.y),
+        rimWidth: rimLayout.frameLeft,
+        rimStartY: rimLayout.panelY + rimLayout.sidePadding,
+        rimEndY: rimLayout.panelBottom - rimLayout.sidePadding,
+      }),
+    [leftEdgeZones, rimLayout],
   );
 
   useEffect(() => {
@@ -197,21 +218,31 @@ export function ShellEdgeLayer({
         if (zone.kind === "edge-group") {
           const bridge = bridgeRefs.current.get(zone.id);
           if (bridge) {
-            const flyoutLeft = x - menuSize.width * 0.5;
-            const flyoutTop = y - menuSize.height * 0.5;
-            const iconRight = zone.x + 18;
-            const bridgeLeft = iconRight;
-            const bridgeWidth = Math.max(12, flyoutLeft - iconRight);
-            const bridgeTop = Math.min(zone.y - 24, flyoutTop);
-            const bridgeHeight = Math.max(menuSize.height, 48, zone.y + 24 - bridgeTop);
+            const bridgeRect = computeEdgeHoverBridge({
+              handleCenterX: zone.x,
+              handleCenterY: zone.y,
+              flyoutCenterX: x,
+              flyoutCenterY: y,
+              menuWidth: menuSize.width,
+              menuHeight: menuSize.height,
+            });
 
-            bridge.style.left = `${bridgeLeft}px`;
-            bridge.style.top = `${bridgeTop}px`;
-            bridge.style.width = `${bridgeWidth}px`;
-            bridge.style.height = `${bridgeHeight}px`;
-            bridge.style.pointerEvents =
-              pointerActive && state.activeZoneId === zone.id ? "auto" : "none";
-            bridge.style.opacity = pointerActive ? "1" : "0";
+            bridge.style.left = `${bridgeRect.left}px`;
+            bridge.style.top = `${bridgeRect.top}px`;
+            bridge.style.width = `${bridgeRect.width}px`;
+            bridge.style.height = `${bridgeRect.height}px`;
+            bridge.style.pointerEvents = shouldEnableHoverBridge(
+              state.activeZoneId,
+              zone.id,
+              state.closing,
+              state.overIcon,
+              state.overMenu,
+              progress,
+            )
+              ? "auto"
+              : "none";
+            bridge.style.opacity =
+              state.activeZoneId === zone.id && !state.closing ? "1" : "0";
           }
         }
       }
@@ -269,6 +300,31 @@ export function ShellEdgeLayer({
       })}
 
       <ShellSettingsButton />
+
+      {leftEdgeZones.map((zone, index) => {
+        const trap = leftRimTraps[index];
+        if (!trap) {
+          return null;
+        }
+
+        return (
+          <div
+            key={`left-rim-${zone.id}`}
+            className="shell-rim-hit shell-edge-rim-hit"
+            style={{
+              top: trap.top,
+              left: trap.left,
+              width: trap.width,
+              height: trap.height,
+            }}
+            onMouseEnter={() => {
+              setZoneHover("rim", true);
+              requestActivateZone(zone.id, zonesRef.current);
+            }}
+            onMouseLeave={() => leaveZoneHover("rim")}
+          />
+        );
+      })}
 
       {zones.map((zone) => {
         if (zone.kind === "dashboard") {

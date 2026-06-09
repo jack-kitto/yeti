@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -18,10 +18,10 @@ Relevant code: `shell-edge-layer.tsx`, `shell-zones.ts`, `shell-hover-bridge` / 
 
 ## Acceptance criteria
 
-- [ ] User can move pointer from handle to flyout without the menu closing on typical paths
-- [ ] Hit slop around handles meets ~40px minimum effective target (see interface polish guidelines)
-- [ ] Pinned flyouts still dismiss only on explicit dismiss, not accidental edge exit
-- [ ] No regression to drag-reorder on left edge handles
+- [x] User can move pointer from handle to flyout without the menu closing on typical paths
+- [x] Hit slop around handles meets ~40px minimum effective target (see interface polish guidelines)
+- [x] Pinned flyouts still dismiss only on explicit dismiss, not accidental edge exit
+- [x] No regression to drag-reorder on left edge handles
 
 ## Blocked by
 

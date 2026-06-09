@@ -11,6 +11,7 @@ import {
   listBacklogTasks,
   listTodayTasks,
   moveFocusTask,
+  setFocusTaskEstimate,
   setFocusTaskToday,
   startFocusOnTask,
 } from "@/internal-tools/tasks";
@@ -25,17 +26,20 @@ type TasksView = "today" | "backlog";
 
 export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
   const [draft, setDraft] = useState("");
+  const [estimateDraft, setEstimateDraft] = useState("");
   const [view, setView] = useState<TasksView>("today");
   const visibleTasks = view === "today" ? listTodayTasks(internalTools) : listBacklogTasks(internalTools);
 
   function handleAdd(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const next = addFocusTask(internalTools, draft);
+    const estimateMinutes = estimateDraft.trim() ? Number(estimateDraft) : undefined;
+    const next = addFocusTask(internalTools, draft, crypto.randomUUID(), estimateMinutes);
     if (next === internalTools) {
       return;
     }
     onChange(next);
     setDraft("");
+    setEstimateDraft("");
   }
 
   return (
@@ -63,7 +67,31 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
         <ul className="shell-tool-task-list">
           {visibleTasks.map((task, index) => (
             <li key={task.id} className="shell-tool-task-item">
-              <span>{task.title}</span>
+              <div className="shell-tool-task-main">
+                <span>{task.title}</span>
+                <label className="shell-tool-task-estimate-field">
+                  <span className="shell-tool-split-label">Est (min)</span>
+                  <input
+                    type="number"
+                    min={1}
+                    value={task.estimateMinutes ?? ""}
+                    onChange={(event) => {
+                      const raw = event.target.value;
+                      const next = setFocusTaskEstimate(
+                        internalTools,
+                        task.id,
+                        raw ? Number(raw) : undefined,
+                      );
+                      if (next !== internalTools) {
+                        onChange(next);
+                      }
+                    }}
+                    placeholder="—"
+                    className="shell-config-input"
+                    aria-label={`Estimate for ${task.title}`}
+                  />
+                </label>
+              </div>
               <div className="shell-tool-task-actions">
                 <button
                   type="button"
@@ -120,6 +148,18 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
           className="shell-config-input"
           aria-label="New focus task"
         />
+        <label className="shell-tool-task-estimate-field">
+          <span className="shell-tool-split-label">Estimate (minutes)</span>
+          <input
+            type="number"
+            min={1}
+            value={estimateDraft}
+            onChange={(event) => setEstimateDraft(event.target.value)}
+            placeholder="Optional"
+            className="shell-config-input"
+            aria-label="New focus task estimate"
+          />
+        </label>
         <button type="submit" className="shell-flyout-more" disabled={!draft.trim()}>
           Add
         </button>

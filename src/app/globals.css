@@ -1950,10 +1950,29 @@ body {
 
 .shell-tool-task-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
   font-size: 13px;
+}
+
+.shell-tool-task-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.shell-tool-task-estimate-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shell-tool-task-estimate-input {
+  width: 4.5rem;
+  min-height: 0;
+  padding-block: 4px;
 }
 
 .shell-tool-task-view-toggle {

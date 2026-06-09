@@ -10,6 +10,10 @@ export function listBacklogTasks(tools: WorkspaceInternalTools): FocusTask[] {
   return listOpenTasks(tools, false);
 }
 
+function isValidEstimateMinutes(value: number): boolean {
+  return Number.isInteger(value) && value > 0;
+}
+
 function listOpenTasks(tools: WorkspaceInternalTools, today: boolean): FocusTask[] {
   return sortByKey(
     tools.tasks.filter((task) => task.today === today && !task.completed),
@@ -21,6 +25,7 @@ export function addFocusTask(
   tools: WorkspaceInternalTools,
   title: string,
   id = crypto.randomUUID(),
+  estimateMinutes?: number,
 ): WorkspaceInternalTools {
   const trimmed = title.trim();
   if (!trimmed) {
@@ -29,19 +34,21 @@ export function addFocusTask(
 
   const lastTask = tools.tasks.at(-1);
   const orderKey = lastTask ? insertBetween(lastTask.orderKey, null) : initialKey();
+  const task: FocusTask = {
+    id,
+    title: trimmed,
+    today: true,
+    completed: false,
+    orderKey,
+  };
+
+  if (estimateMinutes !== undefined && isValidEstimateMinutes(estimateMinutes)) {
+    task.estimateMinutes = estimateMinutes;
+  }
 
   return {
     ...tools,
-    tasks: [
-      ...tools.tasks,
-      {
-        id,
-        title: trimmed,
-        today: true,
-        completed: false,
-        orderKey,
-      },
-    ],
+    tasks: [...tools.tasks, task],
   };
 }
 
@@ -116,6 +123,46 @@ export function moveFocusTask(
     ...tools,
     tasks: tools.tasks.map((item) =>
       item.id === taskId ? { ...item, orderKey: newOrderKey } : item,
+    ),
+  };
+}
+
+export function setFocusTaskEstimate(
+  tools: WorkspaceInternalTools,
+  taskId: string,
+  estimateMinutes: number | undefined,
+): WorkspaceInternalTools {
+  const task = tools.tasks.find((item) => item.id === taskId && !item.completed);
+  if (!task) {
+    return tools;
+  }
+
+  if (estimateMinutes === undefined) {
+    if (task.estimateMinutes === undefined) {
+      return tools;
+    }
+
+    return {
+      ...tools,
+      tasks: tools.tasks.map((item) => {
+        if (item.id !== taskId) {
+          return item;
+        }
+
+        const { estimateMinutes: _removed, ...rest } = item;
+        return rest;
+      }),
+    };
+  }
+
+  if (!isValidEstimateMinutes(estimateMinutes) || task.estimateMinutes === estimateMinutes) {
+    return tools;
+  }
+
+  return {
+    ...tools,
+    tasks: tools.tasks.map((item) =>
+      item.id === taskId ? { ...item, estimateMinutes } : item,
     ),
   };
 }

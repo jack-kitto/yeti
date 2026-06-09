@@ -6,6 +6,7 @@ import {
   listBacklogTasks,
   listTodayTasks,
   moveFocusTask,
+  setFocusTaskEstimate,
   setFocusTaskToday,
   startFocusOnTask,
 } from "./tasks";
@@ -43,6 +44,16 @@ describe("focus tasks", () => {
     tools = moveFocusTask(tools, "task-2", 0);
 
     expect(listTodayTasks(tools).map((task) => task.id)).toEqual(["task-2", "task-1"]);
+  });
+
+  it("persists optional minute estimates on add and edit", () => {
+    let tools = addFocusTask(createDefaultWorkspaceInternalTools(), "Ship tasks", "task-1", 30);
+
+    expect(listTodayTasks(tools)[0]?.estimateMinutes).toBe(30);
+
+    tools = setFocusTaskEstimate(tools, "task-1", 45);
+
+    expect(listTodayTasks(tools)[0]?.estimateMinutes).toBe(45);
   });
 
   it("sets the active task and starts a work pomodoro", () => {

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createStarterLibrary } from "@/library/starter-template";
 import { deserializeSnapshot, serializeSnapshot } from "@/snapshot/snapshot";
 import { createDefaultFocusRadio } from "./config";
+import { buildFocusRadioStationPickerRows } from "./station-picker";
 import {
   addFocusRadioStation,
   listFocusRadioStations,
@@ -148,6 +149,68 @@ describe("updateFocusRadioPlayback", () => {
       muted: true,
       playing: true,
     });
+  });
+});
+
+describe("buildFocusRadioStationPickerRows", () => {
+  it("lists stations with the active one marked and favorites pinned first", async () => {
+    let library = createStarterLibrary();
+    library = addFocusRadioStation(
+      library,
+      { label: "Techno", url: "https://stream.example.com/techno.mp3", kind: "stream" },
+      "techno",
+    );
+    library = addFocusRadioStation(
+      library,
+      { label: "Lofi Girl", url: "https://stream.example.com/lofi.mp3", kind: "stream", favorite: true },
+      "lofi",
+    );
+    library = addFocusRadioStation(
+      library,
+      { label: "Night Drive", url: "https://stream.example.com/night.mp3", kind: "stream" },
+      "night",
+    );
+    library = updateFocusRadioPlayback(library, { stationId: "night" });
+
+    expect(buildFocusRadioStationPickerRows(library)).toEqual([
+      {
+        id: "lofi",
+        label: "Lofi Girl",
+        kind: "stream",
+        active: false,
+        favorite: true,
+      },
+      {
+        id: "techno",
+        label: "Techno",
+        kind: "stream",
+        active: false,
+        favorite: false,
+      },
+      {
+        id: "night",
+        label: "Night Drive",
+        kind: "stream",
+        active: true,
+        favorite: false,
+      },
+    ]);
+  });
+
+  it("filters stations by label", async () => {
+    let library = createStarterLibrary();
+    library = addFocusRadioStation(
+      library,
+      { label: "Lofi Girl", url: "https://stream.example.com/lofi.mp3", kind: "stream" },
+      "lofi",
+    );
+    library = addFocusRadioStation(
+      library,
+      { label: "Techno FM", url: "https://stream.example.com/techno.mp3", kind: "stream" },
+      "techno",
+    );
+
+    expect(buildFocusRadioStationPickerRows(library, "lofi").map((row) => row.id)).toEqual(["lofi"]);
   });
 });
 

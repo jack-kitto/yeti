@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -22,11 +22,11 @@ Users enable/configure widgets from **settings** (not a rim surface). Widget tog
 
 ## Acceptance criteria
 
-- [ ] Widget layout: vertical stack at optical center, slight upward bias (~40% from top) (locked)
-- [ ] At least two widget types render on canvas with real data (not lorem)
-- [ ] Settings UI toggles/configures which widgets show (minimal: on/off per widget)
-- [ ] Widget layout respects active workspace theme tokens
-- [ ] Canvas is widget-only — no pin strip or workspace switcher on canvas (pins removed; switcher in control center + command bar)
+- [x] Widget layout: vertical stack at optical center, slight upward bias (~40% from top) (locked)
+- [x] At least two widget types render on canvas with real data (not lorem)
+- [x] Settings UI toggles/configures which widgets show (minimal: on/off per widget)
+- [x] Widget layout respects active workspace theme tokens
+- [x] Canvas is widget-only — no pin strip or workspace switcher on canvas (pins removed; switcher in control center + command bar)
 
 ## Also in scope
 
@@ -39,3 +39,7 @@ None — implementation may follow issue 26 (settings entry stable)
 ## Comments
 
 Backlog item 2025-06. "Configured from the right panel" → **settings dialog** per product direction (issue 26). Weather/quotes overlap conceptually with issue 27 top-rim tabs — decide center vs top-rim split before AFK build.
+
+Shipped 2026-06: `9817a46`, `4e24b15`, `e34d802`. Clock/welcome use runtime local timezone (no UTC default).
+
+**Follow-up:** Canvas settings layout → issue **50**; pin schema removal → issue **48**.

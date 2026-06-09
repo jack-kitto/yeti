@@ -54,3 +54,5 @@ Product note (2026-06): grill-with-docs session reframed issue from "SSR bootstr
 Supersedes original bootstrap/merge architecture in this file's first draft.
 
 Completed via issues 35–39.
+
+**Follow-up:** Live library sync across `/home` and `/start` tabs → issue **45**.

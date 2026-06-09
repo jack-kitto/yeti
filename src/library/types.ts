@@ -1,5 +1,6 @@
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
 import type { FractionalOrderKey } from "@/fractional-order/fractional-order";
+import type { CanvasWidgetConfig } from "@/canvas-widgets/types";
 
 export type Link = {
   id: string;
@@ -63,6 +64,7 @@ export type Workspace = {
   theme: Theme;
   placements: WorkspacePlacements;
   internalTools: WorkspaceInternalTools;
+  canvasWidgets: CanvasWidgetConfig;
 };
 
 export type ShortcutBindings = {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { initialKey } from "@/fractional-order/fractional-order";
 import { defaultInternalToolsForTests } from "@/internal-tools/test-fixtures";
 import type { Library } from "@/library/types";
@@ -37,6 +38,7 @@ function makeLibrary(): Library {
           pins: [],
         },
         internalTools: defaultInternalToolsForTests(),
+        canvasWidgets: createDefaultCanvasWidgets(),
       },
     ],
     shortcuts: { focusCommandBar: "Meta+Shift+k", cycleWorkspace: "Control+Tab" },

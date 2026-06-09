@@ -1,4 +1,5 @@
 import type { Library, Workspace } from "@/library/types";
+import { ensureLibraryCanvasWidgets } from "@/canvas-widgets/defaults";
 import { createDefaultWorkspaceInternalTools } from "./pomodoro";
 
 export function ensureWorkspaceInternalTools(workspace: Workspace): Workspace {
@@ -13,8 +14,8 @@ export function ensureWorkspaceInternalTools(workspace: Workspace): Workspace {
 }
 
 export function ensureLibraryDefaults(library: Library): Library {
-  return {
+  return ensureLibraryCanvasWidgets({
     ...library,
     workspaces: library.workspaces.map(ensureWorkspaceInternalTools),
-  };
+  });
 }

@@ -1,4 +1,5 @@
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
+import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { rebalanceKeys } from "@/fractional-order/fractional-order";
 import type { EdgeGroup, Library, Link, Theme, Workspace } from "./types";
 
@@ -63,6 +64,7 @@ function workspace(
       })),
     },
     internalTools: createDefaultWorkspaceInternalTools(),
+    canvasWidgets: createDefaultCanvasWidgets(),
   };
 }
 

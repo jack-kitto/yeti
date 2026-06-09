@@ -1,4 +1,5 @@
 import { parse, stringify } from "yaml";
+import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import type { FocusTask, PomodoroState } from "@/internal-tools/types";
 import { validateLibrary } from "@/library/library";
@@ -12,6 +13,7 @@ import type {
   Workspace,
   WorkspacePlacements,
 } from "@/library/types";
+import type { CanvasWidgetConfig } from "@/canvas-widgets/types";
 
 export const SNAPSHOT_VERSION = 1;
 
@@ -55,6 +57,7 @@ type SnapshotWorkspace = {
     pomodoro: PomodoroState;
     tasks: FocusTask[];
   };
+  canvasWidgets?: CanvasWidgetConfig;
 };
 
 export type LibrarySnapshot = {
@@ -151,6 +154,7 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
         pins: workspace.placements.pins.map(pinToSnapshot),
       },
       internalTools: workspace.internalTools,
+      canvasWidgets: workspace.canvasWidgets,
     })),
     shortcuts: { ...library.shortcuts },
     activeWorkspaceId: library.activeWorkspaceId,
@@ -187,6 +191,7 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
         },
         internalTools:
           workspace.internalTools ?? createDefaultWorkspaceInternalTools(),
+        canvasWidgets: workspace.canvasWidgets ?? createDefaultCanvasWidgets(),
       }),
     ),
     shortcuts: { ...snapshot.shortcuts },

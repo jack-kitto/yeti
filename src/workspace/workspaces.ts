@@ -1,4 +1,5 @@
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
+import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import type { Library, Theme, Workspace, WorkspacePlacements } from "@/library/types";
 
 export const DEFAULT_WORKSPACE_THEME: Theme = {
@@ -36,6 +37,7 @@ export function createWorkspace(library: Library, name: string): Library {
     },
     placements: EMPTY_PLACEMENTS,
     internalTools: createDefaultWorkspaceInternalTools(),
+    canvasWidgets: createDefaultCanvasWidgets(),
   };
 
   return {

@@ -299,6 +299,100 @@ body {
   opacity: 0.58;
 }
 
+.shell-dashboard-calendar-empty,
+.shell-dashboard-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shell-dashboard-setup-button {
+  align-self: flex-start;
+  border: 0;
+  border-radius: calc(var(--qs-border-radius) - 6px);
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--qs-color-accent) 16%, var(--qs-color-surface));
+  color: var(--qs-color-text);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.shell-dashboard-setup-button:active {
+  transform: scale(0.98);
+}
+
+.shell-dashboard-calendar-error {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
+}
+
+.shell-dashboard-calendar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shell-dashboard-calendar-item {
+  border-radius: calc(var(--qs-border-radius) - 8px);
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.shell-dashboard-calendar-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.shell-dashboard-calendar-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--qs-color-text);
+  text-decoration: none;
+}
+
+.shell-dashboard-calendar-title:hover {
+  text-decoration: underline;
+}
+
+.shell-dashboard-calendar-expand {
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--qs-color-text) 58%, transparent);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.shell-dashboard-calendar-time {
+  margin: 4px 0 0;
+  font-size: 11px;
+  opacity: 0.62;
+}
+
+.shell-dashboard-calendar-details {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.45;
+  opacity: 0.72;
+}
+
+.shell-dashboard-calendar-details p {
+  margin: 0 0 4px;
+}
+
+.shell-dashboard-calendar-overflow {
+  margin: 0;
+  font-size: 11px;
+  opacity: 0.58;
+}
+
 .shell-surface-search {
   width: max-content;
   min-width: 300px;

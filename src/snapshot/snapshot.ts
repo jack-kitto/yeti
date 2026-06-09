@@ -58,6 +58,7 @@ type SnapshotWorkspace = {
     tasks: FocusTask[];
   };
   canvasWidgets?: CanvasWidgetConfig;
+  icsFeedUrl?: string;
 };
 
 export type LibrarySnapshot = {
@@ -155,6 +156,7 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
       },
       internalTools: workspace.internalTools,
       canvasWidgets: workspace.canvasWidgets,
+      ...(workspace.icsFeedUrl ? { icsFeedUrl: workspace.icsFeedUrl } : {}),
     })),
     shortcuts: { ...library.shortcuts },
     activeWorkspaceId: library.activeWorkspaceId,
@@ -192,6 +194,7 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
         internalTools:
           workspace.internalTools ?? createDefaultWorkspaceInternalTools(),
         canvasWidgets: workspace.canvasWidgets ?? createDefaultCanvasWidgets(),
+        ...(workspace.icsFeedUrl ? { icsFeedUrl: workspace.icsFeedUrl } : {}),
       }),
     ),
     shortcuts: { ...snapshot.shortcuts },

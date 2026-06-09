@@ -5,9 +5,11 @@ import {
   useApplyLibraryPatch,
   useCreateWorkspace,
   useDeleteWorkspace,
+  useMutateLibrary,
   useRenameWorkspace,
   useUpdateWorkspaceTheme,
 } from "@/hooks/use-library";
+import { updateWorkspaceIcsFeedUrl } from "@/calendar/workspace-ics";
 import type { Library, ThemePalette } from "@/library/types";
 
 type ShellConfigWorkspacesProps = {
@@ -27,6 +29,7 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
   const renameWorkspace = useRenameWorkspace();
   const deleteWorkspace = useDeleteWorkspace();
   const updateWorkspaceTheme = useUpdateWorkspaceTheme();
+  const mutateLibrary = useMutateLibrary();
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState(library.activeWorkspaceId);
   const [workspaceName, setWorkspaceName] = useState("");
   const [newWorkspaceName, setNewWorkspaceName] = useState("");
@@ -260,6 +263,28 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
                   patchTheme({ borderRadius: Number(event.target.value) })
                 }
                 className="shell-config-range"
+              />
+            </label>
+          </div>
+
+          <div className="shell-config-form">
+            <p className="shell-config-form-label">Calendar</p>
+            <label className="shell-config-color-field">
+              <span className="shell-config-form-label">ICS feed URL</span>
+              <input
+                type="url"
+                value={selectedWorkspace.icsFeedUrl ?? ""}
+                onChange={(event) =>
+                  mutateLibrary.mutate((current) =>
+                    updateWorkspaceIcsFeedUrl(
+                      current,
+                      selectedWorkspace.id,
+                      event.target.value || null,
+                    ),
+                  )
+                }
+                placeholder="https://calendar.google.com/calendar/ical/…/basic.ics"
+                className="shell-config-input"
               />
             </label>
           </div>

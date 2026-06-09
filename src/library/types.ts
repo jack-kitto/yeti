@@ -65,6 +65,7 @@ export type Workspace = {
   placements: WorkspacePlacements;
   internalTools: WorkspaceInternalTools;
   canvasWidgets: CanvasWidgetConfig;
+  icsFeedUrl?: string;
 };
 
 export type ShortcutBindings = {

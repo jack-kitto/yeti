@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { buildControlCenterWorkspaceRows } from "@/control-center/workspaces";
 import type { Library } from "@/library/types";
+import { ControlCenterCalendarTab } from "./control-center-calendar-tab";
 
 const TABS = [
   { id: "workspaces", label: "Workspaces" },
@@ -19,11 +20,10 @@ type ShellDashboardProps = {
 
 function tabPlaceholder(tab: TabId): string {
   switch (tab) {
-    case "calendar":
-      return "Connect an ICS feed in settings to see upcoming events.";
     case "media":
       return "Add focus radio stations in settings to start listening.";
     case "workspaces":
+    case "calendar":
       return "";
   }
 }
@@ -100,6 +100,8 @@ export function ShellDashboard({ library, onSwitchWorkspace }: ShellDashboardPro
             library={library}
             onSwitchWorkspace={onSwitchWorkspace}
           />
+        ) : activeTab === "calendar" ? (
+          <ControlCenterCalendarTab library={library} active />
         ) : (
           <p className="shell-dashboard-placeholder">{tabPlaceholder(activeTab)}</p>
         )}

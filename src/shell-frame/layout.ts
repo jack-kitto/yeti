@@ -223,27 +223,85 @@ export function getSurfacePosition(
   menuSize: MenuSize,
 ): { x: number; y: number } {
   switch (zone.rim) {
-    case "top":
+    case "top": {
+      const insetTop = layout.panelY + layout.pocketInset;
+      const halfMenu = menuSize.height * 0.5;
+      const halfPocket = pocket.depth * 0.5;
       return {
         x: pocket.anchor,
-        y: layout.panelY + layout.pocketInset + menuSize.height * 0.5,
+        y: insetTop + Math.min(halfMenu, halfPocket),
       };
-    case "bottom":
+    }
+    case "bottom": {
+      const insetBottom = layout.panelBottom - layout.pocketInset;
+      const halfMenu = menuSize.height * 0.5;
+      const halfPocket = pocket.depth * 0.5;
       return {
         x: pocket.anchor,
-        y: layout.panelBottom - layout.pocketInset - menuSize.height * 0.5,
+        y: insetBottom - Math.min(halfMenu, halfPocket),
       };
-    case "left":
+    }
+    case "left": {
+      const insetLeft = layout.panelX + layout.pocketInset;
+      const halfMenu = menuSize.width * 0.5;
+      const halfPocket = pocket.depth * 0.5;
       return {
-        x: layout.panelX + layout.pocketInset + menuSize.width * 0.5,
+        x: insetLeft + Math.min(halfMenu, halfPocket),
         y: pocket.anchor,
       };
-    case "right":
+    }
+    case "right": {
+      const insetRight = layout.panelRight - layout.pocketInset;
+      const halfMenu = menuSize.width * 0.5;
+      const halfPocket = pocket.depth * 0.5;
       return {
-        x: layout.panelRight - layout.pocketInset - menuSize.width * 0.5,
+        x: insetRight - Math.min(halfMenu, halfPocket),
         y: pocket.anchor,
       };
+    }
   }
+}
+
+export function getSurfacePocketFit(
+  pocket: RenderPocket,
+  zone: ShellZoneLayout,
+  menuSize: MenuSize,
+): number {
+  if (pocket.depth <= 0 || pocket.span <= 0) {
+    return 0;
+  }
+
+  const isHorizontal = zone.rim === "top" || zone.rim === "bottom";
+  if (isHorizontal) {
+    return clamp(
+      Math.min(pocket.depth / menuSize.height, pocket.span / menuSize.width),
+      0,
+      1,
+    );
+  }
+
+  return clamp(
+    Math.min(pocket.depth / menuSize.width, pocket.span / menuSize.height),
+    0,
+    1,
+  );
+}
+
+export type SurfaceRevealStyle = {
+  progress: number;
+  opacity: number;
+  scale: number;
+};
+
+export function getSurfaceRevealStyle(
+  zoneRevealProgress: number,
+  pocketFit: number,
+): SurfaceRevealStyle {
+  const progress = zoneRevealProgress * pocketFit;
+  const opacity = progress <= 0 ? 0 : progress ** 1.6;
+  const scale = 0.72 + pocketFit * 0.28;
+
+  return { progress, opacity, scale };
 }
 
 /** @deprecated Use getSurfacePosition */

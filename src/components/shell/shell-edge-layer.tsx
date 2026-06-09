@@ -34,7 +34,9 @@ import {
 import {
   getFlyoutRevealProgress,
   getShellLayout,
+  getSurfacePocketFit,
   getSurfacePosition,
+  getSurfaceRevealStyle,
   isSurfacePointerActive,
   updateZonePositions,
 } from "@/shell-frame/layout";
@@ -212,14 +214,14 @@ export function ShellEdgeLayer({
     registerShellFrameListener(({ layout: frameLayout, pocket }) => {
       const positioned = updateZonePositions(zonesRef.current, frameLayout);
       const state = getShellState();
-      const reveal = getFlyoutRevealProgress(state);
+      const flyoutReveal = getFlyoutRevealProgress(state);
 
       function zoneReveal(zoneId: string) {
         if (state.closing && zoneId === state.previousZoneId) {
-          return reveal;
+          return flyoutReveal;
         }
         if (!state.closing && zoneId === state.activeZoneId) {
-          return reveal;
+          return flyoutReveal;
         }
         return 0;
       }
@@ -242,20 +244,21 @@ export function ShellEdgeLayer({
         surface.style.left = `${x}px`;
         surface.style.top = `${y}px`;
 
-        const progress = zoneReveal(zone.id);
-        const scale = 0.9 + progress * 0.1;
-        surface.style.opacity = `${progress}`;
-        surface.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        const zoneProgress = zoneReveal(zone.id);
+        const pocketFit = getSurfacePocketFit(pocket, zone, menuSize);
+        const surfaceReveal = getSurfaceRevealStyle(zoneProgress, pocketFit);
+        surface.style.opacity = `${surfaceReveal.opacity}`;
+        surface.style.transform = `translate(-50%, -50%) scale(${surfaceReveal.scale})`;
 
         const pointerActive = isSurfacePointerActive(
           state.activeZoneId,
           zone.id,
-          progress,
+          surfaceReveal.progress,
           state.closing,
           state.previousZoneId,
         );
         surface.style.pointerEvents = pointerActive ? "auto" : "none";
-        surface.classList.toggle("visible", progress > 0.04);
+        surface.classList.toggle("visible", surfaceReveal.progress > 0.04);
 
         if (zone.kind === "edge-group") {
           const bridge = bridgeRefs.current.get(zone.id);
@@ -279,7 +282,7 @@ export function ShellEdgeLayer({
               state.closing,
               state.overIcon,
               state.overMenu,
-              progress,
+              surfaceReveal.progress,
             )
               ? "auto"
               : "none";
@@ -310,7 +313,7 @@ export function ShellEdgeLayer({
               state.closing,
               state.overIcon,
               state.overMenu,
-              progress,
+              surfaceReveal.progress,
             )
               ? "auto"
               : "none";
@@ -358,7 +361,7 @@ export function ShellEdgeLayer({
   }
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-20">
+    <div className="pointer-events-none absolute inset-0 z-30">
       {renderRimHit(BUILTIN_SURFACE.TOP_DASHBOARD, "shell-rim-hit-top", {
         top: topDashboardHit.top,
         left: topDashboardHit.left,

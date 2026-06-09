@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { getFlyoutRevealProgress, getRenderPocket, getShellLayout } from "./layout";
+import {
+  getFlyoutRevealProgress,
+  getRenderPocket,
+  getShellLayout,
+  getSurfacePocketFit,
+  getSurfaceRevealStyle,
+} from "./layout";
+import type { ShellZoneLayout } from "./layout";
 import type { ShellAnimationSnapshot } from "./shell-state";
 
 function baseAnimation(
@@ -37,6 +44,30 @@ describe("getRenderPocket", () => {
     expect(open.span).toBeCloseTo(120, 0);
     expect(open.depth).toBeCloseTo(160, 0);
     expect(open.active).toBe(true);
+  });
+});
+
+describe("getSurfaceRevealStyle", () => {
+  const topZone: ShellZoneLayout = {
+    id: "dashboard",
+    rim: "top",
+    kind: "dashboard",
+    x: 400,
+    y: 7,
+  };
+
+  it("fades and scales down when the pocket is smaller than the menu", () => {
+    const layout = getShellLayout();
+    const pocket = getRenderPocket(
+      layout,
+      baseAnimation({ t: 0.35, depth: 260, span: 480 }),
+    );
+    const pocketFit = getSurfacePocketFit(pocket, topZone, { width: 480, height: 260 });
+    const style = getSurfaceRevealStyle(1, pocketFit);
+
+    expect(pocketFit).toBeLessThan(1);
+    expect(style.opacity).toBeLessThan(pocketFit);
+    expect(style.scale).toBeLessThan(1);
   });
 });
 

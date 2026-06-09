@@ -95,7 +95,7 @@ export function Shell() {
         />
 
         <main
-          className="pointer-events-none absolute z-10 flex flex-col items-center px-8"
+          className="pointer-events-none absolute z-[5] flex flex-col items-center px-8"
           style={{
             left: panelBounds.left,
             top: panelBounds.top,

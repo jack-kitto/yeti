@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   advancePomodoroPhase,
   BUILTIN_FOCUS_SPLITS,
@@ -9,7 +9,9 @@ import {
   remainingSeconds,
   resetPomodoro,
   resolveFocusSplit,
+  playChimeIfEnabled,
   setCustomFocusSplit,
+  setPomodoroChimeEnabled,
   setPomodoroSplit,
   startPomodoro,
 } from "./pomodoro";
@@ -100,6 +102,18 @@ describe("setPomodoroSplit", () => {
 
     expect(updated.pomodoro.splitId).toBe("deep");
     expect(tools.pomodoro.splitId).toBe("classic");
+  });
+});
+
+describe("playChimeIfEnabled", () => {
+  it("plays the chime only when enabled", () => {
+    const play = vi.fn();
+
+    playChimeIfEnabled(false, play);
+    expect(play).not.toHaveBeenCalled();
+
+    playChimeIfEnabled(true, play);
+    expect(play).toHaveBeenCalledOnce();
   });
 });
 

@@ -8,10 +8,12 @@ import {
   formatTimerSeconds,
   isPomodoroPhaseComplete,
   pausePomodoro,
+  playChimeIfEnabled,
   remainingSeconds,
   resetPomodoro,
   resolveFocusSplit,
   setCustomFocusSplit,
+  setPomodoroChimeEnabled,
   setPomodoroSplit,
   startPomodoro,
 } from "@/internal-tools/pomodoro";
@@ -58,6 +60,7 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
       return;
     }
 
+    playChimeIfEnabled(pomodoro.chimeEnabled);
     onChange({
       ...internalTools,
       pomodoro: advancePomodoroPhase(pomodoro),
@@ -188,6 +191,16 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
         </button>
       </form>
       <div className="shell-tool-actions">
+        <button
+          type="button"
+          className="shell-flyout-more"
+          aria-pressed={pomodoro.chimeEnabled}
+          onClick={() =>
+            onChange(setPomodoroChimeEnabled(internalTools, !pomodoro.chimeEnabled))
+          }
+        >
+          Chime
+        </button>
         {pomodoro.running ? (
           <button
             type="button"

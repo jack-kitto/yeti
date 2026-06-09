@@ -143,6 +143,54 @@ export function setCustomFocusSplit(
   };
 }
 
+export function playPomodoroChime(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const context = new AudioContext();
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+
+  oscillator.type = "sine";
+  oscillator.frequency.value = 880;
+  gain.gain.setValueAtTime(0.2, context.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.5);
+
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+
+  oscillator.start(context.currentTime);
+  oscillator.stop(context.currentTime + 0.5);
+  void context.close();
+}
+
+export function playChimeIfEnabled(
+  chimeEnabled: boolean,
+  play: () => void = playPomodoroChime,
+): void {
+  if (chimeEnabled) {
+    play();
+  }
+}
+
+export function setPomodoroChimeEnabled(
+  tools: WorkspaceInternalTools,
+  chimeEnabled: boolean,
+): WorkspaceInternalTools {
+  if (tools.pomodoro.chimeEnabled === chimeEnabled) {
+    return tools;
+  }
+
+  return {
+    ...tools,
+    pomodoro: {
+      ...tools.pomodoro,
+      chimeEnabled,
+    },
+  };
+}
+
 export function setPomodoroSplit(
   tools: WorkspaceInternalTools,
   splitId: string,

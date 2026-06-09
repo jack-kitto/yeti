@@ -9,6 +9,7 @@ import {
   remainingSeconds,
   resetPomodoro,
   resolveFocusSplit,
+  setCustomFocusSplit,
   setPomodoroSplit,
   startPomodoro,
 } from "./pomodoro";
@@ -99,6 +100,29 @@ describe("setPomodoroSplit", () => {
 
     expect(updated.pomodoro.splitId).toBe("deep");
     expect(tools.pomodoro.splitId).toBe("classic");
+  });
+});
+
+describe("setCustomFocusSplit", () => {
+  it("stores a validated custom split and selects it on the workspace", () => {
+    const tools = createDefaultWorkspaceInternalTools();
+
+    const updated = setCustomFocusSplit(tools, {
+      label: "My split",
+      workMinutes: 40,
+      shortBreakMinutes: 8,
+      longBreakMinutes: 16,
+    });
+
+    expect(updated.customFocusSplit).toEqual({
+      id: "custom",
+      label: "My split",
+      workMinutes: 40,
+      shortBreakMinutes: 8,
+      longBreakMinutes: 16,
+    });
+    expect(updated.pomodoro.splitId).toBe("custom");
+    expect(tools.customFocusSplit).toBeNull();
   });
 });
 

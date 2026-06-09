@@ -98,6 +98,51 @@ export function pausePomodoro(state: PomodoroState): PomodoroState {
   };
 }
 
+export type CustomFocusSplitDraft = {
+  label?: string;
+  workMinutes: number;
+  shortBreakMinutes: number;
+  longBreakMinutes: number;
+};
+
+const MIN_SPLIT_MINUTES = 1;
+const MAX_WORK_MINUTES = 60;
+const MAX_BREAK_MINUTES = 30;
+
+function isValidSplitMinutes(value: number, max: number): boolean {
+  return Number.isInteger(value) && value >= MIN_SPLIT_MINUTES && value <= max;
+}
+
+export function setCustomFocusSplit(
+  tools: WorkspaceInternalTools,
+  draft: CustomFocusSplitDraft,
+): WorkspaceInternalTools {
+  if (
+    !isValidSplitMinutes(draft.workMinutes, MAX_WORK_MINUTES) ||
+    !isValidSplitMinutes(draft.shortBreakMinutes, MAX_BREAK_MINUTES) ||
+    !isValidSplitMinutes(draft.longBreakMinutes, MAX_BREAK_MINUTES)
+  ) {
+    return tools;
+  }
+
+  const customFocusSplit: FocusSplit = {
+    id: CUSTOM_SPLIT_ID,
+    label: draft.label?.trim() || "Custom",
+    workMinutes: draft.workMinutes,
+    shortBreakMinutes: draft.shortBreakMinutes,
+    longBreakMinutes: draft.longBreakMinutes,
+  };
+
+  return {
+    ...tools,
+    customFocusSplit,
+    pomodoro: {
+      ...tools.pomodoro,
+      splitId: CUSTOM_SPLIT_ID,
+    },
+  };
+}
+
 export function setPomodoroSplit(
   tools: WorkspaceInternalTools,
   splitId: string,

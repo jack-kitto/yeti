@@ -8,6 +8,7 @@ import {
   SNAPSHOT_DOWNLOAD_FILENAME,
   SNAPSHOT_URL_PLACEHOLDER,
 } from "@/branding/branding";
+import { ShellConfigStartPage } from "./shell-config-start-page";
 
 type ShellConfigLibraryProps = {
   library: Library;
@@ -68,6 +69,8 @@ export function ShellConfigLibrary({ library }: ShellConfigLibraryProps) {
 
   return (
     <div className="shell-config-dialog-section">
+      <ShellConfigStartPage />
+
       <section className="shell-config-section">
         <p className="shell-config-form-label">Library snapshot</p>
         <p className="shell-config-dialog-copy">

@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,9 +14,9 @@ Add **start page URL** guidance to **settings**:
 
 ## Acceptance criteria
 
-- [ ] Settings exposes `/start` with working copy-to-clipboard
-- [ ] Helper text explains home-station-first seeding flow
-- [ ] No encoded-path or theme-slug generation UI
+- [x] Settings exposes `/start` with working copy-to-clipboard
+- [x] Helper text explains home-station-first seeding flow
+- [x] No encoded-path or theme-slug generation UI
 
 ## Blocked by
 
@@ -25,3 +25,5 @@ Add **start page URL** guidance to **settings**:
 ## Comments
 
 Tracer bullet 4 of 5 for issue 34. Can ship in parallel with issues 36–37 once routes exist.
+
+Shipped in `feat(settings): add start page URL copy in library section`.

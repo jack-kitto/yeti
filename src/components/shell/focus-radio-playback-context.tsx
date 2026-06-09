@@ -13,7 +13,9 @@ import {
   resolveFocusRadioNowPlaying,
   resolveFocusRadioOutputVolume,
   shouldPlayFocusRadioStream,
+  shouldPlayFocusRadioYoutube,
 } from "@/focus-radio/playback";
+import { parseYoutubeVideoId } from "@/focus-radio/youtube";
 import {
   FOCUS_RADIO_STREAM_RETRY_MS,
   resolveFocusRadioStreamFailureAction,
@@ -21,6 +23,7 @@ import {
 import { updateFocusRadioPlayback } from "@/focus-radio/stations";
 import { useMutateLibrary } from "@/hooks/use-library";
 import type { Library } from "@/library/types";
+import { FocusRadioYoutubePlayer } from "./focus-radio-youtube-player";
 
 type FocusRadioPlaybackContextValue = {
   playbackError: string | null;
@@ -56,8 +59,11 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
 
   const playback = library.focusRadio.playback;
   const nowPlaying = resolveFocusRadioNowPlaying(library);
-  const shouldPlay = shouldPlayFocusRadioStream(library);
+  const shouldPlayStream = shouldPlayFocusRadioStream(library);
+  const shouldPlayYoutube = shouldPlayFocusRadioYoutube(library);
   const streamUrl = nowPlaying?.kind === "stream" ? nowPlaying.url : null;
+  const youtubeVideoId =
+    nowPlaying?.kind === "youtube" ? parseYoutubeVideoId(nowPlaying.url) : null;
   const activeStationId = playback.stationId;
 
   const clearRetryTimer = useCallback(() => {
@@ -178,17 +184,23 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
       audio.load();
     }
 
-    if (shouldPlay) {
+    if (shouldPlayStream) {
       attemptPlayRef.current();
       return;
     }
 
     audio.pause();
-  }, [playback.muted, playback.volume, shouldPlay, streamUrl]);
+  }, [playback.muted, playback.volume, shouldPlayStream, streamUrl]);
 
   return (
     <FocusRadioPlaybackContext value={{ playbackError, retryPlayback }}>
       <audio ref={audioRef} className="shell-focus-radio-audio" aria-hidden />
+      <FocusRadioYoutubePlayer
+        videoId={youtubeVideoId}
+        shouldPlay={shouldPlayYoutube}
+        playback={playback}
+        onError={handleStreamFailure}
+      />
       {children}
     </FocusRadioPlaybackContext>
   );

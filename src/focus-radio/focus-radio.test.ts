@@ -5,7 +5,9 @@ import { createDefaultFocusRadio } from "./config";
 import {
   resolveFocusRadioNowPlaying,
   resolveFocusRadioOutputVolume,
+  shouldPlayFocusRadioYoutube,
 } from "./playback";
+import { parseYoutubeVideoId } from "./youtube";
 import { buildFocusRadioStationPickerRows } from "./station-picker";
 import { resolveFocusRadioStreamFailureAction } from "./stream-fallback";
 import { isFocusRadioStationCatalogEmpty } from "./station-picker";
@@ -190,6 +192,31 @@ describe("resolveFocusRadioNowPlaying", () => {
 
   it("returns null when no station is selected", () => {
     expect(resolveFocusRadioNowPlaying(createStarterLibrary())).toBeNull();
+  });
+});
+
+describe("parseYoutubeVideoId", () => {
+  it("extracts ids from common youtube urls", () => {
+    expect(parseYoutubeVideoId("https://www.youtube.com/watch?v=dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
+    expect(parseYoutubeVideoId("https://youtu.be/dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
+    expect(parseYoutubeVideoId("https://youtube.com/live/abc123XYZ_0")).toBe("abc123XYZ_0");
+    expect(parseYoutubeVideoId("not-a-url")).toBeNull();
+  });
+});
+
+describe("shouldPlayFocusRadioYoutube", () => {
+  it("is true only when the active youtube station is playing", async () => {
+    let library = addFocusRadioStation(createStarterLibrary(), {
+      label: "Live",
+      url: "https://youtube.com/live/example",
+      kind: "youtube",
+    }, "live");
+    library = updateFocusRadioPlayback(library, { stationId: "live", playing: true });
+
+    expect(shouldPlayFocusRadioYoutube(library)).toBe(true);
+
+    library = updateFocusRadioPlayback(library, { playing: false });
+    expect(shouldPlayFocusRadioYoutube(library)).toBe(false);
   });
 });
 

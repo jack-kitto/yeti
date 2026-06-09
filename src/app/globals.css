@@ -497,7 +497,8 @@ body {
   opacity: 0.72;
 }
 
-.shell-focus-radio-audio {
+.shell-focus-radio-audio,
+.shell-focus-radio-youtube {
   display: none;
 }
 

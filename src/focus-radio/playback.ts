@@ -46,3 +46,12 @@ export function shouldPlayFocusRadioStream(library: Library): boolean {
     nowPlaying.kind === "stream"
   );
 }
+
+export function shouldPlayFocusRadioYoutube(library: Library): boolean {
+  const nowPlaying = resolveFocusRadioNowPlaying(library);
+  return (
+    library.focusRadio.playback.playing &&
+    nowPlaying !== null &&
+    nowPlaying.kind === "youtube"
+  );
+}

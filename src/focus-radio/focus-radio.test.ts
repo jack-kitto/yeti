@@ -7,6 +7,7 @@ import {
   resolveFocusRadioOutputVolume,
 } from "./playback";
 import { buildFocusRadioStationPickerRows } from "./station-picker";
+import { resolveFocusRadioStreamFailureAction } from "./stream-fallback";
 import { isFocusRadioStationCatalogEmpty } from "./station-picker";
 import {
   addFocusRadioStation,
@@ -189,6 +190,42 @@ describe("resolveFocusRadioNowPlaying", () => {
 
   it("returns null when no station is selected", () => {
     expect(resolveFocusRadioNowPlaying(createStarterLibrary())).toBeNull();
+  });
+});
+
+describe("resolveFocusRadioStreamFailureAction", () => {
+  it("retries the current station once before falling back to the next one", async () => {
+    let library = createStarterLibrary();
+    library = addFocusRadioStation(
+      library,
+      { label: "First", url: "https://stream.example.com/1.mp3", kind: "stream" },
+      "first",
+    );
+    library = addFocusRadioStation(
+      library,
+      { label: "Second", url: "https://stream.example.com/2.mp3", kind: "stream" },
+      "second",
+    );
+
+    expect(resolveFocusRadioStreamFailureAction(library, "first", false)).toEqual({
+      type: "retry",
+    });
+    expect(resolveFocusRadioStreamFailureAction(library, "first", true)).toEqual({
+      type: "fallback",
+      stationId: "second",
+    });
+  });
+
+  it("reports exhaustion when no other station can be tried", async () => {
+    let library = addFocusRadioStation(createStarterLibrary(), {
+      label: "Only",
+      url: "https://stream.example.com/only.mp3",
+      kind: "stream",
+    }, "only");
+
+    expect(resolveFocusRadioStreamFailureAction(library, "only", true)).toEqual({
+      type: "exhausted",
+    });
   });
 });
 

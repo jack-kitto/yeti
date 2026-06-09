@@ -10,6 +10,7 @@ import { updateFocusRadioPlayback } from "@/focus-radio/stations";
 import { useMutateLibrary } from "@/hooks/use-library";
 import type { Library } from "@/library/types";
 import { useConfigStore } from "@/store/config-store";
+import { useFocusRadioPlayback } from "./focus-radio-playback-context";
 
 type ControlCenterMediaTabProps = {
   library: Library;
@@ -17,6 +18,7 @@ type ControlCenterMediaTabProps = {
 
 export function ControlCenterMediaTab({ library }: ControlCenterMediaTabProps) {
   const openSection = useConfigStore((state) => state.openSection);
+  const { playbackError, retryPlayback } = useFocusRadioPlayback();
   const mutateLibrary = useMutateLibrary();
   const [query, setQuery] = useState("");
   const catalogEmpty = isFocusRadioStationCatalogEmpty(library);
@@ -92,6 +94,15 @@ export function ControlCenterMediaTab({ library }: ControlCenterMediaTabProps) {
             <p className="shell-dashboard-media-now-playing-label">{nowPlaying.label}</p>
             <p className="shell-dashboard-media-now-playing-kind">{nowPlaying.kind}</p>
           </div>
+        </div>
+      ) : null}
+
+      {playbackError ? (
+        <div className="shell-dashboard-media-error">
+          <p>{playbackError}</p>
+          <button type="button" className="shell-dashboard-setup-button" onClick={retryPlayback}>
+            Retry
+          </button>
         </div>
       ) : null}
 

@@ -6,6 +6,7 @@ import { formatClockDisplay } from "@/canvas-widgets/clock";
 import { listEnabledCanvasWidgets } from "@/canvas-widgets/config";
 import { pickQuote } from "@/canvas-widgets/quote";
 import { formatWelcomeMessage } from "@/canvas-widgets/welcome";
+import { CanvasNowPlayingWidget } from "./canvas-now-playing-widget";
 
 type CanvasWidgetStackProps = {
   workspace: Workspace;
@@ -77,6 +78,8 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
             );
           case "quote":
             return <CanvasQuoteWidget key={widgetId} />;
+          case "nowPlaying":
+            return <CanvasNowPlayingWidget key={widgetId} />;
         }
       })}
     </div>

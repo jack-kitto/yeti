@@ -13,6 +13,7 @@ const WIDGET_LABELS: Record<CanvasWidgetId, string> = {
   clock: "Clock / date",
   welcome: "Welcome message",
   quote: "Quote",
+  nowPlaying: "Now playing",
 };
 
 type ShellConfigCanvasWidgetsProps = {

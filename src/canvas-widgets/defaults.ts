@@ -2,13 +2,12 @@ import type { Library, Workspace } from "@/library/types";
 import { createDefaultCanvasWidgets } from "./config";
 
 export function ensureWorkspaceCanvasWidgets(workspace: Workspace): Workspace {
-  if (workspace.canvasWidgets) {
-    return workspace;
-  }
-
   return {
     ...workspace,
-    canvasWidgets: createDefaultCanvasWidgets(),
+    canvasWidgets: {
+      ...createDefaultCanvasWidgets(),
+      ...workspace.canvasWidgets,
+    },
   };
 }
 

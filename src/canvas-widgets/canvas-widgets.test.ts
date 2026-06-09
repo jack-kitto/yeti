@@ -68,6 +68,7 @@ describe("createDefaultCanvasWidgets", () => {
       clock: true,
       welcome: true,
       quote: true,
+      nowPlaying: true,
     });
   });
 });
@@ -94,11 +95,11 @@ describe("listEnabledCanvasWidgets", () => {
         },
         tasks: [],
       },
-      canvasWidgets: { clock: true, welcome: false, quote: true },
+      canvasWidgets: { clock: true, welcome: false, quote: true, nowPlaying: false },
     });
 
     expect(listEnabledCanvasWidgets(workspace)).toEqual(["clock", "quote"]);
-    expect(CANVAS_WIDGET_IDS).toEqual(["clock", "welcome", "quote"]);
+    expect(CANVAS_WIDGET_IDS).toEqual(["clock", "welcome", "quote", "nowPlaying"]);
   });
 });
 

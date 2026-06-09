@@ -38,6 +38,8 @@ type FocusRadioPlaybackContextValue = {
   retryPlayback: () => void;
   externalGlance: ExternalMediaGlance | null;
   dispatchExternalMediaKey: typeof dispatchExternalMediaKey;
+  getStreamAnalyser: () => AnalyserNode | null;
+  streamVisualizerActive: boolean;
 };
 
 const FocusRadioPlaybackContext = createContext<FocusRadioPlaybackContextValue | null>(null);
@@ -63,6 +65,8 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   const retriedCurrentRef = useRef(false);
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const libraryRef = useRef(library);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const wasPlayingBeforeExternalRef = useRef(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
   const [externalGlance, setExternalGlance] = useState<ExternalMediaGlance | null>(null);
@@ -231,6 +235,29 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
 
   useEffect(() => {
     const audio = audioRef.current;
+    if (!audio || !streamUrl || !shouldPlayStream) {
+      return;
+    }
+
+    if (!analyserRef.current) {
+      const context = new AudioContext();
+      const analyser = context.createAnalyser();
+      analyser.fftSize = 32;
+      analyser.smoothingTimeConstant = 0.82;
+      const source = context.createMediaElementSource(audio);
+      source.connect(analyser);
+      analyser.connect(context.destination);
+      analyserRef.current = analyser;
+      audioContextRef.current = context;
+    }
+
+    void audioContextRef.current?.resume();
+  }, [shouldPlayStream, streamUrl]);
+
+  const getStreamAnalyser = useCallback(() => analyserRef.current, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
     if (!audio) {
       return;
     }
@@ -261,7 +288,14 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
 
   return (
     <FocusRadioPlaybackContext
-      value={{ playbackError, retryPlayback, externalGlance, dispatchExternalMediaKey }}
+      value={{
+        playbackError,
+        retryPlayback,
+        externalGlance,
+        dispatchExternalMediaKey,
+        getStreamAnalyser,
+        streamVisualizerActive: shouldPlayStream,
+      }}
     >
       <audio ref={audioRef} className="shell-focus-radio-audio" aria-hidden />
       <FocusRadioYoutubePlayer

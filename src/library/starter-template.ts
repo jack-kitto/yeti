@@ -1,5 +1,6 @@
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
+import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { rebalanceKeys } from "@/fractional-order/fractional-order";
 import type { EdgeGroup, Library, Link, Theme, Workspace } from "./types";
 
@@ -233,6 +234,7 @@ export function createStarterLibrary(): Library {
       focusCommandBar: "Meta+Shift+k",
       cycleWorkspace: "Control+Tab",
     },
+    focusRadio: createDefaultFocusRadio(),
     activeWorkspaceId: work.id,
   };
 }

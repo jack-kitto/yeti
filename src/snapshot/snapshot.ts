@@ -1,6 +1,8 @@
 import { parse, stringify } from "yaml";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
+import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
+import type { FocusRadio } from "@/focus-radio/types";
 import type { FocusTask, PomodoroState } from "@/internal-tools/types";
 import { validateLibrary } from "@/library/library";
 import type {
@@ -66,6 +68,7 @@ export type LibrarySnapshot = {
   catalog: Link[];
   workspaces: SnapshotWorkspace[];
   shortcuts: ShortcutBindings;
+  focusRadio?: FocusRadio;
   activeWorkspaceId: string;
 };
 
@@ -159,6 +162,10 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
       ...(workspace.icsFeedUrl ? { icsFeedUrl: workspace.icsFeedUrl } : {}),
     })),
     shortcuts: { ...library.shortcuts },
+    focusRadio: {
+      stations: library.focusRadio.stations.map((station) => ({ ...station })),
+      playback: { ...library.focusRadio.playback },
+    },
     activeWorkspaceId: library.activeWorkspaceId,
   };
 }
@@ -198,6 +205,12 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
       }),
     ),
     shortcuts: { ...snapshot.shortcuts },
+    focusRadio: snapshot.focusRadio
+      ? {
+          stations: snapshot.focusRadio.stations.map((station) => ({ ...station })),
+          playback: { ...snapshot.focusRadio.playback },
+        }
+      : createDefaultFocusRadio(),
     activeWorkspaceId: snapshot.activeWorkspaceId,
   };
 

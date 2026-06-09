@@ -50,13 +50,22 @@ export async function saveLibrary(
   return library;
 }
 
+async function maybeSeedFocusRadioFromLocalFile(library: Library): Promise<Library> {
+  if (typeof window !== "undefined") {
+    return library;
+  }
+
+  const { seedFocusRadioFromDisk } = await import("@/focus-radio/seed-from-disk");
+  return seedFocusRadioFromDisk(library);
+}
+
 export async function loadOrSeedLibrary(store: LibraryStore): Promise<Library> {
   const existing = await store.read();
   if (existing) {
     return ensureLibraryDefaults(existing);
   }
 
-  const starter = createStarterLibrary();
+  const starter = await maybeSeedFocusRadioFromLocalFile(createStarterLibrary());
   await store.write(starter);
   return starter;
 }

@@ -8,6 +8,7 @@ import {
 } from "@/store/config-store";
 import { ShellConfigCanvasWidgets } from "./shell-config-canvas-widgets";
 import { ShellConfigCatalog } from "./shell-config-catalog";
+import { ShellConfigFocusRadio } from "./shell-config-focus-radio";
 import { ShellConfigLibrary } from "./shell-config-library";
 import { ShellConfigPlacements } from "./shell-config-placements";
 import { ShellConfigWorkspaces } from "./shell-config-workspaces";
@@ -22,6 +23,7 @@ const SECTIONS: { id: ConfigSection; label: string; description: string }[] = [
   { id: "edges", label: "Edges", description: "Edge groups and placements" },
   { id: "canvas", label: "Canvas", description: "Ambient canvas widgets" },
   { id: "workspaces", label: "Workspaces", description: "Workspaces and themes" },
+  { id: "focusRadio", label: "Focus radio", description: "BYO media stations" },
   { id: "library", label: "Library", description: "Reset and maintenance" },
 ];
 
@@ -35,6 +37,8 @@ function sectionContent(section: ConfigSection, library: Library) {
       return <ShellConfigCanvasWidgets library={library} />;
     case "workspaces":
       return <ShellConfigWorkspaces library={library} />;
+    case "focusRadio":
+      return <ShellConfigFocusRadio library={library} />;
     case "library":
       return <ShellConfigLibrary library={library} />;
   }

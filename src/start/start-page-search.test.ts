@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey } from "@/fractional-order/fractional-order";
 import type { Library, Link } from "@/library/types";
 import { buildStartPageSearchResults } from "./start-page-search";
@@ -36,6 +37,7 @@ function makeLibrary(catalog: Link[]): Library {
     ],
     activeWorkspaceId: "work",
     shortcuts: {},
+    focusRadio: createDefaultFocusRadio(),
   };
 }
 

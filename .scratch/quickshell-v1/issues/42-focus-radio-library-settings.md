@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -10,10 +10,10 @@ Status: ready-for-agent
 
 ## Acceptance criteria
 
-- [ ] Library stores user stations and focus radio playback preferences globally
-- [ ] Settings UI adds, edits, removes, and reorders stations
-- [ ] Snapshot export/import round-trips radio preferences
-- [ ] Starter library ships with no stations
+- [x] Library stores user stations and focus radio playback preferences globally
+- [x] Settings UI adds, edits, removes, and reorders stations
+- [x] Snapshot export/import round-trips radio preferences
+- [x] Starter library ships with no stations
 
 ## Blocked by
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
+import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey } from "@/fractional-order/fractional-order";
 import { defaultInternalToolsForTests } from "@/internal-tools/test-fixtures";
 import type { Library } from "@/library/types";
@@ -42,6 +43,7 @@ function makeLibrary(): Library {
       },
     ],
     shortcuts: { focusCommandBar: "Meta+Shift+k", cycleWorkspace: "Control+Tab" },
+    focusRadio: createDefaultFocusRadio(),
     activeWorkspaceId: "work",
   };
 }

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey, insertBetween } from "@/fractional-order/fractional-order";
 import type { EdgeGroup, Library, PinPosition } from "@/library/types";
 import {
@@ -73,6 +74,7 @@ function makeLibrary(edgeGroups: {
       },
     ],
     shortcuts: { focusCommandBar: "Meta+Shift+k", cycleWorkspace: "Control+Tab" },
+    focusRadio: createDefaultFocusRadio(),
     activeWorkspaceId: "work",
   };
 }
@@ -200,6 +202,7 @@ function makeLibraryWithPins(
       },
     ],
     shortcuts: { focusCommandBar: "Meta+Shift+k", cycleWorkspace: "Control+Tab" },
+    focusRadio: createDefaultFocusRadio(),
     activeWorkspaceId: "work",
   };
 }

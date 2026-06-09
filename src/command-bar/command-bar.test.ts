@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey } from "@/fractional-order/fractional-order";
 import type { Library } from "@/library/types";
 import {
@@ -66,6 +67,7 @@ function makeLibrary(): Library {
       },
     ],
     shortcuts: { focusCommandBar: "Meta+Shift+k", cycleWorkspace: "Control+Tab" },
+    focusRadio: createDefaultFocusRadio(),
     activeWorkspaceId: "work",
   };
 }

@@ -1,6 +1,8 @@
 # Yeti
 
-A developer-focused browser start page that feels like a desktop shell — edge-attached panels, spatial navigation, and a central workspace canvas. Delivered as a web app (local or hosted); opened via browser homepage or bookmark.
+A developer-focused productivity shell for developers — spatial navigation, edge-attached panels, and a central workspace canvas. Delivered as a web app (local or hosted). Yeti has two distinct surfaces: a **home station** you pin and work from all day, and a lightweight **start page** you set as the browser new-tab URL for instant search-and-launch.
+
+**Two surfaces:** the **home station** (`/home`) is the full **shell** — pin it and keep it open. The **start page** (`/start`) is a lightweight new-tab surface that reads the same **library** from IndexedDB; bookmark `/start` in the browser. Open `/home` once first so the library seeds; after that, new tabs are near-instant (issue 34).
 
 ## Language
 
@@ -127,6 +129,22 @@ _Avoid_: Search box, omnibox, palette
 **Command bar action**:
 A shell operation triggered from the **command bar** with a `:` prefix — not a link. Typing `:reset` surfaces matching actions; `Enter` runs the selected action (with confirmation when destructive). Does not open a URL.
 _Avoid_: Command, palette action, slash command
+
+**Home station**:
+The full Yeti experience — **shell** rims, **canvas**, **edge groups**, **internal tools**, **settings**, and the complete **library** in IndexedDB. Lives at `/home` (dedicated app route, not `/`). Intended as a pinned tab you work from all day; cold open may show a loading gate while the library loads.
+_Avoid_: Main app, dashboard, root URL
+
+**Landing page**:
+The public entry at `/` — product name, one-liner, and a primary path into the **home station** (`/home`). v1 is minimal. Not a **start page** and not the **shell**.
+_Avoid_: Homepage, marketing site, start page, setup wizard
+
+**Start page**:
+A lightweight surface at `/start` for browser new-tab use — **command bar** fuzzy search over the **link catalog**, with the active **workspace** **theme** as backdrop. Reads the **library** from IndexedDB (same store as **home station**). On load: generic loading state while IndexedDB is checked; if a **library** exists, search uses it immediately; if none, show **starter template** defaults and prompt the user to load their config (open **home station** or import a **library snapshot**). Search-and-launch only — no **command bar actions**, workspace switching, or **shell** chrome. SSR ships command bar HTML on first response; client attaches catalog when IDB resolves. Command bar autofocus on load. Footer link to `/home`.
+_Avoid_: Bootstrap mode, encoded URL, lite shell
+
+**Start page URL**:
+The fixed browser new-tab bookmark: `/start`. No generation step, no encoded theme or links — the **library** in IndexedDB is the source of truth. Settings shows copy-to-clipboard for this path.
+_Avoid_: Generated path, payload, `/p/…` route
 
 Keyboard shortcuts are **configurable** with browser-safe defaults (e.g. `⌘⇧K` for command bar). All shortcuts are tab-scoped — they only work when the Yeti tab is active.
 

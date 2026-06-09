@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { stringify } from "yaml";
+import { initialKey } from "@/fractional-order/fractional-order";
 import { loadOrSeedLibrary } from "@/library/library";
 import { createInMemoryLibraryStore } from "@/library/store";
 import {
@@ -17,6 +18,74 @@ describe("serializeSnapshot", () => {
     const restored = deserializeSnapshot(yaml);
 
     expect(restored).toEqual(library);
+  });
+
+  it("round-trips extended internal tools fields on a workspace", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const workspace = library.workspaces[0]!;
+
+    library.workspaces[0] = {
+      ...workspace,
+      internalTools: {
+        pomodoro: {
+          ...workspace.internalTools.pomodoro,
+          splitId: "custom",
+          phase: "shortBreak",
+          running: false,
+          endsAt: null,
+          chimeEnabled: true,
+          activeTaskId: "task-1",
+          completedWorkSessions: 2,
+        },
+        customFocusSplit: {
+          id: "custom",
+          label: "My split",
+          workMinutes: 40,
+          shortBreakMinutes: 8,
+          longBreakMinutes: 16,
+        },
+        tasks: [
+          {
+            id: "task-1",
+            title: "Ship snapshot",
+            estimateMinutes: 45,
+            today: true,
+            completed: false,
+            orderKey: initialKey(),
+          },
+        ],
+      },
+    };
+
+    const restored = deserializeSnapshot(serializeSnapshot(library));
+
+    expect(restored.workspaces[0]?.internalTools).toEqual(library.workspaces[0]!.internalTools);
+  });
+
+  it("backfills missing internal tools fields when importing older snapshots", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const snapshot = libraryToSnapshot(library);
+
+    snapshot.workspaces[0]!.internalTools = {
+      pomodoro: {
+        splitId: "classic",
+        phase: "work",
+        running: false,
+        endsAt: null,
+        chimeEnabled: false,
+        activeTaskId: null,
+      },
+      tasks: [],
+    };
+
+    const restored = deserializeSnapshot(stringify(snapshot));
+
+    expect(restored.workspaces[0]?.internalTools).toMatchObject({
+      customFocusSplit: null,
+      pomodoro: {
+        completedWorkSessions: 0,
+      },
+    });
   });
 
   it("keeps theme background images as URL references in the snapshot", async () => {

@@ -1,9 +1,10 @@
 import { parse, stringify } from "yaml";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
+import { ensureWorkspaceInternalTools } from "@/internal-tools/defaults";
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import type { FocusRadio } from "@/focus-radio/types";
-import type { FocusTask, PomodoroState } from "@/internal-tools/types";
+import type { WorkspaceInternalTools } from "@/internal-tools/types";
 import { validateLibrary } from "@/library/library";
 import { normalizeWorkspacePlacements } from "@/library/migrate-placements";
 import type {
@@ -55,10 +56,7 @@ type SnapshotWorkspace = {
     };
     pins?: SnapshotPin[];
   };
-  internalTools?: {
-    pomodoro: PomodoroState;
-    tasks: FocusTask[];
-  };
+  internalTools?: WorkspaceInternalTools;
   canvasWidgets?: CanvasWidgetConfig;
   icsFeedUrl?: string;
 };
@@ -148,8 +146,8 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
       ...(link.title !== undefined ? { title: link.title } : {}),
       ...(link.image !== undefined ? { image: link.image } : {}),
     })),
-    workspaces: snapshot.workspaces.map(
-      (workspace): Workspace => ({
+    workspaces: snapshot.workspaces.map((workspace): Workspace =>
+      ensureWorkspaceInternalTools({
         id: workspace.id,
         name: workspace.name,
         theme: {

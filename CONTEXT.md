@@ -11,8 +11,8 @@ The product — a productivity shell for developers combining bookmarks, project
 _Avoid_: Dashboard, homepage, portal, Quickshell
 
 **Shell**:
-The overall spatial interface metaphor — controls on screen edges, canvas in the center, contextual flyouts rather than traditional web chrome.
-_Avoid_: Dashboard, layout, UI
+The glass frame that sits **on top of** the **canvas** — controls on screen edges, contextual menus at the rim, not traditional web chrome. At rest the shell rings the viewport; on hover it expands outward over the canvas to open a **notch**. Paint order: **canvas** (bottom) → **shell** / **notch** (middle) → **rim menu** content (top).
+_Avoid_: Dashboard, layout, UI, pocket
 
 **Library**:
 A single user's complete Yeti dataset — workspaces, the link catalog, placements, themes, and preferences. Persisted in browser **IndexedDB** on the active machine/browser.
@@ -44,6 +44,14 @@ _Avoid_: Page transition, slide animation
 
 ## Shell layout
 
+**Notch**:
+The shell's outward expansion at a rim anchor when a zone is hovered or pinned — iPhone-bezel style. The deformed shell surface **is** the menu container; **rim menu** content sits on top of the notch with no separate card, panel, or flyout backdrop. One notch at a time per rim activation. Where the notch overlaps the **canvas**, **canvas widgets** underneath are fully occluded in that region only — widgets elsewhere stay visible; no global dim when a notch opens.
+_Avoid_: Pocket, bubble, cutout, popover
+
+**Rim menu**:
+The interactive content revealed inside an open **notch** — link rows, command bar, control center tabs, tool UI. No wrapper card or glass panel around the content; the **notch** provides the surface. **Edge flyouts** (link lists) are visually bare on the notch; denser menus (control center, command bar, tool flyouts) may use item-level hover/row chrome — never an enclosing flyout backdrop. Content fades and scales **in lockstep** with notch expansion — one motion, not notch-then-menu. Synonyms by location: **edge flyout** (left groups), tool flyout (right), **control center** (top), **command bar** (bottom).
+_Avoid_: Flyout card, dropdown panel, modal
+
 **Canvas**:
 The large central area and primary focus surface. In v1: **canvas widgets** only — ambient home content with no pins and no workspace switcher. Enabled widgets stack vertically at optical center with a slight upward bias (~40% from top). Links are reached via **edge groups**, the **command bar**, and the **launcher**.
 _Avoid_: Dashboard, homepage, main content, pin strip
@@ -57,15 +65,15 @@ A **canvas widget** that rotates short lines curated for design, innovation, eng
 _Avoid_: Affirmation, fortune cookie, API feed
 
 **Control center**:
-The **top rim** pocket — on-demand glance and utility content opened by hovering the top edge. Tabbed inside the pocket; configured from **settings**. v1 tabs: **workspaces** (switch and glance at active context), **calendar** (per-workspace **ICS feed URL** in settings — read-only, no OAuth in v1). Shows **next up**: timed events from now forward; all-day events for today until midnight. Click title opens event URL when present; expand shows details inline. List capped at **5** events with **+N more** when overflow. No ICS URL → setup prompt linking to **settings**, and **media**. The **media** tab always exposes the built-in **focus radio** player (lofi, chill hop, techno-style stations); when the browser's media session reports now-playing elsewhere, that overlays as a glance/control strip — radio remains reachable without dismissing it. Does not host **canvas widgets**, **tasks**, or other **internal tools** — tasks live on the **right rim**, not here. Weather is out of v1 scope.
+The **top rim** **rim menu** — on-demand glance and utility content opened by hovering the top edge (shell expands into a top **notch**). Tabbed inside the notch; configured from **settings**. v1 tabs: **workspaces** (switch and glance at active context), **calendar** (per-workspace **ICS feed URL** in settings — read-only, no OAuth in v1). Shows **next up**: timed events from now forward; all-day events for today until midnight. Click title opens event URL when present; expand shows details inline. List capped at **5** events with **+N more** when overflow. No ICS URL → setup prompt linking to **settings**, and **media**. The **media** tab always exposes the built-in **focus radio** player (lofi, chill hop, techno-style stations); when the browser's media session reports now-playing elsewhere, that overlays as a glance/control strip — radio remains reachable without dismissing it. Does not host **canvas widgets**, **tasks**, or other **internal tools** — tasks live on the **right rim**, not here. Weather is out of v1 scope.
 _Avoid_: Dashboard, top panel, notification center
 
 **Focus radio**:
-The stream player in the **control center** media tab — **bring-your-own (BYO)** stations only. The user adds personal **stream** URLs (Icecast/MP3) or **youtube** live links in **settings** for their own instance; Yeti does not ship a bundled station catalog (third-party embed licensing). Each saved station has a user label, URL, and kind (`stream` | `youtube`). **Global** preference: user's station list, last station, volume, and playing/paused state persist in the **library**. Media tab: searchable picker over the user's stations; optional user-provided image URL per station (no bundled broadcaster logos). v1 controls: station picker, play/pause, volume, mute. On `stream` failure: retry once, then try next user station; error if all fail. Playback continues when the control center pocket closes. **Media session** glance strip above BYO radio when another tab is playing; external playback auto-pauses focus radio.
+The stream player in the **control center** media tab — **bring-your-own (BYO)** stations only. The user adds personal **stream** URLs (Icecast/MP3) or **youtube** live links in **settings** for their own instance; Yeti does not ship a bundled station catalog (third-party embed licensing). Each saved station has a user label, URL, and kind (`stream` | `youtube`). **Global** preference: user's station list, last station, volume, and playing/paused state persist in the **library**. Media tab: searchable picker over the user's stations; optional user-provided image URL per station (no bundled broadcaster logos). v1 controls: station picker, play/pause, volume, mute. On `stream` failure: retry once, then try next user station; error if all fail. Playback continues when the control center notch closes. **Media session** glance strip above BYO radio when another tab is playing; external playback auto-pauses focus radio.
 _Avoid_: Spotify embed, bundled radio catalog
 
 **Edge**:
-The **left rim** — hosts **multiple edge groups** of catalog links, each with its own **edge handle** and **edge flyout**. The top and bottom rims host the **control center** and **command bar** pockets instead.
+The **left rim** — hosts **multiple edge groups** of catalog links, each with its own **edge handle** and **edge flyout**. The top and bottom rims host the **control center** and **command bar** notches instead.
 _Avoid_: Menu, panel, zone
 
 **Right rim**:
@@ -101,12 +109,12 @@ A visual resting position along an **edge**, computed from viewport size and min
 _Avoid_: Grid cell, coordinate, array index
 
 **Edge handle**:
-The visible icon on a rim that represents one **edge group** (left) or **internal tool** (right). Link-group handles are user-assigned: optional custom image URL, else emoji or short text glyph, else initials from the group name. Tool handles use built-in icons in v1. Hovering opens the flyout from the handle's anchor with shell-deformation motion. Click to pin the flyout open until dismissed.
+The visible icon on a rim that represents one **edge group** (left) or **internal tool** (right). Link-group handles are user-assigned: optional custom image URL, else emoji or short text glyph, else initials from the group name. Tool handles use built-in icons in v1. Handles are **shell** chrome — painted on the shell layer, below open **rim menu** content. Hovering expands the **shell** into a **notch** at the handle's anchor and reveals the **rim menu** above. Click to pin open until dismissed.
 _Avoid_: Button, tab, dock item
 
 **Edge flyout**:
-The contextual panel of links for one **edge group**. Opens from the group's **edge handle** anchor (not the center of the screen edge). Shows up to **8 links** (user-ordered), then **see more** opens the **launcher** filtered to that group. Closes when the pointer leaves unless pinned.
-_Avoid_: Sidebar, dropdown, popover
+The **rim menu** of links for one **edge group** — bare rows on the **notch** surface, no card wrapper. Opens from the group's **edge handle** anchor (not the center of the screen edge). Shows up to **8 links** (user-ordered), then **see more** opens the **launcher** filtered to that group. Closes when the pointer leaves unless pinned.
+_Avoid_: Sidebar, dropdown, popover, flyout card
 
 **Edge groups** on the left rim and **internal tools** on the **right rim** share the same handle/flyout interaction model. Link-group handles use the glass **shell-icon-btn** surface; **internal tool** handles on the narrow right rim use a ghost variant (glyph only, no card) to avoid canvas overflow. Left handle slot assignment is editable on the live shell (drag handle, snap to slot) and in **settings** (slot rail for precise layout).
 
@@ -119,11 +127,11 @@ The master list of every link in the library — no folders or nesting. **Edge g
 _Avoid_: Database, bookmark list, library table
 
 **Launcher**:
-A full-screen or large overlay for browsing links — grid with search/filter, opened via "see more" from a truncated preview. Defaults to the active workspace; can toggle to the full catalog. Feels like an OS app launcher, not a settings page.
+A full-screen or large overlay for browsing links — grid with search/filter, opened via "see more" from a truncated preview. Defaults to the active workspace; can toggle to the full catalog. Feels like an OS app launcher, not a settings page. Sits on the **top plane** — always above **shell**, open **notches**, and **rim menus**.
 _Avoid_: Modal, drawer, bookmark manager
 
 **Command bar**:
-A compact search input in the **bottom rim** pocket — the universal input for keyboard-first jump-to-link, workspace switching, and shell actions. **Type-to-focus**: printable keys on the focused Yeti tab open/focus the command bar and insert the character, unless focus is already in a text field (settings, tool flyouts, etc.). Two modes only: **default** (bare text) fuzzy-finds workspace switches first, then links (placed first, catalog fallback); **action mode** (`:` prefix) matches **command bar actions** only. `↑`/`↓` and `Tab`/`Shift+Tab` move selection — not `j`/`k`, which type into the query. `Enter` executes; `Esc` clears or dismisses. No preview pane.
+A compact search input in the **bottom rim** **notch** — the universal input for keyboard-first jump-to-link, workspace switching, and shell actions. **Type-to-focus**: printable keys on the focused Yeti tab open/focus the command bar and insert the character, unless focus is already in a text field (settings, tool flyouts, etc.). Two modes only: **default** (bare text) fuzzy-finds workspace switches first, then links (placed first, catalog fallback); **action mode** (`:` prefix) matches **command bar actions** only. `↑`/`↓` and `Tab`/`Shift+Tab` move selection — not `j`/`k`, which type into the query. `Enter` executes; `Esc` clears or dismisses. No preview pane.
 _Avoid_: Search box, omnibox, palette
 
 **Command bar action**:
@@ -149,7 +157,7 @@ _Avoid_: Generated path, payload, `/p/…` route
 Keyboard shortcuts are **configurable** with browser-safe defaults (e.g. `⌘⇧K` for command bar). All shortcuts are tab-scoped — they only work when the Yeti tab is active.
 
 **Settings**:
-A modal dialog for all configuration — workspace management, theme editing, link catalog CRUD, placement assignment, edge ordering, **canvas widget** toggles, **control center** options, library snapshot import/export, and destructive **library reset**. Opened via the **command bar action** `:settings` or a ghost control in the **top-right corner**. Not a rim pocket; the **right rim** is reserved for **internal tools**.
+A modal dialog for all configuration — workspace management, theme editing, link catalog CRUD, placement assignment, edge ordering, **canvas widget** toggles, **control center** options, library snapshot import/export, and destructive **library reset**. Opened via the **command bar action** `:settings` or a ghost control in the **top-right corner**. Not a rim **notch**; the **right rim** is reserved for **internal tools**. Sits on the **top plane** with the **launcher** — always above **shell** and open **rim menus**.
 _Avoid_: Config panel, preferences page, right-edge flyout
 
 **Library reset**:

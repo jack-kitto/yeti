@@ -40,3 +40,5 @@ Measure menu content with `offsetWidth`/`offsetHeight` (not `getBoundingClientRe
 - Top rim — control-center scope in issue 27.
 
 Motion and pocket feel polish remain in issue 12.
+
+**Superseded terminology (2026-06-09):** Product language is now **notch** (shell expands over canvas) not inward canvas **pocket**. Layering model and flyout styling: ADR `docs/adr/0005-shell-notch-layering.md`, issue 52.

@@ -6,7 +6,7 @@ Status: ready-for-agent
 
 ## What to build
 
-Define and implement the **top rim** pocket — the control-center / dashboard surface (`ShellDashboard` today is tab placeholders only).
+Define and implement the **top rim** **notch** — the control-center / dashboard surface (`ShellDashboard` today is tab placeholders only).
 
 v1 scope (locked unless human revises):
 
@@ -30,20 +30,20 @@ v1 scope (locked unless human revises):
 - **Focus radio persistence** (locked): global (not per-workspace) — last station, volume, and playing/paused state in **library** preferences; survives reload
 - **Focus radio controls** (locked): station picker, play/pause, volume slider, mute toggle — no visualizer/skip UI in v1
 - **Stream failure** (locked): retry same `stream` station once after ~3s, then try next user station; inline error + manual retry only if all fail
-- **Background playback** (locked): focus radio keeps playing when the control center pocket closes; pocket is the control surface only
+- **Background playback** (locked): focus radio keeps playing when the control center notch closes; notch is the control surface only
 - **No tasks tab** — tasks live on right rim only (issue 28)
 - **Cut:** Performance tab (deferred), weather (out of v1)
 
-**Implementation-only (no more product forks):** BYO station CRUD in settings + library schema; `stream` and `youtube` players; ICS CORS proxy if needed; pocket sizing/tab model vs deformation shell.
+**Implementation-only (no more product forks):** BYO station CRUD in settings + library schema; `stream` and `youtube` players; ICS CORS proxy if needed; notch sizing/tab model vs deformation shell. Layering: ADR 0005 / issue 52.
 
 ## Acceptance criteria
 
 - [x] Human agrees on v1 tab(s) and widget scope for the top rim
 - [ ] **Workspaces** tab switches workspace and shows active context
 - [ ] **Calendar** tab: per-workspace ICS, next-up glance (5 cap, +N more), refresh on open + 15m, click/expand, setup prompt when unset
-- [ ] **Media** tab: BYO focus radio (`stream` + `youtube`), settings CRUD, searchable picker, play-pause/volume/mute, global persistence, stream retry/fallback, setup prompt when empty, background playback when pocket closes
+- [ ] **Media** tab: BYO focus radio (`stream` + `youtube`), settings CRUD, searchable picker, play-pause/volume/mute, global persistence, stream retry/fallback, setup prompt when empty, background playback when notch closes
 - [ ] Media session strip when another tab is playing; external transport auto-pauses radio
-- [ ] Pocket sizing and scroll behavior feel intentional inside the rim shell
+- [ ] Notch sizing and scroll behavior feel intentional inside the rim shell
 - [ ] Top rim does not duplicate settings (issue 26) or command bar (bottom rim)
 
 ## Blocked by

@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,10 +12,10 @@ Match existing settings patterns: consistent row height, checkbox + label alignm
 
 ## Acceptance criteria
 
-- [ ] Canvas widget toggles align visually with other settings list rows
-- [ ] Checkbox and label sit on one baseline; no overlapping or off-center card backgrounds
-- [ ] Section reads correctly at default dialog width and when the body scrolls
-- [ ] No regression to per-workspace toggle behavior
+- [x] Canvas widget toggles align visually with other settings list rows
+- [x] Checkbox and label sit on one baseline; no overlapping or off-center card backgrounds
+- [x] Section reads correctly at default dialog width and when the body scrolls
+- [x] No regression to per-workspace toggle behavior
 
 ## Blocked by
 

@@ -964,6 +964,20 @@ body {
   gap: 2px;
 }
 
+.shell-config-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+  cursor: pointer;
+}
+
+.shell-config-toggle-row input[type="checkbox"] {
+  flex-shrink: 0;
+  margin: 0;
+}
+
 .shell-config-catalog-title {
   font-size: 13px;
   line-height: 1.2;

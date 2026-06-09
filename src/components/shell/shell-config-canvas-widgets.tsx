@@ -6,6 +6,7 @@ import {
   setCanvasWidgetEnabled,
   type CanvasWidgetId,
 } from "@/canvas-widgets/config";
+import { CANVAS_WIDGET_TOGGLE_ROW_CLASS } from "@/canvas-widgets/settings-layout";
 import type { Library } from "@/library/types";
 
 const WIDGET_LABELS: Record<CanvasWidgetId, string> = {
@@ -38,7 +39,7 @@ export function ShellConfigCanvasWidgets({ library }: ShellConfigCanvasWidgetsPr
       <ul className="shell-config-catalog">
         {CANVAS_WIDGET_IDS.map((widgetId) => (
           <li key={widgetId} className="shell-config-catalog-item">
-            <label className="shell-config-catalog-copy">
+            <label className={CANVAS_WIDGET_TOGGLE_ROW_CLASS}>
               <input
                 type="checkbox"
                 checked={workspace.canvasWidgets[widgetId]}

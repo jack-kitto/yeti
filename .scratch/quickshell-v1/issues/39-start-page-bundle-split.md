@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -16,9 +16,9 @@ If shell code is currently pulled in via shared imports, refactor shared boundar
 
 ## Acceptance criteria
 
-- [ ] `/start` initial JS payload excludes full shell modules (verified via build analyzer output or equivalent test)
-- [ ] `/home` still loads full **shell** without regression
-- [ ] Verification approach documented in issue comment or README note if non-obvious
+- [x] `/start` initial JS payload excludes full shell modules (verified via build analyzer output or equivalent test)
+- [x] `/home` still loads full **shell** without regression
+- [x] Verification approach documented in issue comment or README note if non-obvious
 
 ## Blocked by
 
@@ -27,3 +27,7 @@ If shell code is currently pulled in via shared imports, refactor shared boundar
 ## Comments
 
 Tracer bullet 5 of 5 for issue 34.
+
+Shipped in `test(routing): enforce start page shell bundle boundaries`.
+
+**Verification:** `src/routing/surface-boundaries.test.ts` walks the transitive import graph from `src/app/start/page.tsx` and fails if any `SHELL_ONLY_MODULES` entry appears (shell root, canvas, edge layer, config dialog, launcher, dashboard, pin strip, `shell-frame/`). Home station entry must reach `shell.tsx`. Run `npm run verify:surface-boundaries`. Production build (2026-06): `/start` page 1.98 kB / 145 kB first-load JS vs `/home` 20.6 kB / 167 kB.

@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -36,12 +36,12 @@ Implement in order (35 → 36 → 37; 38 parallel after 35; 39 after 37).
 
 ## Acceptance criteria
 
-- [ ] `/`, `/home`, and `/start` routes exist with correct surface per ADR 0004
-- [ ] `/start` first HTML includes usable command bar; generic loading until IDB check completes
-- [ ] `/start` searches user's **library** when present; **starter template** + load-config prompt when absent
-- [ ] `/home` retains full **shell** behavior (issue 31 regressions unaffected)
-- [ ] Settings exposes copyable `/start` bookmark instructions
-- [ ] `/start` does not load full shell JS bundle
+- [x] `/`, `/home`, and `/start` routes exist with correct surface per ADR 0004
+- [x] `/start` first HTML includes usable command bar; generic loading until IDB check completes
+- [x] `/start` searches user's **library** when present; **starter template** + load-config prompt when absent
+- [x] `/home` retains full **shell** behavior (issue 31 regressions unaffected)
+- [x] Settings exposes copyable `/start` bookmark instructions
+- [x] `/start` does not load full shell JS bundle
 
 ## Blocked by
 
@@ -52,3 +52,5 @@ None
 Product note (2026-06): grill-with-docs session reframed issue from "SSR bootstrap merge" to two-surface model. See ADR 0004 and `CONTEXT.md` (**Start page**, **Home station**, **Start page URL**).
 
 Supersedes original bootstrap/merge architecture in this file's first draft.
+
+Completed via issues 35–39.

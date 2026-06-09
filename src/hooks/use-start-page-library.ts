@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createIndexedDbLibraryStore } from "@/library/indexed-db-store";
+import { getLibrarySync } from "@/library/library-sync";
 import {
   resolveStartPageLibrary,
   type ResolvedStartPageLibrary,
@@ -21,21 +22,17 @@ export function useStartPageLibrary(): {
   const [phase, setPhase] = useState<StartPagePhase>(initialStartPagePhase);
   const [resolved, setResolved] = useState<ResolvedStartPageLibrary | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-
+  const refresh = useCallback(() => {
     void resolveStartPageLibrary(store).then((next) => {
-      if (cancelled) {
-        return;
-      }
       setResolved(next);
       setPhase(readyStartPagePhase());
     });
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
+
+  useEffect(() => {
+    refresh();
+    return getLibrarySync().subscribe(refresh);
+  }, [refresh]);
 
   return { phase, resolved };
 }

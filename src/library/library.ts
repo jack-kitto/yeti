@@ -1,4 +1,5 @@
 import { ensureLibraryDefaults } from "@/internal-tools/defaults";
+import { notifyLibraryChanged } from "./library-sync";
 import { createStarterLibrary } from "./starter-template";
 import {
   addCatalogLink as addCatalogLinkToLibrary,
@@ -41,13 +42,21 @@ export async function getLibrary(store: LibraryStore): Promise<Library | null> {
   return store.read();
 }
 
-export async function saveLibrary(
+async function persistLibrary(
   store: LibraryStore,
   library: Library,
 ): Promise<Library> {
   validateLibrary(library);
   await store.write(library);
+  notifyLibraryChanged();
   return library;
+}
+
+export async function saveLibrary(
+  store: LibraryStore,
+  library: Library,
+): Promise<Library> {
+  return persistLibrary(store, library);
 }
 
 export async function loadOrSeedLibrary(store: LibraryStore): Promise<Library> {
@@ -57,15 +66,12 @@ export async function loadOrSeedLibrary(store: LibraryStore): Promise<Library> {
   }
 
   const starter = createStarterLibrary();
-  await store.write(starter);
-  return starter;
+  return persistLibrary(store, starter);
 }
 
 export async function resetLibrary(store: LibraryStore): Promise<Library> {
   const starter = createStarterLibrary();
-  validateLibrary(starter);
-  await store.write(starter);
-  return starter;
+  return persistLibrary(store, starter);
 }
 
 export async function applyPatch(
@@ -82,9 +88,7 @@ export async function applyPatch(
     ...patch,
   };
 
-  validateLibrary(next);
-  await store.write(next);
-  return next;
+  return persistLibrary(store, next);
 }
 
 export async function addCatalogLink(

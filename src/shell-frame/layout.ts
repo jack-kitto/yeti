@@ -262,6 +262,8 @@ export function getSurfacePosition(
   }
 }
 
+const POCKET_FIT_MARGIN = 1.12;
+
 export function getSurfacePocketFit(
   pocket: RenderPocket,
   zone: ShellZoneLayout,
@@ -274,14 +276,20 @@ export function getSurfacePocketFit(
   const isHorizontal = zone.rim === "top" || zone.rim === "bottom";
   if (isHorizontal) {
     return clamp(
-      Math.min(pocket.depth / menuSize.height, pocket.span / menuSize.width),
+      Math.min(
+        pocket.depth / (menuSize.height * POCKET_FIT_MARGIN),
+        pocket.span / (menuSize.width * POCKET_FIT_MARGIN),
+      ),
       0,
       1,
     );
   }
 
   return clamp(
-    Math.min(pocket.depth / menuSize.width, pocket.span / menuSize.height),
+    Math.min(
+      pocket.depth / (menuSize.width * POCKET_FIT_MARGIN),
+      pocket.span / (menuSize.height * POCKET_FIT_MARGIN),
+    ),
     0,
     1,
   );
@@ -297,9 +305,9 @@ export function getSurfaceRevealStyle(
   zoneRevealProgress: number,
   pocketFit: number,
 ): SurfaceRevealStyle {
-  const progress = zoneRevealProgress * pocketFit;
-  const opacity = progress <= 0 ? 0 : progress ** 1.6;
-  const scale = 0.72 + pocketFit * 0.28;
+  const progress = zoneRevealProgress * pocketFit ** 1.15;
+  const opacity = progress <= 0 ? 0 : progress ** 2.6;
+  const scale = 0.52 + pocketFit ** 1.2 * 0.48;
 
   return { progress, opacity, scale };
 }

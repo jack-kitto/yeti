@@ -187,8 +187,8 @@ body {
 
 .shell-surface.visible,
 .shell-flyout.visible {
-  z-index: 12;
-  background: color-mix(in srgb, var(--qs-color-surface) 92%, transparent);
+  z-index: 50;
+  background: color-mix(in srgb, var(--qs-color-surface) 96%, transparent);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   box-shadow:

@@ -361,7 +361,7 @@ export function ShellEdgeLayer({
   }
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-30">
+    <div className="pointer-events-none absolute inset-0 z-[40]">
       {renderRimHit(BUILTIN_SURFACE.TOP_DASHBOARD, "shell-rim-hit-top", {
         top: topDashboardHit.top,
         left: topDashboardHit.left,

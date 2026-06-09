@@ -76,6 +76,23 @@ export function Shell() {
     <FocusRadioPlaybackProvider library={library}>
       <div className="relative h-screen w-screen overflow-hidden">
         <ShellCanvas theme={activeWorkspace.theme} />
+        <main
+          className="pointer-events-none absolute z-[5] flex flex-col items-center px-8"
+          style={{
+            left: panelBounds.left,
+            top: panelBounds.top,
+            width: panelBounds.width,
+            height: panelBounds.height,
+          }}
+        >
+          <div
+            className="pointer-events-auto absolute left-0 flex w-full justify-center px-8"
+            style={{ top: "40%", transform: "translateY(-50%)" }}
+          >
+            <CanvasWidgetStack workspace={activeWorkspace} />
+          </div>
+        </main>
+
         <ShellEdgeLayer
           library={library}
           onReorderGroup={handleReorderGroup}
@@ -93,23 +110,6 @@ export function Shell() {
             })
           }
         />
-
-        <main
-          className="pointer-events-none absolute z-[5] flex flex-col items-center px-8"
-          style={{
-            left: panelBounds.left,
-            top: panelBounds.top,
-            width: panelBounds.width,
-            height: panelBounds.height,
-          }}
-        >
-          <div
-            className="pointer-events-auto absolute left-0 flex w-full justify-center px-8"
-            style={{ top: "40%", transform: "translateY(-50%)" }}
-          >
-            <CanvasWidgetStack workspace={activeWorkspace} />
-          </div>
-        </main>
 
         <Launcher library={library} />
         <ShellConfigDialog

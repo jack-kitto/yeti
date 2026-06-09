@@ -1,31 +1,84 @@
 "use client";
 
 import { useState } from "react";
+import { buildControlCenterWorkspaceRows } from "@/control-center/workspaces";
+import type { Library } from "@/library/types";
 
 const TABS = [
-  { id: "dashboard", label: "Dashboard" },
-  { id: "media", label: "Media" },
-  { id: "performance", label: "Performance" },
   { id: "workspaces", label: "Workspaces" },
+  { id: "calendar", label: "Calendar" },
+  { id: "media", label: "Media" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
 
+type ShellDashboardProps = {
+  library: Library;
+  onSwitchWorkspace: (workspaceId: string) => void;
+};
+
 function tabPlaceholder(tab: TabId): string {
   switch (tab) {
-    case "dashboard":
-      return "Weather, calendar, and at-a-glance widgets will live here.";
+    case "calendar":
+      return "Connect an ICS feed in settings to see upcoming events.";
     case "media":
-      return "Now playing and media controls will live here.";
-    case "performance":
-      return "CPU, memory, and disk monitors will live here.";
+      return "Add focus radio stations in settings to start listening.";
     case "workspaces":
-      return "Workspace overview and quick switching will live here.";
+      return "";
   }
 }
 
-export function ShellDashboard() {
-  const [activeTab, setActiveTab] = useState<TabId>("dashboard");
+function ControlCenterWorkspacesTab({
+  library,
+  onSwitchWorkspace,
+}: {
+  library: Library;
+  onSwitchWorkspace: (workspaceId: string) => void;
+}) {
+  const rows = buildControlCenterWorkspaceRows(library);
+  const active = rows.find((row) => row.active);
+
+  return (
+    <div className="shell-dashboard-workspaces">
+      {active ? (
+        <p className="shell-dashboard-workspaces-active">
+          <span
+            className="shell-dashboard-workspace-swatch"
+            style={{ backgroundColor: active.accentColor }}
+            aria-hidden
+          />
+          <span>{active.name}</span>
+        </p>
+      ) : null}
+
+      <ul className="shell-dashboard-workspace-list">
+        {rows.map((row) => (
+          <li key={row.id}>
+            <button
+              type="button"
+              className={`shell-dashboard-workspace-row${row.active ? " active" : ""}`}
+              onClick={() => onSwitchWorkspace(row.id)}
+              aria-current={row.active ? "true" : undefined}
+            >
+              <span
+                className="shell-dashboard-workspace-swatch"
+                style={{ backgroundColor: row.accentColor }}
+                aria-hidden
+              />
+              <span className="shell-dashboard-workspace-name">{row.name}</span>
+              {row.active ? (
+                <span className="shell-dashboard-workspace-badge">Active</span>
+              ) : null}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export function ShellDashboard({ library, onSwitchWorkspace }: ShellDashboardProps) {
+  const [activeTab, setActiveTab] = useState<TabId>("workspaces");
 
   return (
     <div className="shell-dashboard">
@@ -42,7 +95,14 @@ export function ShellDashboard() {
         ))}
       </nav>
       <div className="shell-dashboard-body">
-        <p className="shell-dashboard-placeholder">{tabPlaceholder(activeTab)}</p>
+        {activeTab === "workspaces" ? (
+          <ControlCenterWorkspacesTab
+            library={library}
+            onSwitchWorkspace={onSwitchWorkspace}
+          />
+        ) : (
+          <p className="shell-dashboard-placeholder">{tabPlaceholder(activeTab)}</p>
+        )}
       </div>
     </div>
   );

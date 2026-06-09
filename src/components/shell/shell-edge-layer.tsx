@@ -426,7 +426,7 @@ export function ShellEdgeLayer({
               onMouseEnter={() => setZoneHover("menu", true)}
               onMouseLeave={() => leaveZoneHover("menu")}
             >
-              <ShellDashboard />
+              <ShellDashboard library={library} onSwitchWorkspace={onSwitchWorkspace} />
             </div>
           );
         }

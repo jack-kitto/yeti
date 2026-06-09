@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -18,11 +18,11 @@ Right rim hit zone can remain temporarily empty/stubbed until issue 28 repurpose
 
 ## Acceptance criteria
 
-- [ ] Hovering the right edge no longer opens settings
-- [ ] `:settings` in the command bar opens the settings dialog
-- [ ] A control on the left edge (bottom) opens the same dialog
-- [ ] All existing settings sections (links, edges, pins, workspaces, library) still work
-- [ ] No regression to command bar search / workspace switch / `:reset`
+- [x] Hovering the right edge no longer opens settings
+- [x] `:settings` in the command bar opens the settings dialog
+- [x] A control on the left edge (bottom) opens the same dialog
+- [x] All existing settings sections (links, edges, pins, workspaces, library) still work
+- [x] No regression to command bar search / workspace switch / `:reset`
 
 ## Blocked by
 

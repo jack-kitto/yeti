@@ -97,7 +97,6 @@ export function updateZonePositions(
 ): ShellZoneLayout[] {
   const leftGroups = zones.filter((zone) => zone.kind === "edge-group");
   const centerX = layout.panelX + layout.panelW * 0.5;
-  const centerY = layout.panelY + layout.panelH * 0.5;
 
   return zones.map((zone) => {
     if (zone.kind === "edge-group") {
@@ -122,7 +121,7 @@ export function updateZonePositions(
       return { ...zone, x: centerX, y: layout.h - layout.frameBottom * 0.5 };
     }
 
-    return { ...zone, x: layout.w - layout.frameRight * 0.5, y: centerY };
+    return zone;
   });
 }
 
@@ -151,20 +150,6 @@ export function getTargetPocketForZone(
     return {
       rim: "bottom",
       anchor: layout.panelX + layout.panelW * 0.5,
-      span,
-      depth,
-    };
-  }
-
-  if (zone.kind === "config") {
-    const span = Math.max(menuSize.height * 0.5 + 28, 120);
-    const depth = Math.min(
-      Math.max(menuSize.width + layout.pocketInset * 2 + 8, 180),
-      220,
-    );
-    return {
-      rim: "right",
-      anchor: layout.panelY + layout.panelH * 0.5,
       span,
       depth,
     };

@@ -44,8 +44,8 @@ import {
 import { useLauncherStore } from "@/store/launcher-store";
 import { CommandBar } from "./command-bar";
 import { LinkItem } from "./link-item";
-import { ShellConfigMenu } from "./shell-config-menu";
 import { ShellDashboard } from "./shell-dashboard";
+import { ShellSettingsButton } from "./shell-settings-button";
 
 const DRAG_THRESHOLD_PX = 6;
 
@@ -65,9 +65,6 @@ function defaultMenuSize(zoneId: string) {
   }
   if (zoneId === BUILTIN_SURFACE.BOTTOM_SEARCH) {
     return { width: 340, height: 48 };
-  }
-  if (zoneId === BUILTIN_SURFACE.RIGHT_CONFIG) {
-    return { width: 148, height: 220 };
   }
   return { width: 170, height: 130 };
 }
@@ -270,12 +267,8 @@ export function ShellEdgeLayer({
         right: 0,
         height: rimLayout.frameBottom,
       })}
-      {renderRimHit(BUILTIN_SURFACE.RIGHT_CONFIG, "shell-rim-hit-right", {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        width: rimLayout.frameRight,
-      })}
+
+      <ShellSettingsButton />
 
       {zones.map((zone) => {
         if (zone.kind === "dashboard") {
@@ -322,26 +315,6 @@ export function ShellEdgeLayer({
                   measureSurfaceRef.current.get(BUILTIN_SURFACE.BOTTOM_SEARCH)?.()
                 }
               />
-            </div>
-          );
-        }
-
-        if (zone.kind === "config") {
-          return (
-            <div
-              key={zone.id}
-              ref={(node) => {
-                if (node) {
-                  surfaceRefs.current.set(zone.id, node);
-                } else {
-                  surfaceRefs.current.delete(zone.id);
-                }
-              }}
-              className="shell-surface shell-surface-config"
-              onMouseEnter={() => setZoneHover("menu", true)}
-              onMouseLeave={() => leaveZoneHover("menu")}
-            >
-              <ShellConfigMenu workspaceName={activeWorkspace?.name ?? "Workspace"} />
             </div>
           );
         }

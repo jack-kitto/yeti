@@ -13,6 +13,7 @@ import type { Library } from "@/library/types";
 import { BUILTIN_SURFACE } from "@/shell-frame/rim";
 import { getLatestShellZones } from "@/shell-frame/shell-state";
 import { activateZone } from "@/shell-frame/shell-zones";
+import { useConfigStore } from "@/store/config-store";
 
 type CommandBarProps = {
   library: Library;
@@ -58,6 +59,7 @@ export function CommandBar({
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const resetLibraryMutation = useResetLibrary();
+  const openSettings = useConfigStore((state) => state.openSettings);
 
   const results = useMemo(
     () => buildCommandBarRows(library, query),
@@ -102,6 +104,11 @@ export function CommandBar({
     }
 
     if (result.kind === "action") {
+      if (result.actionId === "settings") {
+        openSettings();
+        setQuery("");
+        return;
+      }
       if (result.actionId === "reset") {
         const confirmed = window.confirm(
           "Reset the library to the starter template? This wipes your local library and cannot be undone without a snapshot backup.",

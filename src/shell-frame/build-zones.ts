@@ -31,13 +31,6 @@ export function buildShellZones(library: Library): ShellZoneLayout[] {
       x: 0,
       y: 0,
     },
-    {
-      id: BUILTIN_SURFACE.RIGHT_CONFIG,
-      rim: "right",
-      kind: "config",
-      x: 0,
-      y: 0,
-    },
   );
 
   return updateZonePositions(zones, getShellLayout());

@@ -18,7 +18,7 @@ export type CommandBarLinkResult = {
 
 export type CommandBarActionResult = {
   kind: "action";
-  actionId: "reset";
+  actionId: "reset" | "settings";
   label: string;
 };
 
@@ -32,6 +32,11 @@ export function isCommandBarActionMode(query: string): boolean {
 }
 
 const COMMAND_BAR_ACTIONS: CommandBarActionResult[] = [
+  {
+    kind: "action",
+    actionId: "settings",
+    label: "Open settings",
+  },
   {
     kind: "action",
     actionId: "reset",

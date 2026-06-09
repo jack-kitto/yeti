@@ -95,7 +95,7 @@ describe("buildCommandBarActionResults", () => {
 
   it("filters actions by text after the prefix", () => {
     expect(buildCommandBarActionResults(":res")).toHaveLength(1);
-    expect(buildCommandBarActionResults(":nope")).toHaveLength(0);
+    expect(buildCommandBarActionResults(":zzzz")).toHaveLength(0);
   });
 });
 

@@ -7,7 +7,7 @@ import { useFocusRadioPlayback } from "./focus-radio-playback-context";
 
 export function CanvasNowPlayingWidget() {
   const { data: library } = useLibrary();
-  const { getStreamAnalyser, streamVisualizerActive } = useFocusRadioPlayback();
+  const { getStreamAnalyser } = useFocusRadioPlayback();
 
   if (!library) {
     return null;
@@ -41,7 +41,7 @@ export function CanvasNowPlayingWidget() {
       </div>
       <CanvasNowPlayingVisualizer
         active={playing}
-        getAnalyser={streamVisualizerActive ? getStreamAnalyser : undefined}
+        getAnalyser={nowPlaying.kind === "stream" ? getStreamAnalyser : undefined}
       />
     </div>
   );

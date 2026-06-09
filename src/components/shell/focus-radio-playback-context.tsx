@@ -29,6 +29,7 @@ import {
   resolveFocusRadioStreamFailureAction,
 } from "@/focus-radio/stream-fallback";
 import { updateFocusRadioPlayback } from "@/focus-radio/stations";
+import { resolveFocusRadioStreamProxyUrl } from "@/focus-radio/stream-proxy";
 import { useMutateLibrary } from "@/hooks/use-library";
 import type { Library } from "@/library/types";
 import { FocusRadioYoutubePlayer } from "./focus-radio-youtube-player";
@@ -67,6 +68,7 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   const libraryRef = useRef(library);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const elementSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const wasPlayingBeforeExternalRef = useRef(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
   const [externalGlance, setExternalGlance] = useState<ExternalMediaGlance | null>(null);
@@ -92,33 +94,50 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   const attemptPlayRef = useRef<() => void>(() => {});
   const handleStreamFailureRef = useRef<() => void>(() => {});
 
+  const teardownStreamAnalyser = useCallback(() => {
+    elementSourceRef.current?.disconnect();
+    elementSourceRef.current = null;
+    analyserRef.current?.disconnect();
+    analyserRef.current = null;
+
+    const context = audioContextRef.current;
+    audioContextRef.current = null;
+    if (context && context.state !== "closed") {
+      void context.close();
+    }
+  }, []);
+
   const ensureStreamAnalyser = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio || analyserRef.current) {
+    if (!audio) {
       return;
     }
 
-    const mediaElement = audio as HTMLMediaElement & {
-      captureStream?: () => MediaStream;
-    };
-    if (typeof mediaElement.captureStream !== "function") {
+    if (analyserRef.current) {
+      void audioContextRef.current?.resume();
       return;
     }
 
     try {
       const context = new AudioContext();
-      const analyser = context.createAnalyser();
-      analyser.fftSize = 32;
-      analyser.smoothingTimeConstant = 0.82;
-      const stream = mediaElement.captureStream();
-      const source = context.createMediaStreamSource(stream);
-      source.connect(analyser);
-      analyserRef.current = analyser;
       audioContextRef.current = context;
+
+      const analyser = context.createAnalyser();
+      analyser.fftSize = 512;
+      analyser.smoothingTimeConstant = 0.35;
+      analyser.minDecibels = -85;
+      analyser.maxDecibels = -10;
+
+      const source = context.createMediaElementSource(audio);
+      elementSourceRef.current = source;
+      source.connect(analyser);
+      analyser.connect(context.destination);
+      analyserRef.current = analyser;
+      void context.resume();
     } catch {
-      // Visualizer falls back to decorative animation.
+      teardownStreamAnalyser();
     }
-  }, []);
+  }, [teardownStreamAnalyser]);
 
   attemptPlayRef.current = () => {
     const audio = audioRef.current;
@@ -193,7 +212,13 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
     retriedCurrentRef.current = false;
     setPlaybackError(null);
     clearRetryTimer();
-  }, [activeStationId, clearRetryTimer]);
+  }, [activeStationId, clearRetryTimer, streamUrl]);
+
+  useEffect(() => {
+    return () => {
+      teardownStreamAnalyser();
+    };
+  }, [teardownStreamAnalyser]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -269,6 +294,8 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
 
   const getStreamAnalyser = useCallback(() => analyserRef.current, []);
 
+  const playbackStreamUrl = streamUrl ? resolveFocusRadioStreamProxyUrl(streamUrl) : null;
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) {
@@ -277,7 +304,7 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
 
     audio.volume = resolveFocusRadioOutputVolume(playback);
 
-    if (!streamUrl) {
+    if (!playbackStreamUrl) {
       loadedUrlRef.current = null;
       audio.pause();
       audio.removeAttribute("src");
@@ -285,9 +312,9 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
       return;
     }
 
-    if (loadedUrlRef.current !== streamUrl) {
-      loadedUrlRef.current = streamUrl;
-      audio.src = streamUrl;
+    if (loadedUrlRef.current !== playbackStreamUrl) {
+      loadedUrlRef.current = playbackStreamUrl;
+      audio.src = playbackStreamUrl;
       audio.load();
     }
 
@@ -297,7 +324,43 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
     }
 
     audio.pause();
-  }, [playback.muted, playback.volume, shouldPlayStream, streamUrl]);
+  }, [playback.muted, playback.volume, playbackStreamUrl, shouldPlayStream]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !streamUrl) {
+      return;
+    }
+
+    let retryTimer: ReturnType<typeof setInterval> | null = null;
+
+    const handlePlaying = () => {
+      ensureStreamAnalyser();
+      if (analyserRef.current || retryTimer) {
+        return;
+      }
+
+      let attempts = 0;
+      retryTimer = setInterval(() => {
+        attempts += 1;
+        ensureStreamAnalyser();
+        if (analyserRef.current || attempts >= 12) {
+          if (retryTimer) {
+            clearInterval(retryTimer);
+            retryTimer = null;
+          }
+        }
+      }, 250);
+    };
+
+    audio.addEventListener("playing", handlePlaying);
+    return () => {
+      audio.removeEventListener("playing", handlePlaying);
+      if (retryTimer) {
+        clearInterval(retryTimer);
+      }
+    };
+  }, [ensureStreamAnalyser, streamUrl]);
 
   return (
     <FocusRadioPlaybackContext

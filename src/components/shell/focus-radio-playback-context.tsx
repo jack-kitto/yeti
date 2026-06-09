@@ -15,6 +15,14 @@ import {
   shouldPlayFocusRadioStream,
   shouldPlayFocusRadioYoutube,
 } from "@/focus-radio/playback";
+import type { ExternalMediaGlance } from "@/focus-radio/media-session";
+import {
+  dispatchExternalMediaKey,
+  resolveExternalMediaGlance,
+  shouldAutoPauseFocusRadioForExternalGlance,
+  shouldResumeFocusRadioAfterExternalGlance,
+  syncFocusRadioMediaSession,
+} from "@/focus-radio/media-session";
 import { parseYoutubeVideoId } from "@/focus-radio/youtube";
 import {
   FOCUS_RADIO_STREAM_RETRY_MS,
@@ -28,6 +36,8 @@ import { FocusRadioYoutubePlayer } from "./focus-radio-youtube-player";
 type FocusRadioPlaybackContextValue = {
   playbackError: string | null;
   retryPlayback: () => void;
+  externalGlance: ExternalMediaGlance | null;
+  dispatchExternalMediaKey: typeof dispatchExternalMediaKey;
 };
 
 const FocusRadioPlaybackContext = createContext<FocusRadioPlaybackContextValue | null>(null);
@@ -53,7 +63,9 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   const retriedCurrentRef = useRef(false);
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const libraryRef = useRef(library);
+  const wasPlayingBeforeExternalRef = useRef(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
+  const [externalGlance, setExternalGlance] = useState<ExternalMediaGlance | null>(null);
 
   libraryRef.current = library;
 
@@ -163,6 +175,61 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   }, [clearRetryTimer, handleStreamFailure]);
 
   useEffect(() => {
+    syncFocusRadioMediaSession(nowPlaying, playback.playing);
+
+    if (!("mediaSession" in navigator)) {
+      return;
+    }
+
+    function handlePlay() {
+      mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, { playing: true }));
+    }
+
+    function handlePause() {
+      mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, { playing: false }));
+    }
+
+    navigator.mediaSession.setActionHandler("play", handlePlay);
+    navigator.mediaSession.setActionHandler("pause", handlePause);
+
+    return () => {
+      navigator.mediaSession.setActionHandler("play", null);
+      navigator.mediaSession.setActionHandler("pause", null);
+    };
+  }, [mutateLibrary, nowPlaying, playback.playing]);
+
+  useEffect(() => {
+    if (!("mediaSession" in navigator)) {
+      return;
+    }
+
+    function refreshExternalGlance() {
+      const glance = resolveExternalMediaGlance(navigator.mediaSession.metadata, nowPlaying);
+      setExternalGlance(glance);
+
+      const currentLibrary = libraryRef.current;
+      const focusRadioPlaying = currentLibrary.focusRadio.playback.playing;
+
+      if (shouldAutoPauseFocusRadioForExternalGlance(focusRadioPlaying, glance)) {
+        wasPlayingBeforeExternalRef.current = true;
+        mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, { playing: false }));
+        return;
+      }
+
+      if (
+        shouldResumeFocusRadioAfterExternalGlance(wasPlayingBeforeExternalRef.current, glance)
+      ) {
+        wasPlayingBeforeExternalRef.current = false;
+        mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, { playing: true }));
+      }
+    }
+
+    refreshExternalGlance();
+    const timer = window.setInterval(refreshExternalGlance, 1500);
+    return () => window.clearInterval(timer);
+  }, [mutateLibrary, nowPlaying]);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) {
       return;
@@ -193,7 +260,9 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   }, [playback.muted, playback.volume, shouldPlayStream, streamUrl]);
 
   return (
-    <FocusRadioPlaybackContext value={{ playbackError, retryPlayback }}>
+    <FocusRadioPlaybackContext
+      value={{ playbackError, retryPlayback, externalGlance, dispatchExternalMediaKey }}
+    >
       <audio ref={audioRef} className="shell-focus-radio-audio" aria-hidden />
       <FocusRadioYoutubePlayer
         videoId={youtubeVideoId}

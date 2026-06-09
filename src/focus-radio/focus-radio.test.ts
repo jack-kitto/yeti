@@ -8,6 +8,11 @@ import {
   shouldPlayFocusRadioStream,
   shouldPlayFocusRadioYoutube,
 } from "./playback";
+import {
+  resolveExternalMediaGlance,
+  shouldAutoPauseFocusRadioForExternalGlance,
+  shouldResumeFocusRadioAfterExternalGlance,
+} from "./media-session";
 import { parseYoutubeVideoId } from "./youtube";
 import { buildFocusRadioStationPickerRows } from "./station-picker";
 import { resolveFocusRadioStreamFailureAction } from "./stream-fallback";
@@ -193,6 +198,58 @@ describe("resolveFocusRadioNowPlaying", () => {
 
   it("returns null when no station is selected", () => {
     expect(resolveFocusRadioNowPlaying(createStarterLibrary())).toBeNull();
+  });
+});
+
+describe("resolveExternalMediaGlance", () => {
+  it("returns external metadata when it does not match focus radio", () => {
+    expect(
+      resolveExternalMediaGlance(
+        { title: "Spotify Session", artwork: [{ src: "https://img.example.com/cover.png" }] },
+        {
+          id: "lofi",
+          label: "Lofi Girl",
+          kind: "stream",
+          url: "https://stream.example.com/lofi.mp3",
+        },
+      ),
+    ).toEqual({
+      title: "Spotify Session",
+      artworkUrl: "https://img.example.com/cover.png",
+    });
+  });
+
+  it("ignores metadata that matches the active focus radio station", () => {
+    expect(
+      resolveExternalMediaGlance(
+        { title: "Lofi Girl" },
+        {
+          id: "lofi",
+          label: "Lofi Girl",
+          kind: "stream",
+          url: "https://stream.example.com/lofi.mp3",
+        },
+      ),
+    ).toBeNull();
+  });
+});
+
+describe("focus radio external media session rules", () => {
+  it("auto-pauses focus radio when external media is active", () => {
+    expect(
+      shouldAutoPauseFocusRadioForExternalGlance(true, { title: "Other tab" }),
+    ).toBe(true);
+    expect(shouldAutoPauseFocusRadioForExternalGlance(false, { title: "Other tab" })).toBe(
+      false,
+    );
+  });
+
+  it("resumes focus radio after external media stops if it was playing before", () => {
+    expect(shouldResumeFocusRadioAfterExternalGlance(true, null)).toBe(true);
+    expect(shouldResumeFocusRadioAfterExternalGlance(false, null)).toBe(false);
+    expect(
+      shouldResumeFocusRadioAfterExternalGlance(true, { title: "Still playing" }),
+    ).toBe(false);
   });
 });
 

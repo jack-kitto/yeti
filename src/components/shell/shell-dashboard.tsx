@@ -5,6 +5,8 @@ import { buildControlCenterWorkspaceRows } from "@/control-center/workspaces";
 import type { Library } from "@/library/types";
 import { ControlCenterCalendarTab } from "./control-center-calendar-tab";
 import { ControlCenterMediaTab } from "./control-center-media-tab";
+import { FocusRadioMediaSessionStrip } from "./focus-radio-media-session-strip";
+import { useFocusRadioPlayback } from "./focus-radio-playback-context";
 
 const TABS = [
   { id: "workspaces", label: "Workspaces" },
@@ -71,9 +73,18 @@ function ControlCenterWorkspacesTab({
 
 export function ShellDashboard({ library, onSwitchWorkspace }: ShellDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabId>("workspaces");
+  const { externalGlance, dispatchExternalMediaKey } = useFocusRadioPlayback();
 
   return (
     <div className="shell-dashboard">
+      {externalGlance ? (
+        <FocusRadioMediaSessionStrip
+          glance={externalGlance}
+          onPrevious={() => dispatchExternalMediaKey("MediaTrackPrevious")}
+          onPlayPause={() => dispatchExternalMediaKey("MediaPlayPause")}
+          onNext={() => dispatchExternalMediaKey("MediaTrackNext")}
+        />
+      ) : null}
       <nav className="shell-dashboard-tabs" aria-label="Control center">
         {TABS.map((tab) => (
           <button

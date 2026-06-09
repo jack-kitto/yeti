@@ -404,6 +404,50 @@ body {
   opacity: 0.58;
 }
 
+.shell-dashboard-media-session-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  border-radius: calc(var(--qs-border-radius) - 8px);
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.shell-dashboard-media-session-artwork {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.shell-dashboard-media-session-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shell-dashboard-media-session-transport {
+  display: flex;
+  gap: 4px;
+}
+
+.shell-dashboard-media-session-btn {
+  border: 0;
+  border-radius: calc(var(--qs-border-radius) - 10px);
+  padding: 4px 6px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--qs-color-text);
+  font-size: 10px;
+  cursor: pointer;
+}
+
 .shell-dashboard-media-empty,
 .shell-dashboard-media {
   display: flex;

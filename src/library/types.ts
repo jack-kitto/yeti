@@ -1,3 +1,4 @@
+import type { WorkspaceInternalTools } from "@/internal-tools/types";
 import type { FractionalOrderKey } from "@/fractional-order/fractional-order";
 
 export type Link = {
@@ -61,6 +62,7 @@ export type Workspace = {
   name: string;
   theme: Theme;
   placements: WorkspacePlacements;
+  internalTools: WorkspaceInternalTools;
 };
 
 export type ShortcutBindings = {

@@ -96,6 +96,7 @@ export function updateZonePositions(
   layout: ShellLayout,
 ): ShellZoneLayout[] {
   const leftGroups = zones.filter((zone) => zone.kind === "edge-group");
+  const rightTools = zones.filter((zone) => zone.kind === "internal-tool");
   const centerX = layout.panelX + layout.panelW * 0.5;
 
   return zones.map((zone) => {
@@ -108,6 +109,20 @@ export function updateZonePositions(
           layout.panelY + layout.sidePadding,
           layout.panelBottom - layout.sidePadding,
           leftGroups.length,
+          index,
+        ),
+      };
+    }
+
+    if (zone.kind === "internal-tool") {
+      const index = rightTools.findIndex((entry) => entry.id === zone.id);
+      return {
+        ...zone,
+        x: layout.w - layout.frameRight * 0.5,
+        y: distribute(
+          layout.panelY + layout.sidePadding,
+          layout.panelBottom - layout.sidePadding,
+          rightTools.length,
           index,
         ),
       };
@@ -153,6 +168,18 @@ export function getTargetPocketForZone(
       span,
       depth,
     };
+  }
+
+  if (zone.kind === "internal-tool") {
+    const span = Math.max(Math.ceil(menuSize.height * 0.5) + 22, 82);
+    const depth = Math.max(menuSize.width + layout.pocketInset * 2 + 6, 110);
+    const cornerGuard = layout.shellRadius + layout.pocketCorner + span + 12;
+    const anchor = clamp(
+      zone.y,
+      layout.panelY + cornerGuard,
+      layout.panelBottom - cornerGuard,
+    );
+    return { rim: "right", anchor, span, depth };
   }
 
   const span = Math.max(Math.ceil(menuSize.height * 0.5) + 22, 82);

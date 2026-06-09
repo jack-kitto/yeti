@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -39,12 +39,12 @@ Decide before implementation:
 
 ## Acceptance criteria
 
-- [ ] ADR records tool model, persistence, and left/right edge UX parity for v1
-- [ ] Right rim hosts edge-style handles (not settings — see issue 26)
-- [ ] **Pomodoro** usable from a right-edge flyout (start/pause at minimum)
-- [ ] **Tasks** usable from a right-edge flyout (add + complete at minimum; persists across reload)
-- [ ] Pomodoro and tasks each have their own handle on the right rim
-- [ ] Settings are not accessed from the right rim
+- [x] ADR records tool model, persistence, and left/right edge UX parity for v1
+- [x] Right rim hosts edge-style handles (not settings — see issue 26)
+- [x] **Pomodoro** usable from a right-edge flyout (start/pause at minimum)
+- [x] **Tasks** usable from a right-edge flyout (add + complete at minimum; persists across reload)
+- [x] Pomodoro and tasks each have their own handle on the right rim
+- [x] Settings are not accessed from the right rim
 
 ## Blocked by
 

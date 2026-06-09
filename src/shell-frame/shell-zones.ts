@@ -186,7 +186,7 @@ export function leaveZoneHover(kind: "icon" | "menu" | "rim" | "bridge") {
 
 export function toggleZonePin(zoneId: string, zones: ShellZoneLayout[]) {
   const zone = zones.find((entry) => entry.id === zoneId);
-  if (!zone || zone.kind !== "edge-group") {
+  if (!zone || (zone.kind !== "edge-group" && zone.kind !== "internal-tool")) {
     return;
   }
 

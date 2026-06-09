@@ -15,12 +15,19 @@ import {
   nearestSlotIndex,
   slotIndexToInsertIndex,
 } from "@/edge-slots/edge-slots";
+import {
+  parseInternalToolZoneId,
+  resolveInternalToolHandle,
+} from "@/internal-tools/handles";
+import type { WorkspaceInternalTools } from "@/internal-tools/types";
 import type { Library } from "@/library/types";
 import { resolveEdgeGroupFlyout, resolveEdgeGroups } from "@/placement/placement";
 import { buildShellZones } from "@/shell-frame/build-zones";
 import {
   computeEdgeHoverBridge,
+  computeRightEdgeHoverBridge,
   computeStackedLeftRimTraps,
+  computeStackedRimTraps,
   shouldEnableHoverBridge,
 } from "@/shell-frame/edge-hover-zones";
 import {
@@ -49,8 +56,10 @@ import {
 import { useLauncherStore } from "@/store/launcher-store";
 import { CommandBar } from "./command-bar";
 import { LinkItem } from "./link-item";
+import { PomodoroFlyout } from "./pomodoro-flyout";
 import { ShellDashboard } from "./shell-dashboard";
 import { ShellSettingsButton } from "./shell-settings-button";
+import { TasksFlyout } from "./tasks-flyout";
 
 const DRAG_THRESHOLD_PX = 6;
 
@@ -58,6 +67,7 @@ type ShellEdgeLayerProps = {
   library: Library;
   onReorderGroup: (groupId: string, targetSlotIndex: number) => void;
   onSwitchWorkspace: (workspaceId: string) => void;
+  onUpdateInternalTools: (internalTools: WorkspaceInternalTools) => void;
 };
 
 function groupById(library: Library, groupId: string) {
@@ -78,6 +88,7 @@ export function ShellEdgeLayer({
   library,
   onReorderGroup,
   onSwitchWorkspace,
+  onUpdateInternalTools,
 }: ShellEdgeLayerProps) {
   const zones = useMemo(() => buildShellZones(library), [library]);
   const zonesRef = useRef(zones);
@@ -120,6 +131,23 @@ export function ShellEdgeLayer({
         rimEndY: rimLayout.panelBottom - rimLayout.sidePadding,
       }),
     [leftEdgeZones, rimLayout],
+  );
+
+  const rightEdgeZones = useMemo(
+    () => zones.filter((zone) => zone.kind === "internal-tool"),
+    [zones],
+  );
+
+  const rightRimTraps = useMemo(
+    () =>
+      computeStackedRimTraps({
+        handleCentersY: rightEdgeZones.map((zone) => zone.y),
+        rimStart: rimLayout.w - rimLayout.frameRight,
+        rimWidth: rimLayout.frameRight,
+        rimStartY: rimLayout.panelY + rimLayout.sidePadding,
+        rimEndY: rimLayout.panelBottom - rimLayout.sidePadding,
+      }),
+    [rightEdgeZones, rimLayout],
   );
 
   useEffect(() => {
@@ -245,6 +273,37 @@ export function ShellEdgeLayer({
               state.activeZoneId === zone.id && !state.closing ? "1" : "0";
           }
         }
+
+        if (zone.kind === "internal-tool") {
+          const bridge = bridgeRefs.current.get(zone.id);
+          if (bridge) {
+            const bridgeRect = computeRightEdgeHoverBridge({
+              handleCenterX: zone.x,
+              handleCenterY: zone.y,
+              flyoutCenterX: x,
+              flyoutCenterY: y,
+              menuWidth: menuSize.width,
+              menuHeight: menuSize.height,
+            });
+
+            bridge.style.left = `${bridgeRect.left}px`;
+            bridge.style.top = `${bridgeRect.top}px`;
+            bridge.style.width = `${bridgeRect.width}px`;
+            bridge.style.height = `${bridgeRect.height}px`;
+            bridge.style.pointerEvents = shouldEnableHoverBridge(
+              state.activeZoneId,
+              zone.id,
+              state.closing,
+              state.overIcon,
+              state.overMenu,
+              progress,
+            )
+              ? "auto"
+              : "none";
+            bridge.style.opacity =
+              state.activeZoneId === zone.id && !state.closing ? "1" : "0";
+          }
+        }
       }
     });
 
@@ -326,6 +385,31 @@ export function ShellEdgeLayer({
         );
       })}
 
+      {rightEdgeZones.map((zone, index) => {
+        const trap = rightRimTraps[index];
+        if (!trap) {
+          return null;
+        }
+
+        return (
+          <div
+            key={`right-rim-${zone.id}`}
+            className="shell-rim-hit shell-edge-rim-hit"
+            style={{
+              top: trap.top,
+              left: trap.left,
+              width: trap.width,
+              height: trap.height,
+            }}
+            onMouseEnter={() => {
+              setZoneHover("rim", true);
+              requestActivateZone(zone.id, zonesRef.current);
+            }}
+            onMouseLeave={() => leaveZoneHover("rim")}
+          />
+        );
+      })}
+
       {zones.map((zone) => {
         if (zone.kind === "dashboard") {
           return (
@@ -373,6 +457,101 @@ export function ShellEdgeLayer({
               />
             </div>
           );
+        }
+
+        if (zone.kind === "internal-tool") {
+          const toolId = parseInternalToolZoneId(zone.id);
+          if (!toolId || !activeWorkspace) {
+            return null;
+          }
+
+          const handle = resolveInternalToolHandle(toolId);
+          const internalTools = activeWorkspace.internalTools;
+
+          return (
+            <div key={zone.id}>
+              <button
+                ref={(node) => {
+                  if (node) {
+                    iconRefs.current.set(zone.id, node);
+                  } else {
+                    iconRefs.current.delete(zone.id);
+                  }
+                }}
+                type="button"
+                className="shell-icon-btn"
+                style={{ left: zone.x, top: zone.y }}
+                aria-label={handle.label}
+                onMouseEnter={() => {
+                  setZoneHover("icon", true);
+                  requestActivateZone(zone.id, zonesRef.current);
+                }}
+                onMouseLeave={() => leaveZoneHover("icon")}
+                onFocus={() => {
+                  setZoneHover("icon", true);
+                  requestActivateZone(zone.id, zonesRef.current);
+                }}
+                onBlur={() => leaveZoneHover("icon")}
+                onClick={() => toggleZonePin(zone.id, zonesRef.current)}
+              >
+                <span className="shell-icon-glyph">{handle.glyph}</span>
+              </button>
+
+              <div
+                ref={(node) => {
+                  if (node) {
+                    bridgeRefs.current.set(zone.id, node);
+                  } else {
+                    bridgeRefs.current.delete(zone.id);
+                  }
+                }}
+                className="shell-hover-bridge"
+                aria-hidden
+                onMouseEnter={() => setZoneHover("bridge", true)}
+                onMouseLeave={() => leaveZoneHover("bridge")}
+              />
+
+              <div
+                ref={(node) => {
+                  if (node) {
+                    surfaceRefs.current.set(zone.id, node);
+                  } else {
+                    surfaceRefs.current.delete(zone.id);
+                  }
+                }}
+                className="shell-surface shell-flyout"
+                onMouseEnter={() => setZoneHover("menu", true)}
+                onMouseLeave={() => leaveZoneHover("menu")}
+              >
+                {toolId === "pomodoro" ? (
+                  <PomodoroFlyout
+                    pomodoro={internalTools.pomodoro}
+                    onChange={(pomodoro) =>
+                      onUpdateInternalTools({ ...internalTools, pomodoro })
+                    }
+                  />
+                ) : (
+                  <TasksFlyout
+                    internalTools={internalTools}
+                    onChange={onUpdateInternalTools}
+                  />
+                )}
+                {shellState.pinned && shellState.activeZoneId === zone.id ? (
+                  <button
+                    type="button"
+                    className="shell-flyout-dismiss"
+                    onClick={() => dismissPinnedZone()}
+                  >
+                    Dismiss
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          );
+        }
+
+        if (zone.kind !== "edge-group") {
+          return null;
         }
 
         const group = groupById(library, zone.id);

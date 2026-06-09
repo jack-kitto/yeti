@@ -1,6 +1,6 @@
 export type ShellRim = "left" | "top" | "bottom" | "right";
 
-export type ShellZoneKind = "edge-group" | "dashboard" | "search";
+export type ShellZoneKind = "edge-group" | "dashboard" | "search" | "internal-tool";
 
 export const BUILTIN_SURFACE = {
   TOP_DASHBOARD: "__rim_top__",

@@ -24,6 +24,28 @@ export function computeStackedLeftRimTraps({
   rimEndY,
   minHitPx = EDGE_HANDLE_HIT_PX,
 }: StackedTrapInput): HoverRect[] {
+  return computeStackedRimTraps({
+    handleCentersY,
+    rimStart: 0,
+    rimWidth,
+    rimStartY,
+    rimEndY,
+    minHitPx,
+  });
+}
+
+type StackedRimTrapInput = StackedTrapInput & {
+  rimStart: number;
+};
+
+export function computeStackedRimTraps({
+  handleCentersY,
+  rimStart,
+  rimWidth,
+  rimStartY,
+  rimEndY,
+  minHitPx = EDGE_HANDLE_HIT_PX,
+}: StackedRimTrapInput): HoverRect[] {
   if (handleCentersY.length === 0) {
     return [];
   }
@@ -45,7 +67,7 @@ export function computeStackedLeftRimTraps({
 
     return {
       top,
-      left: 0,
+      left: rimStart,
       width: Math.max(rimWidth, minHitPx),
       height,
     };
@@ -79,6 +101,34 @@ export function computeEdgeHoverBridge({
 
   const bridgeLeft = handleRight;
   const bridgeWidth = Math.max(12, flyoutLeft - handleRight);
+  const bridgeTop = Math.min(handleCenterY - handleRadius, flyoutTop);
+  const bridgeBottom = Math.max(handleCenterY + handleRadius, flyoutBottom);
+
+  return {
+    top: bridgeTop,
+    left: bridgeLeft,
+    width: bridgeWidth,
+    height: bridgeBottom - bridgeTop,
+  };
+}
+
+export function computeRightEdgeHoverBridge({
+  handleCenterX,
+  handleCenterY,
+  flyoutCenterX,
+  flyoutCenterY,
+  menuWidth,
+  menuHeight,
+  handleHitPx = EDGE_HANDLE_HIT_PX,
+}: EdgeHoverBridgeInput): HoverRect {
+  const handleRadius = handleHitPx / 2;
+  const handleLeft = handleCenterX - handleRadius;
+  const flyoutRight = flyoutCenterX + menuWidth / 2;
+  const flyoutTop = flyoutCenterY - menuHeight / 2;
+  const flyoutBottom = flyoutCenterY + menuHeight / 2;
+
+  const bridgeLeft = flyoutRight;
+  const bridgeWidth = Math.max(12, handleLeft - flyoutRight);
   const bridgeTop = Math.min(handleCenterY - handleRadius, flyoutTop);
   const bridgeBottom = Math.max(handleCenterY + handleRadius, flyoutBottom);
 

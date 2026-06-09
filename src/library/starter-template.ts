@@ -1,3 +1,4 @@
+import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import { rebalanceKeys } from "@/fractional-order/fractional-order";
 import type { EdgeGroup, Library, Link, Theme, Workspace } from "./types";
 
@@ -61,6 +62,7 @@ function workspace(
         position: { kind: "strip" as const, orderKey: pinKeys[index] },
       })),
     },
+    internalTools: createDefaultWorkspaceInternalTools(),
   };
 }
 

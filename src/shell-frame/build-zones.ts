@@ -1,4 +1,5 @@
 import type { Library } from "@/library/types";
+import { INTERNAL_TOOL_IDS, internalToolZoneId } from "@/internal-tools/types";
 import { resolveEdgeGroups } from "@/placement/placement";
 import { getShellLayout, updateZonePositions, type ShellZoneLayout } from "./layout";
 import { BUILTIN_SURFACE } from "./rim";
@@ -11,6 +12,16 @@ export function buildShellZones(library: Library): ShellZoneLayout[] {
       id: group.id,
       rim: "left",
       kind: "edge-group",
+      x: 0,
+      y: 0,
+    });
+  }
+
+  for (const toolId of INTERNAL_TOOL_IDS) {
+    zones.push({
+      id: internalToolZoneId(toolId),
+      rim: "right",
+      kind: "internal-tool",
       x: 0,
       y: 0,
     });

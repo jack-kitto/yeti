@@ -1,3 +1,4 @@
+import { ensureLibraryDefaults } from "@/internal-tools/defaults";
 import { createStarterLibrary } from "./starter-template";
 import {
   addCatalogLink as addCatalogLinkToLibrary,
@@ -52,7 +53,7 @@ export async function saveLibrary(
 export async function loadOrSeedLibrary(store: LibraryStore): Promise<Library> {
   const existing = await store.read();
   if (existing) {
-    return existing;
+    return ensureLibraryDefaults(existing);
   }
 
   const starter = createStarterLibrary();

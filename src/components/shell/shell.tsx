@@ -81,6 +81,16 @@ export function Shell() {
         onSwitchWorkspace={(workspaceId) =>
           applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
         }
+        onUpdateInternalTools={(internalTools) =>
+          saveLibraryMutation.mutate({
+            ...library,
+            workspaces: library.workspaces.map((workspace) =>
+              workspace.id === library.activeWorkspaceId
+                ? { ...workspace, internalTools }
+                : workspace,
+            ),
+          })
+        }
       />
 
       <main

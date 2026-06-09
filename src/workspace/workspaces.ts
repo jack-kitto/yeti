@@ -1,3 +1,4 @@
+import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import type { Library, Theme, Workspace, WorkspacePlacements } from "@/library/types";
 
 export const DEFAULT_WORKSPACE_THEME: Theme = {
@@ -34,6 +35,7 @@ export function createWorkspace(library: Library, name: string): Library {
       palette: { ...DEFAULT_WORKSPACE_THEME.palette },
     },
     placements: EMPTY_PLACEMENTS,
+    internalTools: createDefaultWorkspaceInternalTools(),
   };
 
   return {

@@ -1,11 +1,12 @@
 import { parse, stringify } from "yaml";
+import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
+import type { FocusTask, PomodoroState } from "@/internal-tools/types";
 import { validateLibrary } from "@/library/library";
 import type {
   EdgeGroup,
   EdgeGroupLinkPlacement,
   Library,
   Link,
-  PinPosition,
   ShortcutBindings,
   Theme,
   Workspace,
@@ -49,6 +50,10 @@ type SnapshotWorkspace = {
       bottom: SnapshotEdgeGroup[];
     };
     pins: SnapshotPin[];
+  };
+  internalTools?: {
+    pomodoro: PomodoroState;
+    tasks: FocusTask[];
   };
 };
 
@@ -145,6 +150,7 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
         },
         pins: workspace.placements.pins.map(pinToSnapshot),
       },
+      internalTools: workspace.internalTools,
     })),
     shortcuts: { ...library.shortcuts },
     activeWorkspaceId: library.activeWorkspaceId,
@@ -179,6 +185,8 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
           },
           pins: workspace.placements.pins.map(snapshotPinToLibrary),
         },
+        internalTools:
+          workspace.internalTools ?? createDefaultWorkspaceInternalTools(),
       }),
     ),
     shortcuts: { ...snapshot.shortcuts },

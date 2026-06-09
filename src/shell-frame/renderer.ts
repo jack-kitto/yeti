@@ -3,6 +3,7 @@ import type { RenderPocket, ShellLayout } from "./layout";
 export type ShellThemeColors = {
   ambient: string;
   glassStops: [string, string, string];
+  notchFill: string;
   strokeOuter: string;
   strokeInner: string;
   shadow: string;
@@ -141,6 +142,130 @@ function generateInnerBoundary(
   return path;
 }
 
+function generateTopNotchFill(
+  layout: ShellLayout,
+  pocket: RenderPocket,
+): Path2D {
+  const x1 = pocket.anchor - pocket.span;
+  const x2 = pocket.anchor + pocket.span;
+  const y = layout.panelY;
+  const d = pocket.depth;
+  const r = pocket.radius;
+  const path = new Path2D();
+
+  path.moveTo(x1 - r, 0);
+  path.lineTo(x2 + r, 0);
+  path.lineTo(x2 + r, y);
+  path.lineTo(x2, y + r);
+  path.lineTo(x2, y + d - r);
+  path.quadraticCurveTo(x2, y + d, x2 - r, y + d);
+  path.lineTo(x1 + r, y + d);
+  path.quadraticCurveTo(x1, y + d, x1, y + d - r);
+  path.lineTo(x1, y + r);
+  path.quadraticCurveTo(x1, y, x1 - r, y);
+  path.closePath();
+  return path;
+}
+
+function generateBottomNotchFill(
+  layout: ShellLayout,
+  pocket: RenderPocket,
+): Path2D {
+  const x1 = pocket.anchor - pocket.span;
+  const x2 = pocket.anchor + pocket.span;
+  const y = layout.panelBottom;
+  const d = pocket.depth;
+  const r = pocket.radius;
+  const path = new Path2D();
+
+  path.moveTo(x1 - r, layout.h);
+  path.lineTo(x2 + r, layout.h);
+  path.lineTo(x2 + r, y);
+  path.lineTo(x2, y - r);
+  path.lineTo(x2, y - d + r);
+  path.quadraticCurveTo(x2, y - d, x2 - r, y - d);
+  path.lineTo(x1 + r, y - d);
+  path.quadraticCurveTo(x1, y - d, x1, y - d + r);
+  path.lineTo(x1, y - r);
+  path.quadraticCurveTo(x1, y, x1 - r, y);
+  path.closePath();
+  return path;
+}
+
+function generateLeftNotchFill(
+  layout: ShellLayout,
+  pocket: RenderPocket,
+): Path2D {
+  const x = layout.panelX;
+  const y1 = pocket.anchor - pocket.span;
+  const y2 = pocket.anchor + pocket.span;
+  const d = pocket.depth;
+  const r = pocket.radius;
+  const path = new Path2D();
+
+  path.moveTo(0, y1 - r);
+  path.lineTo(0, y2 + r);
+  path.lineTo(x, y2 + r);
+  path.lineTo(x, y2);
+  path.quadraticCurveTo(x, y2, x + r, y2);
+  path.lineTo(x + d - r, y2);
+  path.quadraticCurveTo(x + d, y2, x + d, y2 - r);
+  path.lineTo(x + d, y1 + r);
+  path.quadraticCurveTo(x + d, y1, x + d - r, y1);
+  path.lineTo(x + r, y1);
+  path.quadraticCurveTo(x, y1, x, y1 - r);
+  path.closePath();
+  return path;
+}
+
+function generateRightNotchFill(
+  layout: ShellLayout,
+  pocket: RenderPocket,
+): Path2D {
+  const x = layout.panelRight;
+  const y1 = pocket.anchor - pocket.span;
+  const y2 = pocket.anchor + pocket.span;
+  const d = pocket.depth;
+  const r = pocket.radius;
+  const path = new Path2D();
+
+  path.moveTo(layout.w, y1 - r);
+  path.lineTo(layout.w, y2 + r);
+  path.lineTo(x, y2 + r);
+  path.lineTo(x, y2);
+  path.quadraticCurveTo(x, y2, x - r, y2);
+  path.lineTo(x - d + r, y2);
+  path.quadraticCurveTo(x - d, y2, x - d, y2 - r);
+  path.lineTo(x - d, y1 + r);
+  path.quadraticCurveTo(x - d, y1, x - d + r, y1);
+  path.lineTo(x - r, y1);
+  path.quadraticCurveTo(x, y1, x, y1 - r);
+  path.closePath();
+  return path;
+}
+
+function generateNotchFillPath(
+  layout: ShellLayout,
+  pocket: RenderPocket,
+): Path2D | null {
+  if (!pocket.active || pocket.depth < 1) {
+    return null;
+  }
+
+  switch (pocket.rim) {
+    case "top":
+      return generateTopNotchFill(layout, pocket);
+    case "bottom":
+      return generateBottomNotchFill(layout, pocket);
+    case "left":
+      return generateLeftNotchFill(layout, pocket);
+    case "right":
+      return generateRightNotchFill(layout, pocket);
+    default:
+      return null;
+  }
+}
+
 /** Viewport ring shell: outer screen edge minus inner canvas hole (even-odd). */
 function generateFrameShellPath(layout: ShellLayout, pocket: RenderPocket): Path2D {
   const { w, h } = layout;
@@ -195,6 +320,17 @@ export function drawShell(
   fill.addColorStop(1, theme.glassStops[2]);
   ctx.fillStyle = fill;
   ctx.fill(path, "evenodd");
+
+  const notchPath = generateNotchFillPath(layout, pocket);
+  if (notchPath) {
+    ctx.fillStyle = theme.notchFill;
+    ctx.fill(notchPath);
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.fill(notchPath);
+    ctx.restore();
+  }
 
   ctx.save();
   ctx.clip(path, "evenodd");

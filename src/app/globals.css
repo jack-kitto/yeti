@@ -185,16 +185,13 @@ body {
   overflow: hidden;
 }
 
-.shell-surface.visible,
-.shell-flyout.visible {
-  z-index: 50;
+.shell-rim-menu-layer .shell-surface.visible,
+.shell-rim-menu-layer .shell-flyout.visible {
+  z-index: 1;
+  color: var(--qs-color-text);
   background: color-mix(in srgb, var(--qs-color-surface) 96%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow:
-    0 10px 36px rgba(0, 0, 0, 0.14),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-  border-radius: calc(var(--qs-border-radius) - 4px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .shell-surface.measuring,
@@ -708,18 +705,19 @@ body {
 }
 
 .shell-surface-search {
+  box-sizing: border-box;
   width: max-content;
-  min-width: 300px;
-  max-width: min(480px, 90vw);
-  padding: 2px 4px 0;
+  min-width: min(400px, 92vw);
+  max-width: min(560px, 96vw);
+  padding: 10px 12px 12px;
 }
 
 .shell-search-pocket {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
+  min-width: 0;
 }
 
 .shell-search-results {
@@ -779,8 +777,9 @@ body {
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-  min-width: 280px;
-  padding: 8px 14px;
+  width: 100%;
+  min-width: 0;
+  padding: 9px 14px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--qs-color-accent) 14%, var(--qs-color-surface));
   border: none;
@@ -848,10 +847,18 @@ body {
   transition: background 120ms ease;
 }
 
+.shell-flyout .shell-link-item {
+  color: var(--qs-color-text);
+  font-weight: 500;
+}
+
 .shell-flyout .shell-link-item:hover,
 .shell-flyout .shell-link-item:focus-visible {
-  background: rgba(0, 0, 0, 0.07);
+  opacity: 1;
+  background: transparent;
   outline: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .shell-flyout a,
@@ -991,6 +998,180 @@ body {
 
 .shell-config-dialog-close:active {
   transform: scale(0.96);
+}
+
+.shell-overlay-scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: color-mix(in srgb, var(--qs-color-text) 32%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.shell-launcher-dialog {
+  position: relative;
+  display: flex;
+  width: min(100%, 56rem);
+  max-height: min(85vh, 48rem);
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--qs-border-radius);
+  color: var(--qs-color-text);
+  background: color-mix(in srgb, var(--qs-color-surface) 96%, transparent);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 16px 48px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.shell-launcher-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--qs-color-text) 8%, transparent);
+}
+
+.shell-launcher-search {
+  min-width: 12rem;
+  flex: 1;
+  border: 0;
+  border-radius: calc(var(--qs-border-radius) - 4px);
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--qs-color-text);
+  background: color-mix(in srgb, var(--qs-color-text) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--qs-color-text) 10%, transparent);
+  outline: none;
+}
+
+.shell-launcher-search::placeholder {
+  color: color-mix(in srgb, var(--qs-color-text) 48%, transparent);
+}
+
+.shell-launcher-search:focus-visible {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--qs-color-accent) 45%, transparent),
+    0 0 0 2px color-mix(in srgb, var(--qs-color-accent) 22%, transparent);
+}
+
+.shell-launcher-action {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--qs-color-text);
+  background: color-mix(in srgb, var(--qs-color-text) 7%, transparent);
+  cursor: pointer;
+  transition:
+    transform 140ms var(--qs-press-ease),
+    background 140ms ease;
+}
+
+.shell-launcher-action:hover {
+  background: color-mix(in srgb, var(--qs-color-text) 11%, transparent);
+}
+
+.shell-launcher-action:active {
+  transform: scale(0.96);
+}
+
+.shell-launcher-action-accent {
+  color: var(--qs-color-accent);
+  background: color-mix(in srgb, var(--qs-color-accent) 14%, var(--qs-color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--qs-color-accent) 20%, transparent);
+}
+
+.shell-launcher-action-accent:hover {
+  background: color-mix(in srgb, var(--qs-color-accent) 20%, var(--qs-color-surface));
+}
+
+.shell-launcher-meta {
+  margin: 0;
+  padding: 12px 20px 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--qs-color-text) 64%, transparent);
+}
+
+.shell-launcher-grid-wrap {
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 14px 20px 20px;
+}
+
+.shell-launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .shell-launcher-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .shell-launcher-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.shell-launcher-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-radius: calc(var(--qs-border-radius) - 4px);
+  padding: 14px 10px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--qs-color-text);
+  background: color-mix(in srgb, var(--qs-color-text) 5%, var(--qs-color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--qs-color-text) 8%, transparent);
+  transition:
+    transform 140ms var(--qs-press-ease),
+    background 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.shell-launcher-card:hover {
+  background: color-mix(in srgb, var(--qs-color-text) 8%, var(--qs-color-surface));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--qs-color-text) 12%, transparent),
+    0 4px 14px color-mix(in srgb, var(--qs-color-text) 8%, transparent);
+}
+
+.shell-launcher-card:active {
+  transform: scale(0.96);
+}
+
+.shell-launcher-card-glyph {
+  display: inline-block;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--qs-color-text) 12%, transparent);
+}
+
+.shell-launcher-card-title {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-wrap: balance;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .shell-config-dialog-nav {
@@ -1652,7 +1833,7 @@ body {
   line-height: 1;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.55;
+  color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
 }
 
 .shell-flyout-more,

@@ -41,6 +41,9 @@ export type RenderPocket = {
 
 export type MenuSize = { width: number; height: number };
 
+/** Inner padding between bottom search notch edge and command bar content. */
+export const SEARCH_NOTCH_PADDING = 10;
+
 const FRAME_TOP = 14;
 const FRAME_BOTTOM = 14;
 const FRAME_RIGHT = 14;
@@ -157,11 +160,9 @@ export function getTargetPocketForZone(
   }
 
   if (zone.kind === "search") {
-    const span = Math.max(Math.ceil(menuSize.width * 0.5) + 18, 72);
-    const depth = Math.min(
-      menuSize.height + layout.pocketInset * 2 + 4,
-      layout.panelH * 0.5,
-    );
+    const pad = SEARCH_NOTCH_PADDING;
+    const span = Math.ceil(menuSize.width / 2) + pad;
+    const depth = menuSize.height + pad * 2;
     return {
       rim: "bottom",
       anchor: layout.panelX + layout.panelW * 0.5,
@@ -262,23 +263,25 @@ export function getSurfacePosition(
   }
 }
 
-const POCKET_FIT_MARGIN = 1.12;
-
 export function getSurfacePocketFit(
   pocket: RenderPocket,
   zone: ShellZoneLayout,
   menuSize: MenuSize,
+  layout: ShellLayout = getShellLayout(),
 ): number {
   if (pocket.depth <= 0 || pocket.span <= 0) {
     return 0;
   }
 
+  const pad =
+    zone.kind === "search" ? SEARCH_NOTCH_PADDING : layout.pocketInset;
   const isHorizontal = zone.rim === "top" || zone.rim === "bottom";
+
   if (isHorizontal) {
     return clamp(
       Math.min(
-        pocket.depth / (menuSize.height * POCKET_FIT_MARGIN),
-        pocket.span / (menuSize.width * POCKET_FIT_MARGIN),
+        pocket.depth / (menuSize.height + pad * 2),
+        pocket.span / (menuSize.width / 2 + pad),
       ),
       0,
       1,
@@ -287,12 +290,16 @@ export function getSurfacePocketFit(
 
   return clamp(
     Math.min(
-      pocket.depth / (menuSize.width * POCKET_FIT_MARGIN),
-      pocket.span / (menuSize.height * POCKET_FIT_MARGIN),
+      pocket.depth / (menuSize.width + pad * 2),
+      pocket.span / (menuSize.height / 2 + pad),
     ),
     0,
     1,
   );
+}
+
+export function getSearchNotchInnerWidth(pocket: RenderPocket): number {
+  return Math.max(2 * pocket.span - SEARCH_NOTCH_PADDING * 2, 0);
 }
 
 export type SurfaceRevealStyle = {
@@ -305,9 +312,11 @@ export function getSurfaceRevealStyle(
   zoneRevealProgress: number,
   pocketFit: number,
 ): SurfaceRevealStyle {
-  const progress = zoneRevealProgress * pocketFit ** 1.15;
-  const opacity = progress <= 0 ? 0 : progress ** 2.6;
-  const scale = 0.52 + pocketFit ** 1.2 * 0.48;
+  const fitProgress = pocketFit ** 1.15;
+  const progress = zoneRevealProgress * fitProgress;
+  const opacity =
+    zoneRevealProgress <= 0 ? 0 : Math.min(zoneRevealProgress ** 1.35, 1);
+  const scale = 0.52 + fitProgress * zoneRevealProgress * 0.48;
 
   return { progress, opacity, scale };
 }

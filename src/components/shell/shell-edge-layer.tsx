@@ -33,12 +33,14 @@ import {
 } from "@/shell-frame/edge-hover-zones";
 import {
   getFlyoutRevealProgress,
+  getSearchNotchInnerWidth,
   getShellLayout,
   getSurfacePocketFit,
   getSurfacePosition,
   getSurfaceRevealStyle,
   isSurfacePointerActive,
   updateZonePositions,
+  type ShellZoneLayout,
 } from "@/shell-frame/layout";
 import { BUILTIN_SURFACE } from "@/shell-frame/rim";
 import { registerShellFrameListener } from "@/shell-frame/shell-animation";
@@ -82,7 +84,7 @@ function defaultMenuSize(zoneId: string) {
     return { width: 480, height: 260 };
   }
   if (zoneId === BUILTIN_SURFACE.BOTTOM_SEARCH) {
-    return { width: 340, height: 48 };
+    return { width: 420, height: 52 };
   }
   return { width: 170, height: 130 };
 }
@@ -244,8 +246,14 @@ export function ShellEdgeLayer({
         surface.style.left = `${x}px`;
         surface.style.top = `${y}px`;
 
+        if (zone.kind === "search" && pocket.rim === "bottom" && pocket.active) {
+          surface.style.width = `${getSearchNotchInnerWidth(pocket)}px`;
+        } else {
+          surface.style.width = "";
+        }
+
         const zoneProgress = zoneReveal(zone.id);
-        const pocketFit = getSurfacePocketFit(pocket, zone, menuSize);
+        const pocketFit = getSurfacePocketFit(pocket, zone, menuSize, frameLayout);
         const surfaceReveal = getSurfaceRevealStyle(zoneProgress, pocketFit);
         surface.style.opacity = `${surfaceReveal.opacity}`;
         surface.style.transform = `translate(-50%, -50%) scale(${surfaceReveal.scale})`;
@@ -360,8 +368,305 @@ export function ShellEdgeLayer({
     );
   }
 
+  function renderZoneChrome(zone: ShellZoneLayout) {
+    if (zone.kind === "dashboard" || zone.kind === "search") {
+      return null;
+    }
+
+    if (zone.kind === "internal-tool") {
+      const toolId = parseInternalToolZoneId(zone.id);
+      if (!toolId || !activeWorkspace) {
+        return null;
+      }
+
+      const handle = resolveInternalToolHandle(toolId);
+
+      return (
+        <div key={`chrome-${zone.id}`}>
+          <button
+            ref={(node) => {
+              if (node) {
+                iconRefs.current.set(zone.id, node);
+              } else {
+                iconRefs.current.delete(zone.id);
+              }
+            }}
+            type="button"
+            className="shell-icon-btn shell-icon-btn-ghost"
+            style={{ left: zone.x, top: zone.y }}
+            aria-label={handle.label}
+            onMouseEnter={() => {
+              setZoneHover("icon", true);
+              requestActivateZone(zone.id, zonesRef.current);
+            }}
+            onMouseLeave={() => leaveZoneHover("icon")}
+            onFocus={() => {
+              setZoneHover("icon", true);
+              requestActivateZone(zone.id, zonesRef.current);
+            }}
+            onBlur={() => leaveZoneHover("icon")}
+            onClick={() => toggleZonePin(zone.id, zonesRef.current)}
+          >
+            <span className="shell-icon-glyph">{handle.glyph}</span>
+          </button>
+
+          <div
+            ref={(node) => {
+              if (node) {
+                bridgeRefs.current.set(zone.id, node);
+              } else {
+                bridgeRefs.current.delete(zone.id);
+              }
+            }}
+            className="shell-hover-bridge"
+            aria-hidden
+            onMouseEnter={() => setZoneHover("bridge", true)}
+            onMouseLeave={() => leaveZoneHover("bridge")}
+          />
+        </div>
+      );
+    }
+
+    if (zone.kind !== "edge-group") {
+      return null;
+    }
+
+    const group = groupById(library, zone.id);
+    if (!group) {
+      return null;
+    }
+
+    const display = resolveEdgeHandleDisplay(group);
+
+    return (
+      <div key={`chrome-${zone.id}`}>
+        <button
+          ref={(node) => {
+            if (node) {
+              iconRefs.current.set(zone.id, node);
+            } else {
+              iconRefs.current.delete(zone.id);
+            }
+          }}
+          type="button"
+          className="shell-icon-btn"
+          style={{ left: zone.x, top: zone.y }}
+          aria-label={group.name}
+          onMouseEnter={() => {
+            setZoneHover("icon", true);
+            requestActivateZone(zone.id, zonesRef.current);
+          }}
+          onMouseLeave={() => leaveZoneHover("icon")}
+          onFocus={() => {
+            setZoneHover("icon", true);
+            requestActivateZone(zone.id, zonesRef.current);
+          }}
+          onBlur={() => leaveZoneHover("icon")}
+          onClick={() => toggleZonePin(zone.id, zonesRef.current)}
+          onPointerDown={(event) => {
+            dragRef.current = {
+              groupId: zone.id,
+              startAxis: event.clientY,
+              dragged: false,
+            };
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerMove={(event) => {
+            const drag = dragRef.current;
+            if (!drag || drag.groupId !== zone.id) {
+              return;
+            }
+            if (Math.abs(event.clientY - drag.startAxis) > DRAG_THRESHOLD_PX) {
+              drag.dragged = true;
+            }
+          }}
+          onPointerUp={(event) => {
+            const drag = dragRef.current;
+            if (!drag || drag.groupId !== zone.id) {
+              return;
+            }
+            event.currentTarget.releasePointerCapture(event.pointerId);
+            if (drag.dragged) {
+              finishDrag(zone.id, event.clientY);
+            }
+            dragRef.current = null;
+          }}
+        >
+          {display.kind === "image" ? (
+            <img src={display.url} alt="" className="shell-icon-image" />
+          ) : (
+            <span className="shell-icon-glyph">{display.text}</span>
+          )}
+        </button>
+
+        <div
+          ref={(node) => {
+            if (node) {
+              bridgeRefs.current.set(zone.id, node);
+            } else {
+              bridgeRefs.current.delete(zone.id);
+            }
+          }}
+          className="shell-hover-bridge"
+          aria-hidden
+          onMouseEnter={() => setZoneHover("bridge", true)}
+          onMouseLeave={() => leaveZoneHover("bridge")}
+        />
+      </div>
+    );
+  }
+
+  function renderZoneMenu(zone: ShellZoneLayout) {
+    if (zone.kind === "dashboard") {
+      return (
+        <div
+          key={zone.id}
+          ref={(node) => {
+            if (node) {
+              surfaceRefs.current.set(zone.id, node);
+            } else {
+              surfaceRefs.current.delete(zone.id);
+            }
+          }}
+          className="shell-surface shell-surface-dashboard"
+          onMouseEnter={() => setZoneHover("menu", true)}
+          onMouseLeave={() => leaveZoneHover("menu")}
+        >
+          <ShellDashboard library={library} onSwitchWorkspace={onSwitchWorkspace} />
+        </div>
+      );
+    }
+
+    if (zone.kind === "search") {
+      return (
+        <div
+          key={zone.id}
+          ref={(node) => {
+            if (node) {
+              surfaceRefs.current.set(zone.id, node);
+            } else {
+              surfaceRefs.current.delete(zone.id);
+            }
+          }}
+          className="shell-surface shell-surface-search"
+          onMouseEnter={() => setZoneHover("menu", true)}
+          onMouseLeave={() => leaveZoneHover("menu")}
+        >
+          <CommandBar
+            library={library}
+            variant="pocket"
+            onSwitchWorkspace={onSwitchWorkspace}
+            onFocusChange={(focused) => setZoneHover("menu", focused)}
+            onContentChange={() =>
+              measureSurfaceRef.current.get(BUILTIN_SURFACE.BOTTOM_SEARCH)?.()
+            }
+          />
+        </div>
+      );
+    }
+
+    if (zone.kind === "internal-tool") {
+      const toolId = parseInternalToolZoneId(zone.id);
+      if (!toolId || !activeWorkspace) {
+        return null;
+      }
+
+      const internalTools = activeWorkspace.internalTools;
+
+      return (
+        <div
+          key={zone.id}
+          ref={(node) => {
+            if (node) {
+              surfaceRefs.current.set(zone.id, node);
+            } else {
+              surfaceRefs.current.delete(zone.id);
+            }
+          }}
+          className="shell-surface shell-flyout"
+          onMouseEnter={() => setZoneHover("menu", true)}
+          onMouseLeave={() => leaveZoneHover("menu")}
+        >
+          {toolId === "pomodoro" ? (
+            <PomodoroFlyout
+              pomodoro={internalTools.pomodoro}
+              onChange={(pomodoro) =>
+                onUpdateInternalTools({ ...internalTools, pomodoro })
+              }
+            />
+          ) : (
+            <TasksFlyout
+              internalTools={internalTools}
+              onChange={onUpdateInternalTools}
+            />
+          )}
+          {shellState.pinned && shellState.activeZoneId === zone.id ? (
+            <button
+              type="button"
+              className="shell-flyout-dismiss"
+              onClick={() => dismissPinnedZone()}
+            >
+              Dismiss
+            </button>
+          ) : null}
+        </div>
+      );
+    }
+
+    if (zone.kind !== "edge-group") {
+      return null;
+    }
+
+    const group = groupById(library, zone.id);
+    if (!group) {
+      return null;
+    }
+
+    const { links, hasMore } = resolveEdgeGroupFlyout(library, "left", zone.id);
+
+    return (
+      <div
+        key={zone.id}
+        ref={(node) => {
+          if (node) {
+            surfaceRefs.current.set(zone.id, node);
+          } else {
+            surfaceRefs.current.delete(zone.id);
+          }
+        }}
+        className="shell-surface shell-flyout"
+        onMouseEnter={() => setZoneHover("menu", true)}
+        onMouseLeave={() => leaveZoneHover("menu")}
+      >
+        <p className="shell-flyout-title">{group.name}</p>
+        {links.map((link) => (
+          <LinkItem key={link.id} link={link} />
+        ))}
+        {hasMore ? (
+          <button
+            type="button"
+            className="shell-flyout-more"
+            onClick={() => openFromEdgeGroup("left", zone.id)}
+          >
+            See more…
+          </button>
+        ) : null}
+        {shellState.pinned && shellState.activeZoneId === zone.id ? (
+          <button
+            type="button"
+            className="shell-flyout-dismiss"
+            onClick={() => dismissPinnedZone()}
+          >
+            Dismiss
+          </button>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
-    <div className="pointer-events-none absolute inset-0 z-[40]">
+    <>
+      <div className="shell-edge-chrome pointer-events-none absolute inset-0 z-[15]">
       {renderRimHit(BUILTIN_SURFACE.TOP_DASHBOARD, "shell-rim-hit-top", {
         top: topDashboardHit.top,
         left: topDashboardHit.left,
@@ -427,272 +732,12 @@ export function ShellEdgeLayer({
         );
       })}
 
-      {zones.map((zone) => {
-        if (zone.kind === "dashboard") {
-          return (
-            <div
-              key={zone.id}
-              ref={(node) => {
-                if (node) {
-                  surfaceRefs.current.set(zone.id, node);
-                } else {
-                  surfaceRefs.current.delete(zone.id);
-                }
-              }}
-              className="shell-surface shell-surface-dashboard"
-              onMouseEnter={() => setZoneHover("menu", true)}
-              onMouseLeave={() => leaveZoneHover("menu")}
-            >
-              <ShellDashboard library={library} onSwitchWorkspace={onSwitchWorkspace} />
-            </div>
-          );
-        }
+      {zones.map(renderZoneChrome)}
+      </div>
 
-        if (zone.kind === "search") {
-          return (
-            <div
-              key={zone.id}
-              ref={(node) => {
-                if (node) {
-                  surfaceRefs.current.set(zone.id, node);
-                } else {
-                  surfaceRefs.current.delete(zone.id);
-                }
-              }}
-              className="shell-surface shell-surface-search"
-              onMouseEnter={() => setZoneHover("menu", true)}
-              onMouseLeave={() => leaveZoneHover("menu")}
-            >
-              <CommandBar
-                library={library}
-                variant="pocket"
-                onSwitchWorkspace={onSwitchWorkspace}
-                onFocusChange={(focused) => setZoneHover("menu", focused)}
-                onContentChange={() =>
-                  measureSurfaceRef.current.get(BUILTIN_SURFACE.BOTTOM_SEARCH)?.()
-                }
-              />
-            </div>
-          );
-        }
-
-        if (zone.kind === "internal-tool") {
-          const toolId = parseInternalToolZoneId(zone.id);
-          if (!toolId || !activeWorkspace) {
-            return null;
-          }
-
-          const handle = resolveInternalToolHandle(toolId);
-          const internalTools = activeWorkspace.internalTools;
-
-          return (
-            <div key={zone.id}>
-              <button
-                ref={(node) => {
-                  if (node) {
-                    iconRefs.current.set(zone.id, node);
-                  } else {
-                    iconRefs.current.delete(zone.id);
-                  }
-                }}
-                type="button"
-                className="shell-icon-btn shell-icon-btn-ghost"
-                style={{ left: zone.x, top: zone.y }}
-                aria-label={handle.label}
-                onMouseEnter={() => {
-                  setZoneHover("icon", true);
-                  requestActivateZone(zone.id, zonesRef.current);
-                }}
-                onMouseLeave={() => leaveZoneHover("icon")}
-                onFocus={() => {
-                  setZoneHover("icon", true);
-                  requestActivateZone(zone.id, zonesRef.current);
-                }}
-                onBlur={() => leaveZoneHover("icon")}
-                onClick={() => toggleZonePin(zone.id, zonesRef.current)}
-              >
-                <span className="shell-icon-glyph">{handle.glyph}</span>
-              </button>
-
-              <div
-                ref={(node) => {
-                  if (node) {
-                    bridgeRefs.current.set(zone.id, node);
-                  } else {
-                    bridgeRefs.current.delete(zone.id);
-                  }
-                }}
-                className="shell-hover-bridge"
-                aria-hidden
-                onMouseEnter={() => setZoneHover("bridge", true)}
-                onMouseLeave={() => leaveZoneHover("bridge")}
-              />
-
-              <div
-                ref={(node) => {
-                  if (node) {
-                    surfaceRefs.current.set(zone.id, node);
-                  } else {
-                    surfaceRefs.current.delete(zone.id);
-                  }
-                }}
-                className="shell-surface shell-flyout"
-                onMouseEnter={() => setZoneHover("menu", true)}
-                onMouseLeave={() => leaveZoneHover("menu")}
-              >
-                {toolId === "pomodoro" ? (
-                  <PomodoroFlyout
-                    pomodoro={internalTools.pomodoro}
-                    onChange={(pomodoro) =>
-                      onUpdateInternalTools({ ...internalTools, pomodoro })
-                    }
-                  />
-                ) : (
-                  <TasksFlyout
-                    internalTools={internalTools}
-                    onChange={onUpdateInternalTools}
-                  />
-                )}
-                {shellState.pinned && shellState.activeZoneId === zone.id ? (
-                  <button
-                    type="button"
-                    className="shell-flyout-dismiss"
-                    onClick={() => dismissPinnedZone()}
-                  >
-                    Dismiss
-                  </button>
-                ) : null}
-              </div>
-            </div>
-          );
-        }
-
-        if (zone.kind !== "edge-group") {
-          return null;
-        }
-
-        const group = groupById(library, zone.id);
-        if (!group) {
-          return null;
-        }
-
-        const display = resolveEdgeHandleDisplay(group);
-        const { links, hasMore } = resolveEdgeGroupFlyout(library, "left", zone.id);
-
-        return (
-          <div key={zone.id}>
-            <button
-              ref={(node) => {
-                if (node) {
-                  iconRefs.current.set(zone.id, node);
-                } else {
-                  iconRefs.current.delete(zone.id);
-                }
-              }}
-              type="button"
-              className="shell-icon-btn"
-              style={{ left: zone.x, top: zone.y }}
-              aria-label={group.name}
-              onMouseEnter={() => {
-                setZoneHover("icon", true);
-                requestActivateZone(zone.id, zonesRef.current);
-              }}
-              onMouseLeave={() => leaveZoneHover("icon")}
-              onFocus={() => {
-                setZoneHover("icon", true);
-                requestActivateZone(zone.id, zonesRef.current);
-              }}
-              onBlur={() => leaveZoneHover("icon")}
-              onClick={() => toggleZonePin(zone.id, zonesRef.current)}
-              onPointerDown={(event) => {
-                const frameLayout = getShellLayout();
-                dragRef.current = {
-                  groupId: zone.id,
-                  startAxis: event.clientY,
-                  dragged: false,
-                };
-                event.currentTarget.setPointerCapture(event.pointerId);
-              }}
-              onPointerMove={(event) => {
-                const drag = dragRef.current;
-                if (!drag || drag.groupId !== zone.id) {
-                  return;
-                }
-                if (Math.abs(event.clientY - drag.startAxis) > DRAG_THRESHOLD_PX) {
-                  drag.dragged = true;
-                }
-              }}
-              onPointerUp={(event) => {
-                const drag = dragRef.current;
-                if (!drag || drag.groupId !== zone.id) {
-                  return;
-                }
-                event.currentTarget.releasePointerCapture(event.pointerId);
-                if (drag.dragged) {
-                  finishDrag(zone.id, event.clientY);
-                }
-                dragRef.current = null;
-              }}
-            >
-              {display.kind === "image" ? (
-                <img src={display.url} alt="" className="shell-icon-image" />
-              ) : (
-                <span className="shell-icon-glyph">{display.text}</span>
-              )}
-            </button>
-
-            <div
-              ref={(node) => {
-                if (node) {
-                  bridgeRefs.current.set(zone.id, node);
-                } else {
-                  bridgeRefs.current.delete(zone.id);
-                }
-              }}
-              className="shell-hover-bridge"
-              aria-hidden
-              onMouseEnter={() => setZoneHover("bridge", true)}
-              onMouseLeave={() => leaveZoneHover("bridge")}
-            />
-
-            <div
-              ref={(node) => {
-                if (node) {
-                  surfaceRefs.current.set(zone.id, node);
-                } else {
-                  surfaceRefs.current.delete(zone.id);
-                }
-              }}
-              className="shell-surface shell-flyout"
-              onMouseEnter={() => setZoneHover("menu", true)}
-              onMouseLeave={() => leaveZoneHover("menu")}
-            >
-              <p className="shell-flyout-title">{group.name}</p>
-              {links.map((link) => (
-                <LinkItem key={link.id} link={link} />
-              ))}
-              {hasMore ? (
-                <button
-                  type="button"
-                  className="shell-flyout-more"
-                  onClick={() => openFromEdgeGroup("left", zone.id)}
-                >
-                  See more…
-                </button>
-              ) : null}
-              {shellState.pinned && shellState.activeZoneId === zone.id ? (
-                <button
-                  type="button"
-                  className="shell-flyout-dismiss"
-                  onClick={() => dismissPinnedZone()}
-                >
-                  Dismiss
-                </button>
-              ) : null}
-            </div>
-          </div>
-        );
-      })}
-    </div>
+      <div className="shell-rim-menu-layer pointer-events-none absolute inset-0 z-[20]">
+        {zones.map(renderZoneMenu)}
+      </div>
+    </>
   );
 }

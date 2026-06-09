@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
+import { BUILTIN_SURFACE } from "./rim";
 import {
   getFlyoutRevealProgress,
   getRenderPocket,
   getShellLayout,
   getSurfacePocketFit,
   getSurfaceRevealStyle,
+  getTargetPocketForZone,
 } from "./layout";
 import type { ShellZoneLayout } from "./layout";
 import type { ShellAnimationSnapshot } from "./shell-state";
@@ -56,7 +58,34 @@ describe("getSurfaceRevealStyle", () => {
     y: 7,
   };
 
-  it("fades and scales down when the pocket is smaller than the menu", () => {
+  it("matches bottom search menu width using half-span notch geometry", () => {
+    const searchZone: ShellZoneLayout = {
+      id: BUILTIN_SURFACE.BOTTOM_SEARCH,
+      rim: "bottom",
+      kind: "search",
+      x: 640,
+      y: 780,
+    };
+    const menuSize = { width: 420, height: 128 };
+    const layout = getShellLayout();
+    const target = getTargetPocketForZone(searchZone, menuSize, layout);
+    const pocket = getRenderPocket(
+      layout,
+      baseAnimation({
+        t: 1,
+        renderRim: "bottom",
+        span: target.span,
+        depth: target.depth,
+        targetSpan: target.span,
+        targetDepth: target.depth,
+      }),
+    );
+    const pocketFit = getSurfacePocketFit(pocket, searchZone, menuSize);
+
+    expect(pocketFit).toBeCloseTo(1, 2);
+  });
+
+  it("scales with pocket fit but reaches full opacity when the notch is open", () => {
     const layout = getShellLayout();
     const pocket = getRenderPocket(
       layout,
@@ -66,7 +95,7 @@ describe("getSurfaceRevealStyle", () => {
     const style = getSurfaceRevealStyle(1, pocketFit);
 
     expect(pocketFit).toBeLessThan(1);
-    expect(style.opacity).toBeLessThan(pocketFit);
+    expect(style.opacity).toBe(1);
     expect(style.scale).toBeLessThan(1);
   });
 });

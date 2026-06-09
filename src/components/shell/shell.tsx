@@ -74,10 +74,9 @@ export function Shell() {
 
   return (
     <FocusRadioPlaybackProvider library={library}>
-      <div className="relative h-screen w-screen overflow-hidden">
-        <ShellCanvas theme={activeWorkspace.theme} />
+      <div className="relative isolate h-screen w-screen overflow-hidden">
         <main
-          className="pointer-events-none absolute z-[5] flex flex-col items-center px-8"
+          className="pointer-events-none absolute z-[1] flex flex-col items-center px-8"
           style={{
             left: panelBounds.left,
             top: panelBounds.top,
@@ -92,6 +91,8 @@ export function Shell() {
             <CanvasWidgetStack workspace={activeWorkspace} />
           </div>
         </main>
+
+        <ShellCanvas theme={activeWorkspace.theme} />
 
         <ShellEdgeLayer
           library={library}

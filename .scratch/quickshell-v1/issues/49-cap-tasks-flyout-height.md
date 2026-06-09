@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -10,10 +10,10 @@ Cap the **tasks** flyout list height so many **focus tasks** scroll inside the f
 
 ## Acceptance criteria
 
-- [ ] Tasks flyout has a max height bounded by viewport / pocket size
-- [ ] Long task lists scroll internally; flyout does not extend past the visible shell
-- [ ] Add-task input and actions remain reachable without scrolling the whole page
-- [ ] Pinned flyout behavior unchanged
+- [x] Tasks flyout has a max height bounded by viewport / pocket size
+- [x] Long task lists scroll internally; flyout does not extend past the visible shell
+- [x] Add-task input and actions remain reachable without scrolling the whole page
+- [x] Pinned flyout behavior unchanged
 
 ## Blocked by
 

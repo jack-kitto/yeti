@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import {
+  TASKS_FLYOUT_FORM_CLASS,
+  TASKS_FLYOUT_LIST_SCROLL_CLASS,
+} from "@/internal-tools/tasks-flyout-layout";
 import { addFocusTask, completeFocusTask, listTodayTasks } from "@/internal-tools/tasks";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
 
@@ -26,21 +30,23 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
   return (
     <div className="shell-tool-flyout">
       <p className="shell-flyout-title">Focus tasks</p>
-      <ul className="shell-tool-task-list">
-        {todayTasks.map((task) => (
-          <li key={task.id} className="shell-tool-task-item">
-            <span>{task.title}</span>
-            <button
-              type="button"
-              className="shell-flyout-more"
-              onClick={() => onChange(completeFocusTask(internalTools, task.id))}
-            >
-              Done
-            </button>
-          </li>
-        ))}
-      </ul>
-      <form className="shell-tool-task-form" onSubmit={handleAdd}>
+      <div className={TASKS_FLYOUT_LIST_SCROLL_CLASS}>
+        <ul className="shell-tool-task-list">
+          {todayTasks.map((task) => (
+            <li key={task.id} className="shell-tool-task-item">
+              <span>{task.title}</span>
+              <button
+                type="button"
+                className="shell-flyout-more"
+                onClick={() => onChange(completeFocusTask(internalTools, task.id))}
+              >
+                Done
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <form className={TASKS_FLYOUT_FORM_CLASS} onSubmit={handleAdd}>
         <input
           type="text"
           value={draft}

@@ -404,6 +404,7 @@ body {
   opacity: 0.58;
 }
 
+.shell-dashboard-media-empty,
 .shell-dashboard-media {
   display: flex;
   flex-direction: column;

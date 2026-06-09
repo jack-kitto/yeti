@@ -2,18 +2,24 @@
 
 import { useState } from "react";
 import { resolveFocusRadioNowPlaying } from "@/focus-radio/playback";
-import { buildFocusRadioStationPickerRows } from "@/focus-radio/station-picker";
+import {
+  buildFocusRadioStationPickerRows,
+  isFocusRadioStationCatalogEmpty,
+} from "@/focus-radio/station-picker";
 import { updateFocusRadioPlayback } from "@/focus-radio/stations";
 import { useMutateLibrary } from "@/hooks/use-library";
 import type { Library } from "@/library/types";
+import { useConfigStore } from "@/store/config-store";
 
 type ControlCenterMediaTabProps = {
   library: Library;
 };
 
 export function ControlCenterMediaTab({ library }: ControlCenterMediaTabProps) {
+  const openSection = useConfigStore((state) => state.openSection);
   const mutateLibrary = useMutateLibrary();
   const [query, setQuery] = useState("");
+  const catalogEmpty = isFocusRadioStationCatalogEmpty(library);
   const rows = buildFocusRadioStationPickerRows(library, query);
   const playback = library.focusRadio.playback;
   const nowPlaying = resolveFocusRadioNowPlaying(library);
@@ -45,6 +51,23 @@ export function ControlCenterMediaTab({ library }: ControlCenterMediaTabProps) {
 
   function handleToggleMute() {
     patchPlayback({ muted: !playback.muted });
+  }
+
+  if (catalogEmpty) {
+    return (
+      <div className="shell-dashboard-media-empty">
+        <p className="shell-dashboard-placeholder">
+          Add focus radio stations in settings to start listening.
+        </p>
+        <button
+          type="button"
+          className="shell-dashboard-setup-button"
+          onClick={() => openSection("focusRadio")}
+        >
+          Open focus radio settings
+        </button>
+      </div>
+    );
   }
 
   return (

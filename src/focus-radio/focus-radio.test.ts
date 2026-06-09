@@ -7,6 +7,7 @@ import {
   resolveFocusRadioOutputVolume,
 } from "./playback";
 import { buildFocusRadioStationPickerRows } from "./station-picker";
+import { isFocusRadioStationCatalogEmpty } from "./station-picker";
 import {
   addFocusRadioStation,
   listFocusRadioStations,
@@ -188,6 +189,22 @@ describe("resolveFocusRadioNowPlaying", () => {
 
   it("returns null when no station is selected", () => {
     expect(resolveFocusRadioNowPlaying(createStarterLibrary())).toBeNull();
+  });
+});
+
+describe("isFocusRadioStationCatalogEmpty", () => {
+  it("is true for the starter library and false after adding a station", async () => {
+    let library = createStarterLibrary();
+
+    expect(isFocusRadioStationCatalogEmpty(library)).toBe(true);
+
+    library = addFocusRadioStation(library, {
+      label: "Lofi",
+      url: "https://stream.example.com/lofi.mp3",
+      kind: "stream",
+    });
+
+    expect(isFocusRadioStationCatalogEmpty(library)).toBe(false);
   });
 });
 

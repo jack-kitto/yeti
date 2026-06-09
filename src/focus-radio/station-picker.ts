@@ -11,6 +11,10 @@ export type FocusRadioStationPickerRow = {
   favorite: boolean;
 };
 
+export function isFocusRadioStationCatalogEmpty(library: Library): boolean {
+  return listFocusRadioStations(library).length === 0;
+}
+
 export function buildFocusRadioStationPickerRows(
   library: Library,
   query = "",

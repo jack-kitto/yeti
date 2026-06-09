@@ -2,12 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   advancePomodoroPhase,
   BUILTIN_FOCUS_SPLITS,
+  createDefaultWorkspaceInternalTools,
   formatTimerSeconds,
   getFocusSplit,
   pausePomodoro,
   remainingSeconds,
   resetPomodoro,
   resolveFocusSplit,
+  setPomodoroSplit,
   startPomodoro,
 } from "./pomodoro";
 import { createDefaultPomodoroState } from "./pomodoro";
@@ -86,6 +88,17 @@ describe("BUILTIN_FOCUS_SPLITS", () => {
         shortBreakMinutes: 10,
       }),
     );
+  });
+});
+
+describe("setPomodoroSplit", () => {
+  it("persists the selected focus split on the workspace pomodoro state", () => {
+    const tools = createDefaultWorkspaceInternalTools();
+
+    const updated = setPomodoroSplit(tools, "deep");
+
+    expect(updated.pomodoro.splitId).toBe("deep");
+    expect(tools.pomodoro.splitId).toBe("classic");
   });
 });
 

@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import {
   advancePomodoroPhase,
+  BUILTIN_FOCUS_SPLITS,
   formatTimerSeconds,
   isPomodoroPhaseComplete,
   pausePomodoro,
   remainingSeconds,
   resetPomodoro,
   resolveFocusSplit,
+  setPomodoroSplit,
   startPomodoro,
 } from "@/internal-tools/pomodoro";
 import type { PomodoroState, WorkspaceInternalTools } from "@/internal-tools/types";
@@ -57,6 +59,22 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
       <p className="shell-tool-timer" aria-live="polite">
         {formatTimerSeconds(seconds)}
       </p>
+      <fieldset className="shell-tool-split-picker">
+        <legend className="shell-tool-split-label">Focus split</legend>
+        <div className="shell-tool-split-options">
+          {BUILTIN_FOCUS_SPLITS.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className="shell-flyout-more"
+              aria-pressed={pomodoro.splitId === option.id}
+              onClick={() => onChange(setPomodoroSplit(internalTools, option.id))}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </fieldset>
       <div className="shell-tool-actions">
         {pomodoro.running ? (
           <button

@@ -98,6 +98,23 @@ export function pausePomodoro(state: PomodoroState): PomodoroState {
   };
 }
 
+export function setPomodoroSplit(
+  tools: WorkspaceInternalTools,
+  splitId: string,
+): WorkspaceInternalTools {
+  if (tools.pomodoro.splitId === splitId) {
+    return tools;
+  }
+
+  return {
+    ...tools,
+    pomodoro: {
+      ...tools.pomodoro,
+      splitId,
+    },
+  };
+}
+
 export function resetPomodoro(state: PomodoroState): PomodoroState {
   return {
     ...createDefaultPomodoroState(),

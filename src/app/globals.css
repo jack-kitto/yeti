@@ -1880,6 +1880,27 @@ body {
   letter-spacing: 0.04em;
 }
 
+.shell-tool-split-picker {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+
+.shell-tool-split-label {
+  padding: 0;
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.shell-tool-split-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
 .shell-tool-actions {
   display: flex;
   gap: 8px;

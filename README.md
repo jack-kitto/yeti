@@ -110,7 +110,25 @@ No npm publish — the package is `private`. Deploy is separate (see below).
 
 ## Deployment
 
-Yeti is a standard Next.js app. Build with `npm run build` and deploy the output to any Node-compatible host or static/SSR platform (e.g. Cloudflare Pages).
+Yeti is a standard Next.js app. Build with `npm run build` and deploy the output to any Node-compatible host or SSR platform.
+
+### Cloudflare Pages (recommended)
+
+Deploy from the [Cloudflare dashboard](https://dash.cloudflare.com/) by connecting this GitHub repo — **no GitHub Actions deploy workflow** is required (CI and semantic-release stay separate).
+
+Suggested project settings until a dedicated adapter is chosen:
+
+| Setting                | Value                 |
+| ---------------------- | --------------------- |
+| Framework preset       | Next.js               |
+| Build command          | `npm run build`       |
+| Build output directory | `.next`               |
+| Production branch      | `main`                |
+| Node version           | 22 (matches `.nvmrc`) |
+
+Enable preview deployments on pull requests if you want staging URLs. After the first production deploy, add the live URL here.
+
+Release automation (issue 23) tags GitHub Releases only — Cloudflare rebuilds `main` on push independently.
 
 ## Repo name
 

@@ -1950,23 +1950,32 @@ body {
 
 .shell-tool-task-item {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   gap: 8px;
   font-size: 13px;
 }
 
 .shell-tool-task-main {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
+}
+
+.shell-tool-task-title {
+  flex: 1 1 8rem;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .shell-tool-task-estimate-field {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .shell-tool-task-estimate-input {
@@ -1982,8 +1991,14 @@ body {
 
 .shell-tool-task-actions {
   display: flex;
-  flex-shrink: 0;
+  flex-wrap: wrap;
+  width: 100%;
   gap: 6px;
+}
+
+.shell-tool-task-action-btn {
+  min-width: 2rem;
+  padding-inline: 8px;
 }
 
 .shell-tool-task-form {

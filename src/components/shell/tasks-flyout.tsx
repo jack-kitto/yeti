@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import {
+  TASKS_FLYOUT_ACTIONS_CLASS,
   TASKS_FLYOUT_FORM_CLASS,
+  TASKS_FLYOUT_ITEM_CLASS,
   TASKS_FLYOUT_LIST_SCROLL_CLASS,
+  TASKS_FLYOUT_MAIN_CLASS,
 } from "@/internal-tools/tasks-flyout-layout";
 import {
   addFocusTask,
@@ -66,9 +69,9 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
       <div className={TASKS_FLYOUT_LIST_SCROLL_CLASS}>
         <ul className="shell-tool-task-list">
           {visibleTasks.map((task, index) => (
-            <li key={task.id} className="shell-tool-task-item">
-              <div className="shell-tool-task-main">
-                <span>{task.title}</span>
+            <li key={task.id} className={TASKS_FLYOUT_ITEM_CLASS}>
+              <div className={TASKS_FLYOUT_MAIN_CLASS}>
+                <span className="shell-tool-task-title">{task.title}</span>
                 <label className="shell-tool-task-estimate-field">
                   <span className="shell-tool-split-label">Est (min)</span>
                   <input
@@ -87,33 +90,36 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
                       }
                     }}
                     placeholder="—"
-                    className="shell-config-input"
+                    className="shell-config-input shell-tool-task-estimate-input"
                     aria-label={`Estimate for ${task.title}`}
                   />
                 </label>
               </div>
-              <div className="shell-tool-task-actions">
+              <div className={TASKS_FLYOUT_ACTIONS_CLASS}>
                 <button
                   type="button"
-                  className="shell-flyout-dismiss"
+                  className="shell-flyout-dismiss shell-tool-task-action-btn"
                   aria-label={`Move ${task.title} up`}
+                  title="Move up"
                   disabled={index === 0}
                   onClick={() => onChange(moveFocusTask(internalTools, task.id, index - 1))}
                 >
-                  Up
+                  ↑
                 </button>
                 <button
                   type="button"
-                  className="shell-flyout-dismiss"
+                  className="shell-flyout-dismiss shell-tool-task-action-btn"
                   aria-label={`Move ${task.title} down`}
+                  title="Move down"
                   disabled={index === visibleTasks.length - 1}
                   onClick={() => onChange(moveFocusTask(internalTools, task.id, index + 1))}
                 >
-                  Down
+                  ↓
                 </button>
                 <button
                   type="button"
-                  className="shell-flyout-more"
+                  className="shell-flyout-more shell-tool-task-action-btn"
+                  title={view === "today" ? "Move to backlog" : "Move to today"}
                   onClick={() =>
                     onChange(setFocusTaskToday(internalTools, task.id, view !== "today"))
                   }
@@ -122,14 +128,16 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
                 </button>
                 <button
                   type="button"
-                  className="shell-flyout-more"
+                  className="shell-flyout-more shell-tool-task-action-btn"
+                  title="Start focus"
                   onClick={() => onChange(startFocusOnTask(internalTools, task.id, new Date()))}
                 >
-                  Start focus
+                  Focus
                 </button>
                 <button
                   type="button"
-                  className="shell-flyout-more"
+                  className="shell-flyout-more shell-tool-task-action-btn"
+                  title="Mark done"
                   onClick={() => onChange(completeFocusTask(internalTools, task.id))}
                 >
                   Done

@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
-import { useApplyLibraryPatch, useLibrary, useSaveLibrary } from "@/hooks/use-library";
+import { useApplyLibraryPatch, useLibrary, useMutateLibrary, useSaveLibrary } from "@/hooks/use-library";
 import { usePaletteExtraction } from "@/hooks/use-palette-extraction";
+import { usePomodoroPhaseAdvance } from "@/hooks/use-pomodoro-phase-advance";
+import type { Library, Workspace } from "@/library/types";
 import { getShellLayout } from "@/shell-frame/layout";
 import {
   getWorkspaceTransitionSnapshot,
@@ -103,6 +105,68 @@ export function Shell() {
   }
 
   return (
+    <ShellLoaded
+      library={library}
+      activeWorkspace={activeWorkspace}
+      panelBounds={panelBounds}
+      workspaceTransition={workspaceTransition}
+      paletteExtractionErrors={paletteExtractionErrors}
+      retryPaletteExtraction={retryPaletteExtraction}
+      onReorderGroup={handleReorderGroup}
+      onSwitchWorkspace={switchWorkspace}
+      saveLibraryMutation={saveLibraryMutation}
+    />
+  );
+}
+
+type ShellLoadedProps = {
+  library: Library;
+  activeWorkspace: Workspace;
+  panelBounds: PanelBounds;
+  workspaceTransition: ReturnType<typeof getWorkspaceTransitionSnapshot>;
+  paletteExtractionErrors: ReturnType<typeof usePaletteExtraction>["paletteExtractionErrors"];
+  retryPaletteExtraction: ReturnType<typeof usePaletteExtraction>["retryPaletteExtraction"];
+  onReorderGroup: (groupId: string, targetSlotIndex: number) => void;
+  onSwitchWorkspace: (workspaceId: string) => void;
+  saveLibraryMutation: ReturnType<typeof useSaveLibrary>;
+};
+
+function ShellLoaded({
+  library,
+  activeWorkspace,
+  panelBounds,
+  workspaceTransition,
+  paletteExtractionErrors,
+  retryPaletteExtraction,
+  onReorderGroup,
+  onSwitchWorkspace,
+  saveLibraryMutation,
+}: ShellLoadedProps) {
+  const mutateLibrary = useMutateLibrary();
+
+  const handlePomodoroAdvance = useCallback(
+    (nextPomodoro: Workspace["internalTools"]["pomodoro"]) => {
+      mutateLibrary.mutate((current) => ({
+        ...current,
+        workspaces: current.workspaces.map((entry) =>
+          entry.id === activeWorkspace.id
+            ? {
+                ...entry,
+                internalTools: {
+                  ...entry.internalTools,
+                  pomodoro: nextPomodoro,
+                },
+              }
+            : entry,
+        ),
+      }));
+    },
+    [activeWorkspace.id, mutateLibrary],
+  );
+
+  usePomodoroPhaseAdvance(activeWorkspace, library, handlePomodoroAdvance);
+
+  return (
     <FocusRadioPlaybackProvider library={library}>
       <div className="relative isolate h-screen w-screen overflow-hidden">
         <main
@@ -117,10 +181,7 @@ export function Shell() {
               : undefined,
           }}
         >
-          <div
-            className="pointer-events-auto absolute left-0 flex w-full justify-center px-8"
-            style={{ top: "40%", transform: "translateY(-50%)" }}
-          >
+          <div className="pointer-events-none absolute inset-0 px-6 sm:px-8">
             <CanvasWidgetStack workspace={activeWorkspace} />
           </div>
         </main>
@@ -129,8 +190,8 @@ export function Shell() {
 
         <ShellEdgeLayer
           library={library}
-          onReorderGroup={handleReorderGroup}
-          onSwitchWorkspace={switchWorkspace}
+          onReorderGroup={onReorderGroup}
+          onSwitchWorkspace={onSwitchWorkspace}
           onUpdateInternalTools={(internalTools) =>
             saveLibraryMutation.mutate({
               ...library,

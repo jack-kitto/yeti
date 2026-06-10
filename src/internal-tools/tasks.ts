@@ -226,3 +226,20 @@ export function completeFocusTask(
     tasks: tools.tasks.map((task) => (task.id === taskId ? { ...task, completed: true } : task)),
   };
 }
+
+export function toggleFocusTaskCompletion(
+  tools: WorkspaceInternalTools,
+  taskId: string,
+): WorkspaceInternalTools {
+  const task = tools.tasks.find((item) => item.id === taskId);
+  if (!task) {
+    return tools;
+  }
+
+  return {
+    ...tools,
+    tasks: tools.tasks.map((item) =>
+      item.id === taskId ? { ...item, completed: !item.completed } : item,
+    ),
+  };
+}

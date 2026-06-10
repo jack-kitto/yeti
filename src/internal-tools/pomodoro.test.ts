@@ -5,6 +5,7 @@ import {
   completeCountdown,
   createDefaultWorkspaceInternalTools,
   displayPomodoroSeconds,
+  finishPomodoroInterval,
   formatTimerSeconds,
   formatPomodoroPhaseLabel,
   formatFocusSplitSummary,
@@ -304,6 +305,40 @@ describe("completeCountdown", () => {
       running: false,
       endsAt: null,
       completedWorkSessions: 0,
+    });
+  });
+});
+
+describe("finishPomodoroInterval", () => {
+  it("auto-starts the next pomodoro phase after work completes", () => {
+    const now = new Date("2026-06-09T12:25:00.000Z");
+    const running = {
+      ...createDefaultPomodoroState(),
+      running: true,
+      endsAt: now.toISOString(),
+    };
+    const split = getFocusSplit("classic");
+
+    expect(finishPomodoroInterval(running, split, now)).toMatchObject({
+      phase: "shortBreak",
+      running: true,
+      endsAt: "2026-06-09T12:30:00.000Z",
+      completedWorkSessions: 1,
+    });
+  });
+
+  it("stops a finished focus countdown without starting a break", () => {
+    const now = new Date("2026-06-09T12:15:00.000Z");
+    const running = startCountdown(
+      createDefaultPomodoroState(),
+      15,
+      new Date("2026-06-09T12:00:00.000Z"),
+    );
+
+    expect(finishPomodoroInterval(running, getFocusSplit("classic"), now)).toMatchObject({
+      mode: "countdown",
+      running: false,
+      endsAt: null,
     });
   });
 });

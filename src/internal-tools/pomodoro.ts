@@ -1,3 +1,4 @@
+import { playPomodoroChimeSound } from "./chime-audio";
 import type { FocusSplit, PomodoroPhase, PomodoroState, WorkspaceInternalTools } from "./types";
 
 export const DEFAULT_SPLIT_ID = "classic";
@@ -160,25 +161,7 @@ export function setCustomFocusSplit(
 }
 
 export function playPomodoroChime(): void {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  const context = new AudioContext();
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-
-  oscillator.type = "sine";
-  oscillator.frequency.value = 880;
-  gain.gain.setValueAtTime(0.2, context.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.5);
-
-  oscillator.connect(gain);
-  gain.connect(context.destination);
-
-  oscillator.start(context.currentTime);
-  oscillator.stop(context.currentTime + 0.5);
-  void context.close();
+  void playPomodoroChimeSound();
 }
 
 export function playChimeIfEnabled(
@@ -241,6 +224,18 @@ export function completeCountdown(state: PomodoroState): PomodoroState {
   };
 }
 
+export function finishPomodoroInterval(
+  state: PomodoroState,
+  split: FocusSplit,
+  now: Date,
+): PomodoroState {
+  if (state.mode === "countdown") {
+    return completeCountdown(state);
+  }
+
+  return startPomodoro(advancePomodoroPhase(state), now, split);
+}
+
 const WORK_SESSIONS_BEFORE_LONG_BREAK = 4;
 
 export function advancePomodoroPhase(state: PomodoroState): PomodoroState {
@@ -276,7 +271,7 @@ export function remainingSeconds(state: PomodoroState, now: Date): number {
   }
 
   const endsAtMs = new Date(state.endsAt).getTime();
-  return Math.max(0, Math.ceil((endsAtMs - now.getTime()) / 1000));
+  return Math.max(0, Math.floor((endsAtMs - now.getTime()) / 1000));
 }
 
 export function displayPomodoroSeconds(state: PomodoroState, split: FocusSplit, now: Date): number {

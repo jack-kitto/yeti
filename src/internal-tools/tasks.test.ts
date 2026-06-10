@@ -4,6 +4,7 @@ import {
   addFocusTask,
   clearActiveFocusTask,
   completeFocusTask,
+  toggleFocusTaskCompletion,
   getActiveFocusTask,
   listBacklogTasks,
   listTodayTasks,
@@ -104,5 +105,18 @@ describe("focus tasks", () => {
     expect(cleared.pomodoro.activeTaskId).toBeNull();
     expect(cleared.pomodoro.running).toBe(false);
     expect(getActiveFocusTask(cleared)).toBeNull();
+  });
+});
+
+describe("toggleFocusTaskCompletion", () => {
+  it("marks an open task complete and can reopen it", () => {
+    let tools = addFocusTask(createDefaultWorkspaceInternalTools(), "Ship tasks", "task-1");
+    tools = setFocusTaskToday(tools, "task-1", true);
+
+    tools = toggleFocusTaskCompletion(tools, "task-1");
+    expect(tools.tasks[0]?.completed).toBe(true);
+
+    tools = toggleFocusTaskCompletion(tools, "task-1");
+    expect(tools.tasks[0]?.completed).toBe(false);
   });
 });

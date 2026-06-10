@@ -71,6 +71,7 @@ type FocusRadioYoutubePlayerProps = {
   shouldPlay: boolean;
   playback: FocusRadioPlayback;
   onError: () => void;
+  onPlayerReady?: (player: YoutubePlayerInstance) => void;
 };
 
 export function FocusRadioYoutubePlayer({
@@ -78,6 +79,7 @@ export function FocusRadioYoutubePlayer({
   shouldPlay,
   playback,
   onError,
+  onPlayerReady,
 }: FocusRadioYoutubePlayerProps) {
   const elementId = useId().replace(/:/g, "");
   const playerRef = useRef<YoutubePlayerInstance | null>(null);
@@ -97,6 +99,9 @@ export function FocusRadioYoutubePlayer({
         playerVars: { autoplay: 0, controls: 0 },
         events: {
           onError: onError,
+          onReady: (event) => {
+            onPlayerReady?.(event.target);
+          },
         },
       });
     });

@@ -181,8 +181,9 @@ export function updateFocusRadioPlayback(
   library: Library,
   patch: FocusRadioPlaybackPatch,
 ): Library {
+  const current = library.focusRadio.playback;
   const playback = {
-    ...library.focusRadio.playback,
+    ...current,
     ...patch,
   };
 
@@ -193,8 +194,18 @@ export function updateFocusRadioPlayback(
   if (patch.stationId !== undefined && patch.stationId !== null) {
     const exists = library.focusRadio.stations.some((station) => station.id === patch.stationId);
     if (!exists) {
-      playback.stationId = library.focusRadio.playback.stationId;
+      playback.stationId = current.stationId;
     }
+  }
+
+  const playbackUnchanged =
+    playback.playing === current.playing &&
+    playback.stationId === current.stationId &&
+    playback.volume === current.volume &&
+    playback.muted === current.muted;
+
+  if (playbackUnchanged && patch.playing !== true) {
+    return library;
   }
 
   const nextLibrary = {

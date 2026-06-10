@@ -83,6 +83,12 @@ function defaultMenuSize(zoneId: string) {
   if (zoneId === BUILTIN_SURFACE.BOTTOM_SEARCH) {
     return { width: 420, height: 52 };
   }
+  if (zoneId === "__tool_tasks__") {
+    return { width: 320, height: 420 };
+  }
+  if (zoneId === "__tool_pomodoro__") {
+    return { width: 280, height: 380 };
+  }
   return { width: 170, height: 130 };
 }
 

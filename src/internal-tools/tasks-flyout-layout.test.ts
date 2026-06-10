@@ -29,18 +29,18 @@ describe("tasks flyout layout", () => {
     expect(itemRule![0]).toMatch(/flex-direction:\s*column/);
   });
 
-  it("keeps title and estimate on the main row", () => {
+  it("stacks title and estimate in the main block", () => {
     const mainRule = css.match(new RegExp(`\\.${TASKS_FLYOUT_MAIN_CLASS}\\s*\\{[^}]+\\}`, "s"));
     expect(mainRule).not.toBeNull();
-    expect(mainRule![0]).toMatch(/flex-direction:\s*row/);
+    expect(mainRule![0]).toMatch(/flex-direction:\s*column/);
   });
 
-  it("wraps action buttons on their own row below the title", () => {
+  it("lays out action buttons in a grid below the title", () => {
     const actionsRule = css.match(
       new RegExp(`\\.${TASKS_FLYOUT_ACTIONS_CLASS}\\s*\\{[^}]+\\}`, "s"),
     );
     expect(actionsRule).not.toBeNull();
-    expect(actionsRule![0]).toMatch(/flex-wrap:\s*wrap/);
+    expect(actionsRule![0]).toMatch(/grid-template-columns/);
     expect(actionsRule![0]).toMatch(/width:\s*100%/);
   });
 });

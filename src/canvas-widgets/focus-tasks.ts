@@ -1,4 +1,4 @@
-import { listTodayTasks } from "@/internal-tools/tasks";
+import { sortByKey } from "@/fractional-order/fractional-order";
 import type { FocusTask, WorkspaceInternalTools } from "@/internal-tools/types";
 
 export function formatCanvasFocusTaskEstimate(estimateMinutes?: number): string | null {
@@ -14,5 +14,8 @@ export function canStartFocusCountdown(task: FocusTask): boolean {
 }
 
 export function listCanvasFocusTasks(tools: WorkspaceInternalTools): FocusTask[] {
-  return listTodayTasks(tools);
+  return sortByKey(
+    tools.tasks.filter((task) => task.today),
+    (task) => task.orderKey,
+  );
 }

@@ -18,8 +18,8 @@ export function createDefaultCanvasWidgets(): CanvasWidgetConfig {
     welcome: true,
     quote: true,
     nowPlaying: true,
-    pomodoro: false,
-    focusTasks: false,
+    pomodoro: true,
+    focusTasks: true,
   };
 }
 

@@ -12,6 +12,21 @@ export type MediaSessionMetadataLike = {
   artwork?: ReadonlyArray<{ src: string }>;
 };
 
+export function externalMediaGlancesEqual(
+  left: ExternalMediaGlance | null,
+  right: ExternalMediaGlance | null,
+): boolean {
+  if (left === right) {
+    return true;
+  }
+
+  if (!left || !right) {
+    return false;
+  }
+
+  return left.title === right.title && left.artworkUrl === right.artworkUrl;
+}
+
 export function resolveExternalMediaGlance(
   sessionMetadata: MediaSessionMetadataLike | null,
   nowPlaying: FocusRadioNowPlaying | null,

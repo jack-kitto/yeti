@@ -1,18 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { usePomodoroTimerNow } from "@/hooks/use-pomodoro-timer-now";
 import {
-  advancePomodoroPhase,
   BUILTIN_FOCUS_SPLITS,
-  completeCountdown,
   CUSTOM_SPLIT_ID,
   displayPomodoroSeconds,
   formatFocusSplitSummary,
   formatPomodoroTimerLabel,
   formatTimerSeconds,
-  isPomodoroPhaseComplete,
   pausePomodoro,
-  playChimeIfEnabled,
   resetPomodoro,
   resolveFocusSplit,
   setCustomFocusSplit,
@@ -44,7 +41,7 @@ const DEFAULT_CUSTOM_DRAFT = {
 
 export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps) {
   const pomodoro = internalTools.pomodoro;
-  const [now, setNow] = useState(() => new Date());
+  const now = usePomodoroTimerNow(pomodoro);
   const [customDraft, setCustomDraft] = useState(() => {
     const custom = internalTools.customFocusSplit;
     return custom
@@ -56,30 +53,6 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
         }
       : DEFAULT_CUSTOM_DRAFT;
   });
-
-  useEffect(() => {
-    if (!pomodoro.running) {
-      return;
-    }
-
-    const timer = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(timer);
-  }, [pomodoro.running]);
-
-  useEffect(() => {
-    if (!isPomodoroPhaseComplete(pomodoro, now)) {
-      return;
-    }
-
-    playChimeIfEnabled(pomodoro.chimeEnabled);
-    onChange({
-      ...internalTools,
-      pomodoro:
-        pomodoro.mode === "countdown"
-          ? completeCountdown(pomodoro)
-          : advancePomodoroPhase(pomodoro),
-    });
-  }, [internalTools, now, onChange, pomodoro]);
 
   const activeTask = getActiveFocusTask(internalTools);
   const split = resolveFocusSplit(pomodoro.splitId, internalTools);

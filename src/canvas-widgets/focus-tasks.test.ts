@@ -28,7 +28,7 @@ describe("canStartFocusCountdown", () => {
 });
 
 describe("listCanvasFocusTasks", () => {
-  it("returns today's incomplete tasks in order for the canvas widget", () => {
+  it("returns today's tasks in order, including completed items", () => {
     const tasks = listCanvasFocusTasks({
       tasks: [
         {
@@ -74,6 +74,6 @@ describe("listCanvasFocusTasks", () => {
       customFocusSplit: null,
     });
 
-    expect(tasks.map((task) => task.id)).toEqual(["first", "second"]);
+    expect(tasks.map((task) => task.id)).toEqual(["done", "first", "second"]);
   });
 });

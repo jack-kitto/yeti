@@ -8,11 +8,13 @@ import { pickQuote } from "@/canvas-widgets/quote";
 import { formatWelcomeMessage } from "@/canvas-widgets/welcome";
 import { CanvasFocusTasksWidget } from "./canvas-focus-tasks-widget";
 import { CanvasNowPlayingWidget } from "./canvas-now-playing-widget";
-import { CanvasPomodoroWidget } from "./canvas-pomodoro-widget";
+import { CanvasPomodoroWidget, isCanvasTimerActive } from "./canvas-pomodoro-widget";
 
 type CanvasWidgetStackProps = {
   workspace: Workspace;
 };
+
+const CENTER_WIDGETS = ["welcome", "quote", "nowPlaying"] as const;
 
 function CanvasClockWidget() {
   const [now, setNow] = useState(() => new Date());
@@ -25,13 +27,9 @@ function CanvasClockWidget() {
   const { time, date } = formatClockDisplay(now);
 
   return (
-    <div className="flex flex-col items-center gap-1 text-center">
-      <p className="text-5xl font-light tabular-nums tracking-tight text-[color:var(--qs-color-text)]">
-        {time}
-      </p>
-      <p className="text-sm text-[color:color-mix(in_srgb,var(--qs-color-text)_72%,transparent)]">
-        {date}
-      </p>
+    <div className="canvas-widget canvas-widget-clock">
+      <p className="canvas-widget-clock-time">{time}</p>
+      <p className="canvas-widget-clock-date">{date}</p>
     </div>
   );
 }
@@ -45,47 +43,53 @@ function CanvasWelcomeWidget({ workspaceName }: { workspaceName: string }) {
   }, []);
 
   return (
-    <p className="text-lg text-[color:var(--qs-color-text)]">
-      {formatWelcomeMessage(workspaceName, now)}
-    </p>
+    <p className="canvas-widget canvas-widget-welcome">{formatWelcomeMessage(workspaceName, now)}</p>
   );
 }
 
 function CanvasQuoteWidget() {
   const [quote] = useState(() => pickQuote(Math.floor(Date.now() / 86_400_000)));
 
-  return (
-    <p className="max-w-md text-center text-sm italic text-[color:color-mix(in_srgb,var(--qs-color-text)_68%,transparent)]">
-      {quote.text}
-    </p>
-  );
+  return <p className="canvas-widget canvas-widget-quote">{quote.text}</p>;
 }
 
 export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
-  const enabled = listEnabledCanvasWidgets(workspace);
+  const enabled = new Set(listEnabledCanvasWidgets(workspace));
 
-  if (enabled.length === 0) {
+  if (enabled.size === 0) {
     return null;
   }
 
+  const timerActive = isCanvasTimerActive(workspace);
+  const showWallClock = enabled.has("clock") && !timerActive;
+  const showTimerClock = enabled.has("pomodoro") && timerActive;
+  const centerIds = CENTER_WIDGETS.filter((widgetId) => enabled.has(widgetId));
+  const showTasks = enabled.has("focusTasks");
+
   return (
-    <div className="flex flex-col items-center gap-4">
-      {enabled.map((widgetId) => {
-        switch (widgetId) {
-          case "clock":
-            return <CanvasClockWidget key={widgetId} />;
-          case "welcome":
-            return <CanvasWelcomeWidget key={widgetId} workspaceName={workspace.name} />;
-          case "quote":
-            return <CanvasQuoteWidget key={widgetId} />;
-          case "nowPlaying":
-            return <CanvasNowPlayingWidget key={widgetId} workspace={workspace} />;
-          case "pomodoro":
-            return <CanvasPomodoroWidget key={widgetId} workspace={workspace} />;
-          case "focusTasks":
-            return <CanvasFocusTasksWidget key={widgetId} workspace={workspace} />;
-        }
-      })}
+    <div className="canvas-widget-stage">
+      {showTasks ? (
+        <div className="canvas-widget-tasks-corner">
+          <CanvasFocusTasksWidget workspace={workspace} />
+        </div>
+      ) : null}
+
+      {showWallClock || showTimerClock || centerIds.length > 0 ? (
+        <div className="canvas-widget-foreground">
+          {showTimerClock ? <CanvasPomodoroWidget workspace={workspace} /> : null}
+          {showWallClock ? <CanvasClockWidget /> : null}
+          {centerIds.map((widgetId) => {
+            switch (widgetId) {
+              case "welcome":
+                return <CanvasWelcomeWidget key={widgetId} workspaceName={workspace.name} />;
+              case "quote":
+                return <CanvasQuoteWidget key={widgetId} />;
+              case "nowPlaying":
+                return <CanvasNowPlayingWidget key={widgetId} workspace={workspace} />;
+            }
+          })}
+        </div>
+      ) : null}
     </div>
   );
 }

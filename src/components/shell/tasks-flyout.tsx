@@ -50,34 +50,40 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
   }
 
   return (
-    <div className="shell-tool-flyout">
-      <p className="shell-flyout-title">Focus tasks</p>
-      <div className="shell-tool-task-view-toggle" role="group" aria-label="Task list view">
-        <button
-          type="button"
-          className="shell-flyout-more"
-          aria-pressed={view === "today"}
-          onClick={() => setView("today")}
-        >
-          Today
-        </button>
-        <button
-          type="button"
-          className="shell-flyout-more"
-          aria-pressed={view === "backlog"}
-          onClick={() => setView("backlog")}
-        >
-          Backlog
-        </button>
+    <div className="shell-tool-flyout shell-tool-flyout-tasks">
+      <div className="shell-tool-flyout-tasks-header">
+        <p className="shell-flyout-title">Focus tasks</p>
+        <div className="shell-tool-task-view-toggle" role="group" aria-label="Task list view">
+          <button
+            type="button"
+            className="shell-flyout-more"
+            aria-pressed={view === "today"}
+            onClick={() => setView("today")}
+          >
+            Today
+          </button>
+          <button
+            type="button"
+            className="shell-flyout-more"
+            aria-pressed={view === "backlog"}
+            onClick={() => setView("backlog")}
+          >
+            Backlog
+          </button>
+        </div>
       </div>
+
       <div className={TASKS_FLYOUT_LIST_SCROLL_CLASS}>
         <ul className="shell-tool-task-list">
+          {visibleTasks.length === 0 ? (
+            <li className="shell-tool-task-empty">No tasks in this list yet.</li>
+          ) : null}
           {visibleTasks.map((task, index) => (
             <li key={task.id} className={TASKS_FLYOUT_ITEM_CLASS}>
               <div className={TASKS_FLYOUT_MAIN_CLASS}>
                 <span className="shell-tool-task-title">{task.title}</span>
                 <label className="shell-tool-task-estimate-field">
-                  <span className="shell-tool-split-label">Est (min)</span>
+                  <span className="shell-tool-split-label">Est</span>
                   <input
                     type="number"
                     min={1}
@@ -153,7 +159,7 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
                     pinInternalToolZone("pomodoro", getLatestShellZones());
                   }}
                 >
-                  Countdown
+                  Timer
                 </button>
                 <button
                   type="button"
@@ -168,6 +174,7 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
           ))}
         </ul>
       </div>
+
       <form className={TASKS_FLYOUT_FORM_CLASS} onSubmit={handleAdd}>
         <input
           type="text"
@@ -177,21 +184,23 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
           className="shell-config-input"
           aria-label="New focus task"
         />
-        <label className="shell-tool-task-estimate-field">
-          <span className="shell-tool-split-label">Estimate (minutes)</span>
-          <input
-            type="number"
-            min={1}
-            value={estimateDraft}
-            onChange={(event) => setEstimateDraft(event.target.value)}
-            placeholder="Optional"
-            className="shell-config-input"
-            aria-label="New focus task estimate"
-          />
-        </label>
-        <button type="submit" className="shell-flyout-more" disabled={!draft.trim()}>
-          Add
-        </button>
+        <div className="shell-tool-task-form-row">
+          <label className="shell-tool-task-estimate-field">
+            <span className="shell-tool-split-label">Estimate (min)</span>
+            <input
+              type="number"
+              min={1}
+              value={estimateDraft}
+              onChange={(event) => setEstimateDraft(event.target.value)}
+              placeholder="Optional"
+              className="shell-config-input"
+              aria-label="New focus task estimate"
+            />
+          </label>
+          <button type="submit" className="shell-flyout-more" disabled={!draft.trim()}>
+            Add
+          </button>
+        </div>
       </form>
     </div>
   );

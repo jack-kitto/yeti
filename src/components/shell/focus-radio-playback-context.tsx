@@ -18,6 +18,7 @@ import {
 import type { ExternalMediaGlance } from "@/focus-radio/media-session";
 import {
   dispatchExternalMediaKey,
+  externalMediaGlancesEqual,
   resolveExternalMediaGlance,
   shouldAutoPauseFocusRadioForExternalGlance,
   shouldResumeFocusRadioAfterExternalGlance,
@@ -31,8 +32,16 @@ import {
 import { updateFocusRadioPlayback } from "@/focus-radio/stations";
 import { resolveFocusRadioStreamProxyUrl } from "@/focus-radio/stream-proxy";
 import { useMutateLibrary } from "@/hooks/use-library";
+import {
+  registerChimePlaybackDucker,
+  unregisterChimePlaybackDucker,
+} from "@/internal-tools/chime-audio";
 import type { Library } from "@/library/types";
 import { FocusRadioYoutubePlayer } from "./focus-radio-youtube-player";
+
+type YoutubePlayerVolume = {
+  setVolume: (volume: number) => void;
+};
 
 type FocusRadioPlaybackContextValue = {
   playbackError: string | null;
@@ -70,13 +79,50 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   const audioContextRef = useRef<AudioContext | null>(null);
   const elementSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const wasPlayingBeforeExternalRef = useRef(false);
+  const youtubePlayerRef = useRef<YoutubePlayerVolume | null>(null);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
   const [externalGlance, setExternalGlance] = useState<ExternalMediaGlance | null>(null);
+  const externalGlanceRef = useRef<ExternalMediaGlance | null>(null);
+  const nowPlayingRef = useRef<ReturnType<typeof resolveFocusRadioNowPlaying>>(null);
 
   libraryRef.current = library;
 
+  useEffect(() => {
+    registerChimePlaybackDucker(() => {
+      const currentLibrary = libraryRef.current;
+      const currentPlayback = currentLibrary.focusRadio.playback;
+      const normalVolume = resolveFocusRadioOutputVolume(currentPlayback);
+      const duckedVolume = normalVolume * 0.12;
+
+      const audio = audioRef.current;
+      if (audio && shouldPlayFocusRadioStream(currentLibrary)) {
+        audio.volume = duckedVolume;
+      }
+
+      const youtubePlayer = youtubePlayerRef.current;
+      if (youtubePlayer && shouldPlayFocusRadioYoutube(currentLibrary)) {
+        youtubePlayer.setVolume(Math.round(duckedVolume * 100));
+      }
+
+      return () => {
+        const restoredVolume = resolveFocusRadioOutputVolume(
+          libraryRef.current.focusRadio.playback,
+        );
+        if (audio) {
+          audio.volume = restoredVolume;
+        }
+        if (youtubePlayer) {
+          youtubePlayer.setVolume(Math.round(restoredVolume * 100));
+        }
+      };
+    });
+
+    return () => unregisterChimePlaybackDucker();
+  }, []);
+
   const playback = library.focusRadio.playback;
   const nowPlaying = resolveFocusRadioNowPlaying(library);
+  nowPlayingRef.current = nowPlaying;
   const shouldPlayStream = shouldPlayFocusRadioStream(library);
   const shouldPlayYoutube = shouldPlayFocusRadioYoutube(library);
   const streamUrl = nowPlaying?.kind === "stream" ? nowPlaying.url : null;
@@ -267,28 +313,46 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
     }
 
     function refreshExternalGlance() {
-      const glance = resolveExternalMediaGlance(navigator.mediaSession.metadata, nowPlaying);
-      setExternalGlance(glance);
+      const glance = resolveExternalMediaGlance(
+        navigator.mediaSession.metadata,
+        nowPlayingRef.current,
+      );
+
+      if (!externalMediaGlancesEqual(externalGlanceRef.current, glance)) {
+        externalGlanceRef.current = glance;
+        setExternalGlance(glance);
+      }
 
       const currentLibrary = libraryRef.current;
       const focusRadioPlaying = currentLibrary.focusRadio.playback.playing;
 
       if (shouldAutoPauseFocusRadioForExternalGlance(focusRadioPlaying, glance)) {
         wasPlayingBeforeExternalRef.current = true;
-        mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, { playing: false }));
+        mutateLibrary.mutate((current) => {
+          if (!current.focusRadio.playback.playing) {
+            return current;
+          }
+
+          return updateFocusRadioPlayback(current, { playing: false });
+        });
         return;
       }
 
       if (shouldResumeFocusRadioAfterExternalGlance(wasPlayingBeforeExternalRef.current, glance)) {
         wasPlayingBeforeExternalRef.current = false;
-        mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, { playing: true }));
+        mutateLibrary.mutate((current) => {
+          if (current.focusRadio.playback.playing) {
+            return current;
+          }
+
+          return updateFocusRadioPlayback(current, { playing: true });
+        });
       }
     }
 
-    refreshExternalGlance();
     const timer = window.setInterval(refreshExternalGlance, 1500);
     return () => window.clearInterval(timer);
-  }, [mutateLibrary, nowPlaying]);
+  }, [mutateLibrary]);
 
   const getStreamAnalyser = useCallback(() => analyserRef.current, []);
 
@@ -375,6 +439,9 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
         shouldPlay={shouldPlayYoutube}
         playback={playback}
         onError={handleStreamFailure}
+        onPlayerReady={(player) => {
+          youtubePlayerRef.current = player;
+        }}
       />
       {children}
     </FocusRadioPlaybackContext>

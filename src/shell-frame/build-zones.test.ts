@@ -23,7 +23,6 @@ function makeLibrary(): Library {
             text: "#fff",
             accent: "#f00",
           },
-          glassOpacity: 0.7,
           borderRadius: 16,
         }),
         placements: {

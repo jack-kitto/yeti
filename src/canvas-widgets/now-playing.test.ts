@@ -20,7 +20,6 @@ function workspace(overrides: Partial<Workspace> = {}): Workspace {
     name: "Work",
     theme: createTestTheme({
       palette: { background: "#000", surface: "#111", text: "#fff", accent: "#f00" },
-      glassOpacity: 0.5,
       borderRadius: 12,
     }),
     placements: { edges: { left: [], top: [], bottom: [] } },

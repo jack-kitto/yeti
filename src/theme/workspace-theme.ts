@@ -11,8 +11,6 @@ function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
       ...base.palette,
       ...(patch.palette ?? {}),
     },
-    ...(patch.shellSurface !== undefined ? { shellSurface: patch.shellSurface } : {}),
-    ...(patch.glassOpacity !== undefined ? { glassOpacity: patch.glassOpacity } : {}),
     ...(patch.borderRadius !== undefined ? { borderRadius: patch.borderRadius } : {}),
   };
 

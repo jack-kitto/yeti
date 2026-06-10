@@ -17,8 +17,6 @@ export type ThemePalette = {
   accent: string;
 };
 
-export type ShellSurface = "solid" | "glass" | "transparent";
-
 export type CanvasZone =
   | "center"
   | "upper-center"
@@ -36,10 +34,8 @@ export type CanvasWidgetStyle = {
 
 export type Theme = {
   palette: ThemePalette;
-  shellSurface?: ShellSurface;
   shellBorderColor?: string;
   backgroundUrl?: string;
-  glassOpacity: number;
   borderRadius: number;
   widgets: Partial<Record<CanvasWidgetId, CanvasWidgetStyle>>;
   appliedPresetId?: string;
@@ -47,10 +43,8 @@ export type Theme = {
 
 export type ThemePatch = {
   palette?: Partial<ThemePalette>;
-  shellSurface?: ShellSurface;
   shellBorderColor?: string | null;
   backgroundUrl?: string | null;
-  glassOpacity?: number;
   borderRadius?: number;
   widgets?: Partial<Record<CanvasWidgetId, Partial<CanvasWidgetStyle>>>;
   appliedPresetId?: string | null;

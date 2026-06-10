@@ -30,16 +30,14 @@ describe("resetShellThemeToPreset", () => {
         theme: createTestTheme({
           appliedPresetId: "forest",
           palette: { background: "#000000", surface: "#111111", text: "#ffffff", accent: "#ff0000" },
-          shellSurface: "solid",
+          shellBorderColor: "#ff00ff",
         }),
       }),
     );
 
     expect(patch).toEqual({
       palette: preset.theme.palette,
-      shellSurface: preset.theme.shellSurface,
       shellBorderColor: null,
-      glassOpacity: preset.theme.glassOpacity,
       borderRadius: preset.theme.borderRadius,
       backgroundUrl: preset.theme.backgroundUrl,
     });

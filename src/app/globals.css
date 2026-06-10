@@ -8,10 +8,8 @@
   --qs-color-text: #2c2419;
   --qs-color-accent: #c17f59;
   --qs-background-image: none;
-  --qs-glass-opacity: 0.72;
-  --qs-shell-backdrop-blur: 24px;
   --qs-shell-border-color: #2c2419;
-  --qs-shell-fill-strength: 0.85;
+  --qs-shell-fill-strength: 1;
   --qs-border-radius: 20px;
   --qs-image-outline: rgba(0, 0, 0, 0.1);
   --qs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -72,18 +70,12 @@ body {
   margin-top: -20px;
   border-radius: 11px;
   border: none;
-  background: color-mix(
-    in srgb,
-    var(--qs-color-surface) calc(var(--qs-shell-fill-strength, 0.72) * 100%),
-    transparent
-  );
+  background: var(--qs-color-surface);
   color: var(--qs-color-text);
   display: grid;
   place-items: center;
   pointer-events: auto;
   cursor: pointer;
-  backdrop-filter: blur(var(--qs-shell-backdrop-blur, 12px));
-  -webkit-backdrop-filter: blur(var(--qs-shell-backdrop-blur, 12px));
   box-shadow: var(--qs-shadow-sm);
   transition:
     background 140ms ease,
@@ -154,37 +146,12 @@ body {
   outline-offset: -1px;
 }
 
-.shell-rim-backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-}
-
 .shell-rim-canvas {
   z-index: 5;
 }
 
 .shell-canvas-layer {
   z-index: 11;
-}
-
-.shell-rim-backdrop-fill {
-  width: 100%;
-  height: 100%;
-  background: color-mix(
-    in srgb,
-    var(--qs-color-surface) calc(var(--qs-shell-fill-strength, 0.72) * 55%),
-    transparent
-  );
-  backdrop-filter: blur(var(--qs-shell-backdrop-blur, 24px));
-  -webkit-backdrop-filter: blur(var(--qs-shell-backdrop-blur, 24px));
-}
-
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .shell-rim-backdrop {
-    display: none;
-  }
 }
 
 .shell-rim-hit {
@@ -1385,37 +1352,10 @@ body {
   flex-direction: column;
   overflow: hidden;
   border-radius: var(--qs-border-radius);
-  background: color-mix(
-    in srgb,
-    var(--qs-color-surface) calc(var(--qs-shell-fill-strength, 0.85) * 100%),
-    transparent
-  );
+  background: var(--qs-color-surface);
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.04),
     0 16px 48px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(var(--qs-shell-backdrop-blur, 20px));
-  -webkit-backdrop-filter: blur(var(--qs-shell-backdrop-blur, 20px));
-}
-
-[data-qs-shell-surface="solid"] .shell-config-dialog,
-[data-qs-shell-surface="solid"] .shell-launcher-dialog,
-[data-qs-shell-surface="solid"] .shell-icon-btn:not(.shell-icon-btn-ghost) {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  background: var(--qs-color-surface);
-}
-
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  [data-qs-shell-surface="glass"] .shell-config-dialog,
-  [data-qs-shell-surface="glass"] .shell-launcher-dialog,
-  [data-qs-shell-surface="transparent"] .shell-config-dialog,
-  [data-qs-shell-surface="transparent"] .shell-launcher-dialog,
-  [data-qs-shell-surface="glass"] .shell-icon-btn:not(.shell-icon-btn-ghost),
-  [data-qs-shell-surface="transparent"] .shell-icon-btn:not(.shell-icon-btn-ghost) {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: var(--qs-color-surface);
-  }
 }
 
 .shell-config-dialog-header {
@@ -1485,16 +1425,10 @@ body {
   overflow: hidden;
   border-radius: var(--qs-border-radius);
   color: var(--qs-color-text);
-  background: color-mix(
-    in srgb,
-    var(--qs-color-surface) calc(var(--qs-shell-fill-strength, 0.85) * 100%),
-    transparent
-  );
+  background: var(--qs-color-surface);
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.04),
     0 16px 48px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(var(--qs-shell-backdrop-blur, 24px));
-  -webkit-backdrop-filter: blur(var(--qs-shell-backdrop-blur, 24px));
 }
 
 .shell-launcher-header {

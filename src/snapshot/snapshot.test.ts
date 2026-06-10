@@ -119,7 +119,7 @@ describe("serializeSnapshot", () => {
     });
   });
 
-  it("round-trips appliedPresetId with shell surface and widget styling", async () => {
+  it("round-trips appliedPresetId with shell border and widget styling", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
     const workspaceId = library.activeWorkspaceId;
     const baseTheme = resolveTheme(
@@ -134,7 +134,7 @@ describe("serializeSnapshot", () => {
               theme: {
                 ...baseTheme,
                 appliedPresetId: "editorial",
-                shellSurface: "solid" as const,
+                shellBorderColor: "#000000",
                 widgets: {
                   ...baseTheme.widgets,
                   clock: {
@@ -153,13 +153,13 @@ describe("serializeSnapshot", () => {
     const workspace = restored.workspaces.find((entry) => entry.id === workspaceId);
 
     expect(workspace?.theme.appliedPresetId).toBe("editorial");
-    expect(workspace?.theme.shellSurface).toBe("solid");
+    expect(workspace?.theme.shellBorderColor).toBe("#000000");
     expect(workspace?.theme.widgets.clock?.text).toBe("#000000");
     expect(workspace?.theme.widgets.clock?.zone).toBe("lower-left");
     expect(restored.schemaVersion).toBe(2);
   });
 
-  it("round-trips shell surface and canvas widget styling on workspace themes", async () => {
+  it("round-trips shell border and canvas widget styling on workspace themes", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
     const workspaceId = library.activeWorkspaceId;
     const baseTheme = resolveTheme(
@@ -173,7 +173,7 @@ describe("serializeSnapshot", () => {
               ...workspace,
               theme: {
                 ...baseTheme,
-                shellSurface: "transparent" as const,
+                shellBorderColor: "#445566",
                 widgets: {
                   ...baseTheme.widgets,
                   clock: {
@@ -190,7 +190,7 @@ describe("serializeSnapshot", () => {
     const restored = deserializeSnapshot(serializeSnapshot(withTheme));
     const workspace = restored.workspaces.find((entry) => entry.id === workspaceId);
 
-    expect(workspace?.theme.shellSurface).toBe("transparent");
+    expect(workspace?.theme.shellBorderColor).toBe("#445566");
     expect(workspace?.theme.widgets.clock?.text).toBe("#ffffff");
   });
 

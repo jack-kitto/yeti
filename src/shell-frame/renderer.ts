@@ -1,16 +1,10 @@
 import type { RenderPocket, ShellLayout } from "./layout";
 
-import type { ShellSurface } from "@/library/types";
-
 export type ShellThemeColors = {
   ambient: string;
-  glassStops: [string, string, string];
+  surfaceFill: string;
   notchFill: string;
   strokeOuter: string;
-  strokeInner: string;
-  shadow: string;
-  backdropBlur: number;
-  shellSurface: ShellSurface;
   borderWidth: number;
 };
 
@@ -256,7 +250,7 @@ export function resizeShellCanvas(canvas: HTMLCanvasElement) {
   ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-function drawFlatSolidShell(
+function drawSolidShell(
   ctx: CanvasRenderingContext2D,
   layout: ShellLayout,
   pocket: RenderPocket,
@@ -264,7 +258,7 @@ function drawFlatSolidShell(
 ) {
   const path = generateFrameShellPath(layout, pocket);
 
-  ctx.fillStyle = theme.glassStops[0];
+  ctx.fillStyle = theme.surfaceFill;
   ctx.fill(path, "evenodd");
 
   const notchPath = generateNotchFillPath(layout, pocket);
@@ -273,66 +267,15 @@ function drawFlatSolidShell(
     ctx.fill(notchPath);
   }
 
-  ctx.strokeStyle = theme.strokeOuter;
-  ctx.lineWidth = theme.borderWidth;
-  ctx.stroke(path);
+  if (theme.borderWidth > 0) {
+    ctx.strokeStyle = theme.strokeOuter;
+    ctx.lineWidth = theme.borderWidth;
+    ctx.stroke(path);
 
-  if (notchPath) {
-    ctx.stroke(notchPath);
+    if (notchPath) {
+      ctx.stroke(notchPath);
+    }
   }
-}
-
-function drawGlassShell(
-  ctx: CanvasRenderingContext2D,
-  layout: ShellLayout,
-  pocket: RenderPocket,
-  theme: ShellThemeColors,
-) {
-  const path = generateFrameShellPath(layout, pocket);
-
-  ctx.save();
-  ctx.shadowColor = theme.shadow;
-  ctx.shadowBlur = 42;
-  ctx.shadowOffsetY = 18;
-  ctx.fillStyle = "rgba(8, 11, 20, 0.14)";
-  ctx.fill(path, "evenodd");
-  ctx.restore();
-
-  const fill = ctx.createLinearGradient(0, 0, layout.w, layout.h);
-  fill.addColorStop(0, theme.glassStops[0]);
-  fill.addColorStop(0.45, theme.glassStops[1]);
-  fill.addColorStop(1, theme.glassStops[2]);
-  ctx.fillStyle = fill;
-  ctx.fill(path, "evenodd");
-
-  const notchPath = generateNotchFillPath(layout, pocket);
-  if (notchPath) {
-    ctx.fillStyle = theme.notchFill;
-    ctx.fill(notchPath);
-
-    ctx.save();
-    ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
-    ctx.fill(notchPath);
-    ctx.restore();
-  }
-
-  ctx.save();
-  ctx.clip(path, "evenodd");
-
-  const gloss = ctx.createLinearGradient(0, 0, 0, layout.h);
-  gloss.addColorStop(0, "rgba(255, 255, 255, 0.1)");
-  gloss.addColorStop(0.2, "rgba(255, 255, 255, 0.04)");
-  gloss.addColorStop(1, "rgba(255, 255, 255, 0.015)");
-  ctx.fillStyle = gloss;
-  ctx.fillRect(0, 0, layout.w, layout.h);
-  ctx.restore();
-
-  ctx.strokeStyle = theme.strokeOuter;
-  ctx.lineWidth = 3.5;
-  ctx.stroke(path);
-  ctx.strokeStyle = theme.strokeInner;
-  ctx.lineWidth = 1.25;
-  ctx.stroke(path);
 }
 
 export function drawShell(
@@ -347,11 +290,5 @@ export function drawShell(
   }
 
   ctx.clearRect(0, 0, layout.w, layout.h);
-
-  if (theme.shellSurface === "solid") {
-    drawFlatSolidShell(ctx, layout, pocket, theme);
-    return;
-  }
-
-  drawGlassShell(ctx, layout, pocket, theme);
+  drawSolidShell(ctx, layout, pocket, theme);
 }

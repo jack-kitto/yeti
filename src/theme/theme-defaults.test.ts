@@ -13,8 +13,6 @@ describe("resolveTheme", () => {
   it("fills missing canvas widget styles from the shell palette", () => {
     const theme: Theme = {
       palette,
-      shellSurface: "glass",
-      glassOpacity: 0.72,
       borderRadius: 20,
       widgets: {
         clock: {

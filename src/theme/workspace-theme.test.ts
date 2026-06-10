@@ -19,32 +19,30 @@ describe("updateWorkspaceTheme", () => {
     expect(workspace?.theme.palette.background).toBeTruthy();
   });
 
-  it("updates background image URL and glass styling", async () => {
+  it("updates background image URL and border radius", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
     const workspaceId = library.activeWorkspaceId;
 
     const updated = updateWorkspaceTheme(library, workspaceId, {
       backgroundUrl: "https://example.com/bg.jpg",
-      glassOpacity: 0.5,
       borderRadius: 12,
     });
 
     const workspace = updated.workspaces.find((entry) => entry.id === workspaceId);
     expect(workspace?.theme.backgroundUrl).toBe("https://example.com/bg.jpg");
-    expect(workspace?.theme.glassOpacity).toBe(0.5);
     expect(workspace?.theme.borderRadius).toBe(12);
   });
 
-  it("updates shell surface on a workspace theme", async () => {
+  it("updates shell border color on a workspace theme", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
     const workspaceId = library.activeWorkspaceId;
 
     const updated = updateWorkspaceTheme(library, workspaceId, {
-      shellSurface: "transparent",
+      shellBorderColor: "#112233",
     });
 
     const workspace = updated.workspaces.find((entry) => entry.id === workspaceId);
-    expect(workspace?.theme.shellSurface).toBe("transparent");
+    expect(workspace?.theme.shellBorderColor).toBe("#112233");
   });
 
   it("merges per-widget style patches onto defaults", async () => {

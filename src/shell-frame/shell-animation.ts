@@ -1,7 +1,6 @@
 import { getRenderPocket, getShellLayout } from "./layout";
 import { drawShell, resizeShellCanvas } from "./renderer";
-import type { ShellSurface } from "@/library/types";
-import { rgbaFromHex, shellBackdropBlur, shellFillAlphas } from "./shell-colors";
+import { rgbaFromHex } from "./shell-colors";
 import { getShellState, patchAnimationState } from "./shell-state";
 import type { ShellThemeColors } from "./renderer";
 const SPEED_T = 0.16;
@@ -83,44 +82,17 @@ export function stopShellAnimation() {
 
 export function themeToShellColors(theme: {
   palette: { surface: string; text: string; accent: string; background: string };
-  shellSurface?: ShellSurface;
   shellBorderColor?: string;
-  glassOpacity?: number;
 }): ShellThemeColors {
-  const shellSurface = theme.shellSurface ?? "glass";
-  const { rim, notch } = shellFillAlphas(shellSurface, theme.glassOpacity ?? 0.72);
   const surface = theme.palette.surface;
-  const backdropBlur = shellBackdropBlur(shellSurface);
-  const borderColor = theme.shellBorderColor ?? theme.palette.text;
-
-  if (shellSurface === "solid") {
-    const opaqueSurface = rgbaFromHex(surface, 1);
-    return {
-      ambient: theme.palette.background,
-      glassStops: [opaqueSurface, opaqueSurface, opaqueSurface],
-      notchFill: opaqueSurface,
-      strokeOuter: rgbaFromHex(borderColor, 1),
-      strokeInner: "transparent",
-      shadow: "transparent",
-      backdropBlur: 0,
-      shellSurface,
-      borderWidth: 2,
-    };
-  }
+  const opaqueSurface = rgbaFromHex(surface, 1);
+  const borderColor = theme.shellBorderColor;
 
   return {
     ambient: theme.palette.background,
-    glassStops: [
-      rgbaFromHex(surface, rim),
-      rgbaFromHex(surface, rim * 0.94),
-      rgbaFromHex(surface, rim * 0.88),
-    ],
-    notchFill: rgbaFromHex(surface, notch),
-    strokeOuter: rgbaFromHex(surface, Math.min(rim + 0.08, 1)),
-    strokeInner: "rgba(255, 255, 255, 0.45)",
-    shadow: "rgba(0, 0, 0, 0.22)",
-    backdropBlur,
-    shellSurface,
-    borderWidth: 3.5,
+    surfaceFill: opaqueSurface,
+    notchFill: opaqueSurface,
+    strokeOuter: borderColor ? rgbaFromHex(borderColor, 1) : "transparent",
+    borderWidth: borderColor ? 2 : 0,
   };
 }

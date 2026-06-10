@@ -153,17 +153,13 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
           name: workspace.name,
           theme: resolveTheme({
             palette: { ...workspace.theme.palette },
-            ...(workspace.theme.shellSurface
-              ? { shellSurface: workspace.theme.shellSurface }
-              : {}),
             ...(workspace.theme.shellBorderColor
               ? { shellBorderColor: workspace.theme.shellBorderColor }
               : {}),
             ...(workspace.theme.backgroundUrl
               ? { backgroundUrl: workspace.theme.backgroundUrl }
               : {}),
-            glassOpacity: workspace.theme.glassOpacity,
-            borderRadius: workspace.theme.borderRadius,
+            borderRadius: workspace.theme.borderRadius ?? 20,
             widgets: workspace.theme.widgets ?? {},
             ...(workspace.theme.appliedPresetId
               ? { appliedPresetId: workspace.theme.appliedPresetId }

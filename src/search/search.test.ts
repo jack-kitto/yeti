@@ -25,7 +25,6 @@ function makeLibrary(catalog: Link[], placedIds: string[], activeWorkspaceId = "
             text: "#fff",
             accent: "#f00",
           },
-          glassOpacity: 0.7,
           borderRadius: 16,
         }),
         placements: {

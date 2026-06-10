@@ -37,7 +37,6 @@ describe("theme preset catalog", () => {
       text: "#000000",
       accent: "#000000",
     });
-    expect(editorial.theme.shellSurface).toBe("solid");
     expect(editorial.theme.shellBorderColor).toBe("#000000");
     expect(editorial.theme.backgroundUrl).toBe("");
     expect(editorial.theme.widgets.quote?.zone).toBe("lower-left");
@@ -51,10 +50,16 @@ describe("theme preset catalog", () => {
     expect(editorial.theme.widgets.clock?.order).toBe(1);
   });
 
+  it("ships solid-only themes without glass modes or glassOpacity", () => {
+    for (const preset of THEME_PRESETS) {
+      expect(preset.theme).not.toHaveProperty("shellSurface");
+      expect(preset.theme).not.toHaveProperty("glassOpacity");
+    }
+  });
+
   it("each preset defines a complete theme with per-widget styling", () => {
     for (const preset of THEME_PRESETS) {
       expect(preset.theme.palette.background).toMatch(/^#/);
-      expect(preset.theme.shellSurface).toBeTruthy();
       expect(preset.theme.widgets.clock?.text).toMatch(/^#/);
       expect(preset.theme.widgets.welcome?.zone).toBeTruthy();
     }
@@ -78,9 +83,7 @@ describe("applyThemePreset", () => {
 
     expect(updated.theme.appliedPresetId).toBe("forest");
     expect(updated.theme.palette).toEqual(preset.theme.palette);
-    expect(updated.theme.shellSurface).toBe(preset.theme.shellSurface);
     expect(updated.theme.backgroundUrl).toBe(preset.theme.backgroundUrl);
-    expect(updated.theme.glassOpacity).toBe(preset.theme.glassOpacity);
     expect(updated.theme.borderRadius).toBe(preset.theme.borderRadius);
     expect(updated.theme.widgets).toEqual(preset.theme.widgets);
     expect(updated.canvasWidgets.clock).toBe(false);

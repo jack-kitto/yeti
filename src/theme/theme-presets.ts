@@ -1,5 +1,5 @@
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
-import type { CanvasWidgetStyle, ShellSurface, Theme, ThemePalette, Workspace } from "@/library/types";
+import type { CanvasWidgetStyle, Theme, ThemePalette, Workspace } from "@/library/types";
 
 export const THEME_PRESET_IDS = [
   "work",
@@ -27,9 +27,7 @@ function widgets(styles: PresetWidgetStyles): PresetWidgetStyles {
 function createPresetTheme(
   palette: ThemePalette,
   options: {
-    shellSurface: ShellSurface;
     backgroundUrl: string;
-    glassOpacity: number;
     borderRadius?: number;
     shellBorderColor?: string;
     widgets: PresetWidgetStyles;
@@ -37,9 +35,7 @@ function createPresetTheme(
 ): Omit<Theme, "appliedPresetId"> {
   return {
     palette,
-    shellSurface: options.shellSurface,
     backgroundUrl: options.backgroundUrl,
-    glassOpacity: options.glassOpacity,
     borderRadius: options.borderRadius ?? 20,
     ...(options.shellBorderColor ? { shellBorderColor: options.shellBorderColor } : {}),
     widgets: options.widgets,
@@ -65,9 +61,7 @@ export const THEME_PRESETS: ThemePreset[] = [
     id: "work",
     name: "Work",
     theme: createPresetTheme(workPalette, {
-      shellSurface: "glass",
       backgroundUrl: "https://images.unsplash.com/photo-1497215728101-856f1ea4214f?w=1920",
-      glassOpacity: 0.72,
       widgets: widgets({
         clock: {
           zone: "upper-center",
@@ -118,9 +112,7 @@ export const THEME_PRESETS: ThemePreset[] = [
     id: "personal",
     name: "Personal",
     theme: createPresetTheme(personalPalette, {
-      shellSurface: "glass",
       backgroundUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920",
-      glassOpacity: 0.65,
       widgets: widgets({
         clock: {
           zone: "upper-center",
@@ -178,9 +170,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         accent: "#000000",
       },
       {
-        shellSurface: "solid",
         backgroundUrl: "",
-        glassOpacity: 1,
         borderRadius: 0,
         shellBorderColor: "#000000",
         widgets: widgets({
@@ -241,9 +231,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         accent: "#6b9b6e",
       },
       {
-        shellSurface: "glass",
         backgroundUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920",
-        glassOpacity: 0.68,
         widgets: widgets({
           clock: {
             zone: "upper-center",
@@ -302,9 +290,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         accent: "#e87c4a",
       },
       {
-        shellSurface: "transparent",
         backgroundUrl: "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=1920",
-        glassOpacity: 0.45,
         widgets: widgets({
           clock: {
             zone: "upper-center",
@@ -363,9 +349,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         accent: "#4a9fd4",
       },
       {
-        shellSurface: "glass",
         backgroundUrl: "https://images.unsplash.com/photo-1505142468610-359e7f316be0?w=1920",
-        glassOpacity: 0.7,
         widgets: widgets({
           clock: {
             zone: "upper-center",

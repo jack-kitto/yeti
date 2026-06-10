@@ -24,5 +24,3 @@ export function rgbaFromHex(hex: string, alpha: number): string {
 
   return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
 }
-
-export { shellBackdropBlur, shellFillAlphas } from "@/theme/shell-surface-vars";

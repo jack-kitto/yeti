@@ -38,9 +38,7 @@ describe("themeToCssVars", () => {
         text: "#2c2419",
         accent: "#c17f59",
       },
-      shellSurface: "glass",
       backgroundUrl: "https://example.com/bg.jpg",
-      glassOpacity: 0.72,
       borderRadius: 20,
       widgets: {},
     };
@@ -50,31 +48,10 @@ describe("themeToCssVars", () => {
       "--qs-color-surface": "#fffdf9",
       "--qs-color-text": "#2c2419",
       "--qs-color-accent": "#c17f59",
-      "--qs-shell-surface": "glass",
       "--qs-background-image": "url(https://example.com/bg.jpg)",
-      "--qs-glass-opacity": "0.72",
       "--qs-border-radius": "20px",
-      "--qs-shell-backdrop-blur": "24px",
+      "--qs-shell-fill-strength": "1",
     });
-  });
-
-  it("uses no backdrop blur and full fill strength for solid shell surface", () => {
-    const vars = themeToCssVars({
-      palette: {
-        background: "#f5f0e8",
-        surface: "#fffdf9",
-        text: "#2c2419",
-        accent: "#c17f59",
-      },
-      shellSurface: "solid",
-      glassOpacity: 0.72,
-      borderRadius: 20,
-      widgets: {},
-    });
-
-    expect(vars["--qs-shell-backdrop-blur"]).toBe("0px");
-    expect(vars["--qs-shell-fill-strength"]).toBe("1");
-    expect(vars["--qs-shell-border-color"]).toBe("#2c2419");
   });
 
   it("maps shell border color to a CSS custom property", () => {
@@ -85,9 +62,7 @@ describe("themeToCssVars", () => {
         text: "#000000",
         accent: "#000000",
       },
-      shellSurface: "solid",
       shellBorderColor: "#333333",
-      glassOpacity: 1,
       borderRadius: 0,
       widgets: {},
     });
@@ -103,8 +78,6 @@ describe("themeToCssVars", () => {
         text: "#000000",
         accent: "#000000",
       },
-      shellSurface: "solid",
-      glassOpacity: 1,
       borderRadius: 0,
       widgets: {},
       appliedPresetId: "editorial",
@@ -123,8 +96,6 @@ describe("themeToCssVars", () => {
         text: "#2c2419",
         accent: "#c17f59",
       },
-      shellSurface: "glass",
-      glassOpacity: 0.72,
       borderRadius: 20,
       widgets: {},
       appliedPresetId: "work",
@@ -143,8 +114,6 @@ describe("themeToCssVars", () => {
     };
     const theme: Theme = {
       palette,
-      shellSurface: "glass",
-      glassOpacity: 0.72,
       borderRadius: 20,
       widgets: {
         clock: {

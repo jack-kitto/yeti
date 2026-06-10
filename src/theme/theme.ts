@@ -1,7 +1,6 @@
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { Theme, ThemePalette } from "@/library/types";
 import { editorialTypographyCssVars } from "./editorial-typography";
-import { shellBackdropBlur, shellFillAlphas } from "./shell-surface-vars";
 import { resolveTheme } from "./theme-defaults";
 
 function parseHexChannel(hex: string, offset: number): number {
@@ -35,18 +34,14 @@ function widgetCssVarName(widgetId: CanvasWidgetId, suffix: "text" | "text-muted
 
 export function themeToCssVars(theme: Theme): Record<string, string> {
   const resolved = resolveTheme(theme);
-  const { rim } = shellFillAlphas(resolved.shellSurface, resolved.glassOpacity);
   const vars: Record<string, string> = {
     "--qs-color-background": resolved.palette.background,
     "--qs-color-surface": resolved.palette.surface,
     "--qs-color-text": resolved.palette.text,
     "--qs-color-accent": resolved.palette.accent,
     "--qs-shell-border-color": resolved.shellBorderColor ?? resolved.palette.text,
-    "--qs-shell-surface": resolved.shellSurface,
-    "--qs-shell-backdrop-blur": `${shellBackdropBlur(resolved.shellSurface)}px`,
-    "--qs-shell-fill-strength": String(rim),
+    "--qs-shell-fill-strength": "1",
     "--qs-background-image": resolved.backgroundUrl ? `url(${resolved.backgroundUrl})` : "none",
-    "--qs-glass-opacity": String(resolved.glassOpacity),
     "--qs-border-radius": `${resolved.borderRadius}px`,
   };
 
@@ -63,10 +58,8 @@ export function themeToCssVars(theme: Theme): Record<string, string> {
 }
 
 export function applyTheme(element: HTMLElement, theme: Theme): void {
-  const resolved = resolveTheme(theme);
   const vars = themeToCssVars(theme);
   for (const [key, value] of Object.entries(vars)) {
     element.style.setProperty(key, value);
   }
-  element.dataset.qsShellSurface = resolved.shellSurface;
 }

@@ -5,11 +5,13 @@ import {
   advancePomodoroPhase,
   BUILTIN_FOCUS_SPLITS,
   CUSTOM_SPLIT_ID,
+  displayPomodoroSeconds,
+  formatFocusSplitSummary,
+  formatPomodoroPhaseLabel,
   formatTimerSeconds,
   isPomodoroPhaseComplete,
   pausePomodoro,
   playChimeIfEnabled,
-  remainingSeconds,
   resetPomodoro,
   resolveFocusSplit,
   setCustomFocusSplit,
@@ -17,6 +19,11 @@ import {
   setPomodoroSplit,
   startPomodoro,
 } from "@/internal-tools/pomodoro";
+import {
+  POMODORO_FLYOUT_PHASE_CLASS,
+  POMODORO_FLYOUT_SPLIT_SUMMARY_CLASS,
+  POMODORO_FLYOUT_STATUS_CLASS,
+} from "@/internal-tools/pomodoro-flyout-display";
 import { getActiveFocusTask } from "@/internal-tools/tasks";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
 
@@ -70,13 +77,7 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
 
   const activeTask = getActiveFocusTask(internalTools);
   const split = resolveFocusSplit(pomodoro.splitId, internalTools);
-  const idleSeconds =
-    pomodoro.phase === "work"
-      ? split.workMinutes * 60
-      : pomodoro.phase === "shortBreak"
-        ? split.shortBreakMinutes * 60
-        : split.longBreakMinutes * 60;
-  const seconds = pomodoro.running ? remainingSeconds(pomodoro, now) : idleSeconds;
+  const seconds = displayPomodoroSeconds(pomodoro, split, now);
 
   return (
     <div className="shell-tool-flyout">
@@ -84,9 +85,15 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
       {activeTask ? (
         <p className="shell-tool-active-task">{activeTask.title}</p>
       ) : null}
-      <p className="shell-tool-timer" aria-live="polite">
-        {formatTimerSeconds(seconds)}
-      </p>
+      <div className={POMODORO_FLYOUT_STATUS_CLASS}>
+        <p className={POMODORO_FLYOUT_PHASE_CLASS}>{formatPomodoroPhaseLabel(pomodoro.phase)}</p>
+        <p className="shell-tool-timer" aria-live="polite">
+          {formatTimerSeconds(seconds)}
+        </p>
+        <p className={POMODORO_FLYOUT_SPLIT_SUMMARY_CLASS}>
+          {split.label} · {formatFocusSplitSummary(split)}
+        </p>
+      </div>
       <fieldset className="shell-tool-split-picker">
         <legend className="shell-tool-split-label">Focus split</legend>
         <div className="shell-tool-split-options">

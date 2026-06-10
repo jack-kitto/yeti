@@ -3,7 +3,10 @@ import {
   advancePomodoroPhase,
   BUILTIN_FOCUS_SPLITS,
   createDefaultWorkspaceInternalTools,
+  displayPomodoroSeconds,
   formatTimerSeconds,
+  formatPomodoroPhaseLabel,
+  formatFocusSplitSummary,
   getFocusSplit,
   pausePomodoro,
   remainingSeconds,
@@ -73,6 +76,52 @@ describe("remainingSeconds", () => {
 describe("formatTimerSeconds", () => {
   it("renders mm:ss for the flyout display", () => {
     expect(formatTimerSeconds(125)).toBe("2:05");
+  });
+});
+
+describe("formatPomodoroPhaseLabel", () => {
+  it("names the work phase for the flyout status line", () => {
+    expect(formatPomodoroPhaseLabel("work")).toBe("Work");
+  });
+
+  it("labels break phases distinctly from work", () => {
+    expect(formatPomodoroPhaseLabel("shortBreak")).toBe("Short break");
+    expect(formatPomodoroPhaseLabel("longBreak")).toBe("Long break");
+  });
+});
+
+describe("displayPomodoroSeconds", () => {
+  it("previews the current phase duration when the timer is idle", () => {
+    const split = getFocusSplit("classic");
+    const idle = createDefaultPomodoroState();
+
+    expect(displayPomodoroSeconds(idle, split, new Date("2026-06-09T12:00:00.000Z"))).toBe(
+      25 * 60,
+    );
+  });
+
+  it("previews break duration when idle on a break phase", () => {
+    const split = getFocusSplit("classic");
+    const idleBreak = { ...createDefaultPomodoroState(), phase: "shortBreak" as const };
+
+    expect(displayPomodoroSeconds(idleBreak, split, new Date("2026-06-09T12:00:00.000Z"))).toBe(
+      5 * 60,
+    );
+  });
+
+  it("counts down remaining time while the timer is running", () => {
+    const split = getFocusSplit("classic");
+    const running = startPomodoro(createDefaultPomodoroState(), new Date("2026-06-09T12:00:00.000Z"));
+
+    expect(
+      displayPomodoroSeconds(running, split, new Date("2026-06-09T12:10:00.000Z")),
+    ).toBe(900);
+  });
+});
+
+describe("formatFocusSplitSummary", () => {
+  it("shows work, short break, and long break minutes for the active split", () => {
+    expect(formatFocusSplitSummary(getFocusSplit("classic"))).toBe("25 / 5 / 15");
   });
 });
 

@@ -257,8 +257,34 @@ export function remainingSeconds(state: PomodoroState, now: Date): number {
   return Math.max(0, Math.ceil((endsAtMs - now.getTime()) / 1000));
 }
 
+export function displayPomodoroSeconds(
+  state: PomodoroState,
+  split: FocusSplit,
+  now: Date,
+): number {
+  if (state.running) {
+    return remainingSeconds(state, now);
+  }
+
+  return phaseMinutes(state.phase, split) * 60;
+}
+
 export function formatTimerSeconds(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+export function formatPomodoroPhaseLabel(phase: PomodoroPhase): string {
+  if (phase === "work") {
+    return "Work";
+  }
+  if (phase === "shortBreak") {
+    return "Short break";
+  }
+  return "Long break";
+}
+
+export function formatFocusSplitSummary(split: FocusSplit): string {
+  return `${split.workMinutes} / ${split.shortBreakMinutes} / ${split.longBreakMinutes}`;
 }

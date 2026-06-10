@@ -63,6 +63,27 @@ export function renameWorkspace(library: Library, workspaceId: string, name: str
   };
 }
 
+export function cycleActiveWorkspace(library: Library, direction: "next" | "previous"): Library {
+  if (library.workspaces.length <= 1) {
+    return library;
+  }
+
+  const currentIndex = library.workspaces.findIndex(
+    (workspace) => workspace.id === library.activeWorkspaceId,
+  );
+  if (currentIndex === -1) {
+    return library;
+  }
+
+  const offset = direction === "next" ? 1 : -1;
+  const nextIndex = (currentIndex + offset + library.workspaces.length) % library.workspaces.length;
+
+  return {
+    ...library,
+    activeWorkspaceId: library.workspaces[nextIndex]!.id,
+  };
+}
+
 export function deleteWorkspace(library: Library, workspaceId: string): Library {
   if (!library.workspaces.some((workspace) => workspace.id === workspaceId)) {
     throw new Error(`Workspace "${workspaceId}" not found`);

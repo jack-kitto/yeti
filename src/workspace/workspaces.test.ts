@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { loadOrSeedLibrary } from "@/library/library";
 import { createInMemoryLibraryStore } from "@/library/store";
-import { createWorkspace, deleteWorkspace, renameWorkspace } from "./workspaces";
+import {
+  createWorkspace,
+  cycleActiveWorkspace,
+  deleteWorkspace,
+  renameWorkspace,
+} from "./workspaces";
 
 describe("createWorkspace", () => {
   it("adds a named workspace with default theme and empty placements", async () => {
@@ -36,6 +41,27 @@ describe("renameWorkspace", () => {
     expect(updated.workspaces.find((workspace) => workspace.id === workspaceId)?.name).toBe(
       "Laboratory",
     );
+  });
+});
+
+describe("cycleActiveWorkspace", () => {
+  it("advances to the next workspace in list order", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const [first, second] = library.workspaces;
+
+    const next = cycleActiveWorkspace({ ...library, activeWorkspaceId: first.id }, "next");
+    expect(next.activeWorkspaceId).toBe(second.id);
+
+    const wrapped = cycleActiveWorkspace({ ...library, activeWorkspaceId: second.id }, "next");
+    expect(wrapped.activeWorkspaceId).toBe(first.id);
+  });
+
+  it("moves to the previous workspace with previous direction", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const [first, second] = library.workspaces;
+
+    const previous = cycleActiveWorkspace({ ...library, activeWorkspaceId: first.id }, "previous");
+    expect(previous.activeWorkspaceId).toBe(second.id);
   });
 });
 

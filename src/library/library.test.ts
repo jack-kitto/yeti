@@ -113,6 +113,19 @@ describe("applyPatch", () => {
     expect(updated.activeWorkspaceId).toBe(personalId);
     expect((await getLibrary(store))?.activeWorkspaceId).toBe(personalId);
   });
+
+  it("merges shortcut binding updates into the library", async () => {
+    const store = createInMemoryLibraryStore();
+    await loadOrSeedLibrary(store);
+
+    const updated = await applyPatch(store, {
+      shortcuts: { focusCommandBar: "Meta+k" },
+    });
+
+    expect(updated.shortcuts.focusCommandBar).toBe("Meta+k");
+    expect(updated.shortcuts.cycleWorkspace).toBe("Control+Tab");
+    expect((await getLibrary(store))?.shortcuts.focusCommandBar).toBe("Meta+k");
+  });
 });
 
 describe("catalog mutations via store", () => {

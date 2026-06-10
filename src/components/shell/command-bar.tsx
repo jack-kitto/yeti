@@ -13,6 +13,7 @@ import {
 } from "@/command-bar/command-bar";
 import { useResetLibrary } from "@/hooks/use-library";
 import type { Library } from "@/library/types";
+import { cycleActiveWorkspace } from "@/workspace/workspaces";
 import { BUILTIN_SURFACE } from "@/shell-frame/rim";
 import { getLatestShellZones } from "@/shell-frame/shell-state";
 import { activateZone } from "@/shell-frame/shell-zones";
@@ -97,6 +98,24 @@ export function CommandBar({
   }, [library.shortcuts.focusCommandBar]);
 
   useEffect(() => {
+    function handleCycleShortcut(event: KeyboardEvent) {
+      if (isTextEntryElement(document.activeElement)) {
+        return;
+      }
+      if (!shortcutMatchesEvent(event, library.shortcuts.cycleWorkspace)) {
+        return;
+      }
+
+      event.preventDefault();
+      const next = cycleActiveWorkspace(library, "next");
+      onSwitchWorkspace(next.activeWorkspaceId);
+    }
+
+    window.addEventListener("keydown", handleCycleShortcut);
+    return () => window.removeEventListener("keydown", handleCycleShortcut);
+  }, [library, library.shortcuts.cycleWorkspace, onSwitchWorkspace]);
+
+  useEffect(() => {
     function handleTypeToFocus(event: KeyboardEvent) {
       if (!shouldCaptureTypeToFocusKey(event)) {
         return;
@@ -155,14 +174,24 @@ export function CommandBar({
       return;
     }
 
-    if (!showResults) {
-      return;
-    }
-
     const direction = resolveCommandBarListNavigation(event.key, event.shiftKey);
     if (direction) {
       event.preventDefault();
+      if (trimmedQuery.length === 0) {
+        const next = cycleActiveWorkspace(library, direction === "down" ? "next" : "previous");
+        onSwitchWorkspace(next.activeWorkspaceId);
+        return;
+      }
+
+      if (!showResults) {
+        return;
+      }
+
       setSelectedIndex((current) => moveCommandBarSelection(current, direction, results.length));
+      return;
+    }
+
+    if (!showResults) {
       return;
     }
 

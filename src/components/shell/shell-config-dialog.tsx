@@ -8,6 +8,7 @@ import { ShellConfigCatalog } from "./shell-config-catalog";
 import { ShellConfigFocusRadio } from "./shell-config-focus-radio";
 import { ShellConfigLibrary } from "./shell-config-library";
 import { ShellConfigPlacements } from "./shell-config-placements";
+import { ShellConfigShortcuts } from "./shell-config-shortcuts";
 import { ShellConfigWorkspaces } from "./shell-config-workspaces";
 
 type ShellConfigDialogProps = {
@@ -23,6 +24,7 @@ const SECTIONS: { id: ConfigSection; label: string; description: string }[] = [
   { id: "canvas", label: "Canvas", description: "Ambient canvas widgets" },
   { id: "workspaces", label: "Workspaces", description: "Workspaces and themes" },
   { id: "focusRadio", label: "Focus radio", description: "BYO media stations" },
+  { id: "shortcuts", label: "Shortcuts", description: "Keyboard bindings" },
   { id: "library", label: "Library", description: "Reset and maintenance" },
 ];
 
@@ -45,6 +47,8 @@ function sectionContent(
       return <ShellConfigWorkspaces library={library} {...paletteProps} />;
     case "focusRadio":
       return <ShellConfigFocusRadio library={library} />;
+    case "shortcuts":
+      return <ShellConfigShortcuts library={library} />;
     case "library":
       return <ShellConfigLibrary library={library} />;
   }

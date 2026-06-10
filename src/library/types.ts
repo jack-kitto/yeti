@@ -84,6 +84,7 @@ export type Library = {
 
 export type LibraryPatch = {
   activeWorkspaceId?: string;
+  shortcuts?: Partial<ShortcutBindings>;
 };
 
 export type CatalogLinkInput = {

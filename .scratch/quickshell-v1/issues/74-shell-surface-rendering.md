@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,12 +12,12 @@ Wire `themeToShellColors` (or equivalent) to respect `shellSurface`. Align with 
 
 ## Acceptance criteria
 
-- [ ] `solid` shell renders opaque surface colour without backdrop blur
-- [ ] `glass` shell blurs the background behind the rim with palette-tinted frosted fill
-- [ ] `transparent` shell is visibly lighter than `glass` at the same `glassOpacity` (or uses a lower default opacity band documented in preset data)
-- [ ] `glassOpacity` slider in settings affects shell fill strength for `glass` and `transparent`
-- [ ] Graceful fallback when `backdrop-filter` is unsupported (opaque surface acceptable)
-- [ ] Tests cover shell colour derivation per `shellSurface` mode
+- [x] `solid` shell renders opaque surface colour without backdrop blur
+- [x] `glass` shell blurs the background behind the rim with palette-tinted frosted fill
+- [x] `transparent` shell is visibly lighter than `glass` at the same `glassOpacity` (or uses a lower default opacity band documented in preset data)
+- [x] `glassOpacity` slider in settings affects shell fill strength for `glass` and `transparent`
+- [x] Graceful fallback when `backdrop-filter` is unsupported (opaque surface acceptable)
+- [x] Tests cover shell colour derivation per `shellSurface` mode
 
 ## Blocked by
 

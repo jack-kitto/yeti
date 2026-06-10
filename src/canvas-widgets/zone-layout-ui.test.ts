@@ -19,6 +19,21 @@ describe("canvas zone layout UI", () => {
     expect(css).toContain('[data-applied-preset="editorial"] .canvas-focus-tasks-header');
   });
 
+  it("anchors editorial zones to corners with viewport insets", () => {
+    expect(css).toMatch(
+      /\.canvas-widget-stage\[data-applied-preset="editorial"\][\s\S]*padding:\s*10vh\s+10vw/,
+    );
+    expect(css).toContain(
+      '[data-applied-preset="editorial"] .canvas-zone-upper-center',
+    );
+    expect(css).toContain(
+      '[data-applied-preset="editorial"] .canvas-zone-lower-right',
+    );
+    expect(css).toContain(
+      '[data-applied-preset="editorial"] .canvas-zone-lower-left',
+    );
+  });
+
   it("uses a five-zone grid driven by buildCanvasZoneLayout", () => {
     expect(stackSource).toContain("buildCanvasZoneLayout");
     expect(stackSource).toContain("canvas-zone-upper-center");

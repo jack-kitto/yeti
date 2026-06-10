@@ -625,6 +625,26 @@ body {
   font-size: 0.75rem;
 }
 
+.canvas-widget-stage[data-applied-preset="editorial"] {
+  padding: 10vh 10vw;
+  gap: 0.5rem;
+}
+
+.canvas-widget-stage[data-applied-preset="editorial"] .canvas-zone-upper-center {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.canvas-widget-stage[data-applied-preset="editorial"] .canvas-zone-lower-left {
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.canvas-widget-stage[data-applied-preset="editorial"] .canvas-zone-lower-right {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
 .canvas-widget-welcome {
   margin: 0;
   font-size: 1rem;

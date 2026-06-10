@@ -81,6 +81,20 @@ export function startFocusOnTask(
   };
 }
 
+export function clearActiveFocusTask(tools: WorkspaceInternalTools): WorkspaceInternalTools {
+  if (!tools.pomodoro.activeTaskId) {
+    return tools;
+  }
+
+  return {
+    ...tools,
+    pomodoro: {
+      ...tools.pomodoro,
+      activeTaskId: null,
+    },
+  };
+}
+
 export function moveFocusTask(
   tools: WorkspaceInternalTools,
   taskId: string,

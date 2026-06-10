@@ -62,6 +62,15 @@ describe("resetPomodoro", () => {
       chimeEnabled: true,
     });
   });
+
+  it("clears the active focus task", () => {
+    const reset = resetPomodoro({
+      ...createDefaultPomodoroState(),
+      activeTaskId: "task-1",
+    });
+
+    expect(reset.activeTaskId).toBeNull();
+  });
 });
 
 describe("remainingSeconds", () => {

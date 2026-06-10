@@ -213,7 +213,7 @@ export function resetPomodoro(state: PomodoroState): PomodoroState {
     ...createDefaultPomodoroState(),
     splitId: state.splitId,
     chimeEnabled: state.chimeEnabled,
-    activeTaskId: state.activeTaskId,
+    activeTaskId: null,
   };
 }
 

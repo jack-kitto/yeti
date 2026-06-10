@@ -1869,14 +1869,58 @@ body {
   flex-direction: column;
   gap: 10px;
   min-width: 180px;
-  max-height: min(70vh, 22rem);
   min-height: 0;
+  flex: 1 1 auto;
+}
+
+.shell-internal-tool-surface {
+  display: flex;
+  flex-direction: column;
+  max-height: min(70vh, 24rem);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.shell-internal-tool-surface > .shell-flyout-dismiss {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+.shell-tool-pomodoro-scroll {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shell-tool-pomodoro-primary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.shell-tool-active-task-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.shell-tool-clear-focus-btn {
+  flex-shrink: 0;
+  margin-top: 0;
 }
 
 .shell-tool-active-task {
   margin: 0;
   font-size: 13px;
   opacity: 0.85;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .shell-tool-pomodoro-status {

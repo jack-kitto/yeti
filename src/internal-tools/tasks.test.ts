@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import { createDefaultWorkspaceInternalTools } from "./pomodoro";
 import {
   addFocusTask,
+  clearActiveFocusTask,
   completeFocusTask,
+  getActiveFocusTask,
   listBacklogTasks,
   listTodayTasks,
   moveFocusTask,
@@ -67,5 +69,16 @@ describe("focus tasks", () => {
       running: false,
       endsAt: null,
     });
+  });
+
+  it("clears the armed focus task without changing the timer", () => {
+    let tools = addFocusTask(createDefaultWorkspaceInternalTools(), "Ship tasks", "task-1");
+    tools = startFocusOnTask(tools, "task-1");
+
+    const cleared = clearActiveFocusTask(tools);
+
+    expect(cleared.pomodoro.activeTaskId).toBeNull();
+    expect(cleared.pomodoro.running).toBe(false);
+    expect(getActiveFocusTask(cleared)).toBeNull();
   });
 });

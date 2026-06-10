@@ -21,10 +21,12 @@ import {
 } from "@/internal-tools/pomodoro";
 import {
   POMODORO_FLYOUT_PHASE_CLASS,
+  POMODORO_FLYOUT_PRIMARY_ACTIONS_CLASS,
+  POMODORO_FLYOUT_SCROLL_CLASS,
   POMODORO_FLYOUT_SPLIT_SUMMARY_CLASS,
   POMODORO_FLYOUT_STATUS_CLASS,
 } from "@/internal-tools/pomodoro-flyout-display";
-import { getActiveFocusTask } from "@/internal-tools/tasks";
+import { clearActiveFocusTask, getActiveFocusTask } from "@/internal-tools/tasks";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
 
 type PomodoroFlyoutProps = {
@@ -83,7 +85,16 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
     <div className="shell-tool-flyout">
       <p className="shell-flyout-title">Pomodoro</p>
       {activeTask ? (
-        <p className="shell-tool-active-task">{activeTask.title}</p>
+        <div className="shell-tool-active-task-row">
+          <p className="shell-tool-active-task">{activeTask.title}</p>
+          <button
+            type="button"
+            className="shell-flyout-dismiss shell-tool-clear-focus-btn"
+            onClick={() => onChange(clearActiveFocusTask(internalTools))}
+          >
+            Clear focus
+          </button>
+        </div>
       ) : null}
       <div className={POMODORO_FLYOUT_STATUS_CLASS}>
         <p className={POMODORO_FLYOUT_PHASE_CLASS}>{formatPomodoroPhaseLabel(pomodoro.phase)}</p>
@@ -94,6 +105,58 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
           {split.label} · {formatFocusSplitSummary(split)}
         </p>
       </div>
+      <div className={POMODORO_FLYOUT_PRIMARY_ACTIONS_CLASS}>
+        {pomodoro.running ? (
+          <button
+            type="button"
+            className="shell-flyout-more"
+            onClick={() =>
+              onChange({
+                ...internalTools,
+                pomodoro: pausePomodoro(pomodoro),
+              })
+            }
+          >
+            Pause
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="shell-flyout-more"
+            onClick={() =>
+              onChange({
+                ...internalTools,
+                pomodoro: startPomodoro(pomodoro, new Date(), split),
+              })
+            }
+          >
+            Start
+          </button>
+        )}
+        <button
+          type="button"
+          className="shell-flyout-dismiss"
+          onClick={() =>
+            onChange({
+              ...internalTools,
+              pomodoro: resetPomodoro(pomodoro),
+            })
+          }
+        >
+          Reset
+        </button>
+        <button
+          type="button"
+          className="shell-flyout-more"
+          aria-pressed={pomodoro.chimeEnabled}
+          onClick={() =>
+            onChange(setPomodoroChimeEnabled(internalTools, !pomodoro.chimeEnabled))
+          }
+        >
+          Chime
+        </button>
+      </div>
+      <div className={POMODORO_FLYOUT_SCROLL_CLASS}>
       <fieldset className="shell-tool-split-picker">
         <legend className="shell-tool-split-label">Focus split</legend>
         <div className="shell-tool-split-options">
@@ -202,56 +265,6 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
           Save custom split
         </button>
       </form>
-      <div className="shell-tool-actions">
-        <button
-          type="button"
-          className="shell-flyout-more"
-          aria-pressed={pomodoro.chimeEnabled}
-          onClick={() =>
-            onChange(setPomodoroChimeEnabled(internalTools, !pomodoro.chimeEnabled))
-          }
-        >
-          Chime
-        </button>
-        {pomodoro.running ? (
-          <button
-            type="button"
-            className="shell-flyout-more"
-            onClick={() =>
-              onChange({
-                ...internalTools,
-                pomodoro: pausePomodoro(pomodoro),
-              })
-            }
-          >
-            Pause
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="shell-flyout-more"
-            onClick={() =>
-              onChange({
-                ...internalTools,
-                pomodoro: startPomodoro(pomodoro, new Date(), split),
-              })
-            }
-          >
-            Start
-          </button>
-        )}
-        <button
-          type="button"
-          className="shell-flyout-dismiss"
-          onClick={() =>
-            onChange({
-              ...internalTools,
-              pomodoro: resetPomodoro(pomodoro),
-            })
-          }
-        >
-          Reset
-        </button>
       </div>
     </div>
   );

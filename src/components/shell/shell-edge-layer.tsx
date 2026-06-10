@@ -583,7 +583,7 @@ export function ShellEdgeLayer({
               surfaceRefs.current.delete(zone.id);
             }
           }}
-          className="shell-surface shell-flyout"
+          className="shell-surface shell-flyout shell-internal-tool-surface"
           onMouseEnter={() => setZoneHover("menu", true)}
           onMouseLeave={() => leaveZoneHover("menu")}
         >

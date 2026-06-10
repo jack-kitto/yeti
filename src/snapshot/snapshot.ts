@@ -58,6 +58,7 @@ type SnapshotWorkspace = {
   };
   internalTools?: WorkspaceInternalTools;
   canvasWidgets?: CanvasWidgetConfig;
+  canvasNowPlayingDismissed?: boolean;
   icsFeedUrl?: string;
 };
 
@@ -127,6 +128,9 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
       },
       internalTools: workspace.internalTools,
       canvasWidgets: workspace.canvasWidgets,
+      ...(workspace.canvasNowPlayingDismissed
+        ? { canvasNowPlayingDismissed: workspace.canvasNowPlayingDismissed }
+        : {}),
       ...(workspace.icsFeedUrl ? { icsFeedUrl: workspace.icsFeedUrl } : {}),
     })),
     shortcuts: { ...library.shortcuts },
@@ -169,6 +173,9 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
         internalTools:
           workspace.internalTools ?? createDefaultWorkspaceInternalTools(),
         canvasWidgets: workspace.canvasWidgets ?? createDefaultCanvasWidgets(),
+        ...(workspace.canvasNowPlayingDismissed
+          ? { canvasNowPlayingDismissed: workspace.canvasNowPlayingDismissed }
+          : {}),
         ...(workspace.icsFeedUrl ? { icsFeedUrl: workspace.icsFeedUrl } : {}),
       }),
     ),

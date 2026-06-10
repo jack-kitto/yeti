@@ -1,3 +1,4 @@
+import { clearCanvasNowPlayingDismiss } from "@/canvas-widgets/now-playing";
 import { initialKey, insertBetween, sortByKey } from "@/fractional-order/fractional-order";
 import type { Library } from "@/library/types";
 import type {
@@ -196,11 +197,17 @@ export function updateFocusRadioPlayback(
     }
   }
 
-  return {
+  const nextLibrary = {
     ...library,
     focusRadio: {
       ...library.focusRadio,
       playback,
     },
   };
+
+  if (patch.playing === true) {
+    return clearCanvasNowPlayingDismiss(nextLibrary);
+  }
+
+  return nextLibrary;
 }

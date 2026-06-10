@@ -61,6 +61,7 @@ export type Workspace = {
   placements: WorkspacePlacements;
   internalTools: WorkspaceInternalTools;
   canvasWidgets: CanvasWidgetConfig;
+  canvasNowPlayingDismissed?: boolean;
   icsFeedUrl?: string;
 };
 

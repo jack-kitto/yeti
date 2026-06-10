@@ -1,23 +1,46 @@
 "use client";
 
+import {
+  dismissCanvasNowPlaying,
+  shouldShowCanvasNowPlayingWidget,
+} from "@/canvas-widgets/now-playing";
 import { resolveFocusRadioNowPlaying } from "@/focus-radio/playback";
-import { useLibrary } from "@/hooks/use-library";
+import { updateFocusRadioPlayback } from "@/focus-radio/stations";
+import { useLibrary, useMutateLibrary } from "@/hooks/use-library";
+import type { Workspace } from "@/library/types";
 import { CanvasNowPlayingVisualizer } from "./canvas-now-playing-visualizer";
 import { useFocusRadioPlayback } from "./focus-radio-playback-context";
 
-export function CanvasNowPlayingWidget() {
+type CanvasNowPlayingWidgetProps = {
+  workspace: Workspace;
+};
+
+export function CanvasNowPlayingWidget({ workspace }: CanvasNowPlayingWidgetProps) {
   const { data: library } = useLibrary();
+  const mutateLibrary = useMutateLibrary();
   const { getStreamAnalyser } = useFocusRadioPlayback();
 
-  if (!library) {
+  if (!library || !shouldShowCanvasNowPlayingWidget(workspace, library)) {
     return null;
   }
 
   const nowPlaying = resolveFocusRadioNowPlaying(library);
   const playing = library.focusRadio.playback.playing;
 
-  if (!nowPlaying || !playing) {
+  if (!nowPlaying) {
     return null;
+  }
+
+  function patchPlayback(patch: Parameters<typeof updateFocusRadioPlayback>[1]) {
+    mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, patch));
+  }
+
+  function handleTogglePlay() {
+    patchPlayback({ playing: !playing });
+  }
+
+  function handleDismiss() {
+    mutateLibrary.mutate((current) => dismissCanvasNowPlaying(current, workspace.id));
   }
 
   return (
@@ -43,6 +66,23 @@ export function CanvasNowPlayingWidget() {
         active={playing}
         getAnalyser={nowPlaying.kind === "stream" ? getStreamAnalyser : undefined}
       />
+      <div className="canvas-now-playing-actions">
+        <button
+          type="button"
+          className="canvas-now-playing-action"
+          onClick={handleTogglePlay}
+          aria-label={playing ? "Pause" : "Play"}
+        >
+          {playing ? "Pause" : "Play"}
+        </button>
+        <button
+          type="button"
+          className="canvas-now-playing-action canvas-now-playing-action-dismiss"
+          onClick={handleDismiss}
+        >
+          Dismiss
+        </button>
+      </div>
     </div>
   );
 }

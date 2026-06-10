@@ -81,7 +81,7 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
           case "quote":
             return <CanvasQuoteWidget key={widgetId} />;
           case "nowPlaying":
-            return <CanvasNowPlayingWidget key={widgetId} />;
+            return <CanvasNowPlayingWidget key={widgetId} workspace={workspace} />;
           case "pomodoro":
             return <CanvasPomodoroWidget key={widgetId} workspace={workspace} />;
           case "focusTasks":

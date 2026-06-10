@@ -16,6 +16,7 @@ import type {
   Theme,
   Workspace,
 } from "@/library/types";
+import { resolveTheme } from "@/theme/theme-defaults";
 import type { CanvasWidgetConfig } from "@/canvas-widgets/types";
 
 export const SNAPSHOT_VERSION = 1;
@@ -111,18 +112,7 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
     workspaces: library.workspaces.map((workspace) => ({
       id: workspace.id,
       name: workspace.name,
-      theme: {
-        palette: { ...workspace.theme.palette },
-        ...(workspace.theme.backgroundUrl ? { backgroundUrl: workspace.theme.backgroundUrl } : {}),
-        ...(workspace.theme.paletteOverrides
-          ? { paletteOverrides: { ...workspace.theme.paletteOverrides } }
-          : {}),
-        ...(workspace.theme.paletteExtractedFromUrl
-          ? { paletteExtractedFromUrl: workspace.theme.paletteExtractedFromUrl }
-          : {}),
-        glassOpacity: workspace.theme.glassOpacity,
-        borderRadius: workspace.theme.borderRadius,
-      },
+      theme: resolveTheme(workspace.theme),
       placements: {
         edgeGroups: {
           left: workspace.placements.edges.left.map(edgeGroupToSnapshot),
@@ -159,20 +149,21 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
         ensureWorkspaceInternalTools({
           id: workspace.id,
           name: workspace.name,
-          theme: {
+          theme: resolveTheme({
             palette: { ...workspace.theme.palette },
+            ...(workspace.theme.shellSurface
+              ? { shellSurface: workspace.theme.shellSurface }
+              : {}),
             ...(workspace.theme.backgroundUrl
               ? { backgroundUrl: workspace.theme.backgroundUrl }
               : {}),
-            ...(workspace.theme.paletteOverrides
-              ? { paletteOverrides: { ...workspace.theme.paletteOverrides } }
-              : {}),
-            ...(workspace.theme.paletteExtractedFromUrl
-              ? { paletteExtractedFromUrl: workspace.theme.paletteExtractedFromUrl }
-              : {}),
             glassOpacity: workspace.theme.glassOpacity,
             borderRadius: workspace.theme.borderRadius,
-          },
+            widgets: workspace.theme.widgets ?? {},
+            ...(workspace.theme.appliedPresetId
+              ? { appliedPresetId: workspace.theme.appliedPresetId }
+              : {}),
+          }),
           placements: normalizeWorkspacePlacements({
             edges: {
               left: workspace.placements.edgeGroups.left.map(snapshotEdgeGroupToLibrary),

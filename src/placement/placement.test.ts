@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey, insertBetween } from "@/fractional-order/fractional-order";
 import type { EdgeGroup, Library } from "@/library/types";
+import { createTestTheme } from "@/theme/theme-defaults";
 import {
   EDGE_PREVIEW_LIMIT,
   resolveEdgeGroupFlyout,
@@ -47,7 +48,7 @@ function makeLibrary(edgeGroups: {
       {
         id: "work",
         name: "Work",
-        theme: {
+        theme: createTestTheme({
           palette: {
             background: "#000",
             surface: "#111",
@@ -56,7 +57,7 @@ function makeLibrary(edgeGroups: {
           },
           glassOpacity: 0.7,
           borderRadius: 16,
-        },
+        }),
         placements: {
           edges: {
             left: edgeGroups.left ?? [],

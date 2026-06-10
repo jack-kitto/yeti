@@ -1,5 +1,10 @@
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
-import type { CanvasWidgetStyle, ShellSurface, Theme, ThemePalette } from "@/library/types";
+import type {
+  CanvasWidgetStyle,
+  ShellSurface,
+  Theme,
+  ThemePalette,
+} from "@/library/types";
 
 export const DEFAULT_SHELL_SURFACE: ShellSurface = "glass";
 
@@ -38,12 +43,38 @@ export function createDefaultWidgetStyles(
   };
 }
 
-export function resolveTheme(theme: Theme): Theme {
+export type ResolvedTheme = Theme & {
+  shellSurface: ShellSurface;
+  widgets: Record<CanvasWidgetId, CanvasWidgetStyle>;
+};
+
+export function resolveTheme(theme: Theme): ResolvedTheme {
   return {
     ...theme,
+    shellSurface: theme.shellSurface ?? DEFAULT_SHELL_SURFACE,
     widgets: {
       ...createDefaultWidgetStyles(theme.palette),
       ...theme.widgets,
     },
   };
+}
+
+const TEST_PALETTE: ThemePalette = {
+  background: "#101010",
+  surface: "#202020",
+  text: "#f5f5f5",
+  accent: "#ff5500",
+};
+
+export function createTestTheme(overrides: Partial<Theme> = {}): Theme {
+  const palette = { ...TEST_PALETTE, ...overrides.palette };
+  const { palette: _palette, ...rest } = overrides;
+  return resolveTheme({
+    shellSurface: DEFAULT_SHELL_SURFACE,
+    glassOpacity: 0.7,
+    borderRadius: 20,
+    widgets: {},
+    ...rest,
+    palette,
+  });
 }

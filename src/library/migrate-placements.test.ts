@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
+import { createTestTheme } from "@/theme/theme-defaults";
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import {
   normalizeWorkspacePlacements,
@@ -27,7 +28,7 @@ describe("normalizeWorkspacePlacementsInLibrary", () => {
         {
           id: "work",
           name: "Work",
-          theme: {
+          theme: createTestTheme({
             palette: {
               background: "#000",
               surface: "#111",
@@ -36,7 +37,7 @@ describe("normalizeWorkspacePlacementsInLibrary", () => {
             },
             glassOpacity: 0.7,
             borderRadius: 16,
-          },
+          }),
           placements: {
             edges: { left: [], top: [], bottom: [] },
             pins: [{ linkId: "github", position: { kind: "strip", orderKey: "a0" } }],

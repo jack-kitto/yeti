@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createTestTheme } from "@/theme/theme-defaults";
 import { formatClockDisplay } from "./clock";
 import {
   CANVAS_WIDGET_IDS,
@@ -91,11 +92,11 @@ describe("listEnabledCanvasWidgets", () => {
     const workspace = ensureWorkspaceCanvasWidgets({
       id: "ws-1",
       name: "Work",
-      theme: {
+      theme: createTestTheme({
         palette: { background: "#000", surface: "#111", text: "#fff", accent: "#f00" },
         glassOpacity: 0.5,
         borderRadius: 12,
-      },
+      }),
       placements: { edges: { left: [], top: [], bottom: [] } },
       internalTools: {
         pomodoro: {

@@ -10,12 +10,10 @@ import {
   useUpdateWorkspaceTheme,
 } from "@/hooks/use-library";
 import { updateWorkspaceIcsFeedUrl } from "@/calendar/workspace-ics";
-import type { Library, Theme, ThemePalette } from "@/library/types";
+import type { Library, ThemePalette } from "@/library/types";
 
 type ShellConfigWorkspacesProps = {
   library: Library;
-  paletteExtractionErrors: Record<string, string>;
-  onRetryPaletteExtraction: (workspaceId: string, theme: Theme) => Promise<void>;
 };
 
 const PALETTE_FIELDS: { key: keyof ThemePalette; label: string }[] = [
@@ -25,11 +23,7 @@ const PALETTE_FIELDS: { key: keyof ThemePalette; label: string }[] = [
   { key: "accent", label: "Accent" },
 ];
 
-export function ShellConfigWorkspaces({
-  library,
-  paletteExtractionErrors,
-  onRetryPaletteExtraction,
-}: ShellConfigWorkspacesProps) {
+export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
   const applyLibraryPatch = useApplyLibraryPatch();
   const createWorkspace = useCreateWorkspace();
   const renameWorkspace = useRenameWorkspace();
@@ -147,8 +141,6 @@ export function ShellConfigWorkspaces({
   if (!selectedWorkspace) {
     return null;
   }
-
-  const paletteExtractionError = paletteExtractionErrors[selectedWorkspace.id];
 
   return (
     <div className="shell-config-dialog-section shell-config-dialog-section-fill">
@@ -270,23 +262,6 @@ export function ShellConfigWorkspaces({
                 className="shell-config-input"
               />
             </label>
-
-            {paletteExtractionError ? (
-              <div className="shell-config-theme-feedback">
-                <p className="shell-config-error" role="status">
-                  {paletteExtractionError} Palette colors were left unchanged.
-                </p>
-                <button
-                  type="button"
-                  className="shell-config-action"
-                  onClick={() =>
-                    void onRetryPaletteExtraction(selectedWorkspace.id, selectedWorkspace.theme)
-                  }
-                >
-                  Retry palette extraction
-                </button>
-              </div>
-            ) : null}
 
             <label className="shell-config-color-field">
               <span className="shell-config-form-label">

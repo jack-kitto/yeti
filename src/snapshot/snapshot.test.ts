@@ -9,6 +9,7 @@ import {
   libraryToSnapshot,
   serializeSnapshot,
 } from "./snapshot";
+import { resolveTheme } from "@/theme/theme-defaults";
 
 describe("serializeSnapshot", () => {
   it("round-trips the starter library without losing data", async () => {
@@ -118,9 +119,12 @@ describe("serializeSnapshot", () => {
     });
   });
 
-  it("round-trips palette extraction metadata on workspace themes", async () => {
+  it("round-trips shell surface and canvas widget styling on workspace themes", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
     const workspaceId = library.activeWorkspaceId;
+    const baseTheme = resolveTheme(
+      library.workspaces.find((workspace) => workspace.id === workspaceId)!.theme,
+    );
     const withTheme = {
       ...library,
       workspaces: library.workspaces.map((workspace) =>
@@ -128,9 +132,15 @@ describe("serializeSnapshot", () => {
           ? {
               ...workspace,
               theme: {
-                ...workspace.theme,
-                paletteOverrides: { accent: "#00ff00" },
-                paletteExtractedFromUrl: workspace.theme.backgroundUrl,
+                ...baseTheme,
+                shellSurface: "transparent" as const,
+                widgets: {
+                  ...baseTheme.widgets,
+                  clock: {
+                    ...baseTheme.widgets.clock,
+                    text: "#ffffff",
+                  },
+                },
               },
             }
           : workspace,
@@ -140,10 +150,8 @@ describe("serializeSnapshot", () => {
     const restored = deserializeSnapshot(serializeSnapshot(withTheme));
     const workspace = restored.workspaces.find((entry) => entry.id === workspaceId);
 
-    expect(workspace?.theme.paletteOverrides).toEqual({ accent: "#00ff00" });
-    expect(workspace?.theme.paletteExtractedFromUrl).toBe(
-      withTheme.workspaces.find((entry) => entry.id === workspaceId)?.theme.backgroundUrl,
-    );
+    expect(workspace?.theme.shellSurface).toBe("transparent");
+    expect(workspace?.theme.widgets.clock?.text).toBe("#ffffff");
   });
 
   it("keeps theme background images as URL references in the snapshot", async () => {

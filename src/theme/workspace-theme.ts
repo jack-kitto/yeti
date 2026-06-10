@@ -1,66 +1,46 @@
-import type { Library, Theme, ThemePalette, ThemePatch } from "@/library/types";
-
-function trackPaletteOverrides(
-  theme: Theme,
-  palettePatch: Partial<ThemePalette>,
-): Partial<ThemePalette> | undefined {
-  const overrides: Partial<ThemePalette> = { ...theme.paletteOverrides };
-
-  for (const key of Object.keys(palettePatch) as (keyof ThemePalette)[]) {
-    const value = palettePatch[key];
-    if (value !== undefined) {
-      overrides[key] = value;
-    }
-  }
-
-  return Object.keys(overrides).length > 0 ? overrides : undefined;
-}
+import type { CanvasWidgetId } from "@/canvas-widgets/types";
+import type { Library, Theme, ThemePatch } from "@/library/types";
+import { resolveTheme } from "./theme-defaults";
 
 function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
+  const base = resolveTheme(theme);
   let next: Theme = {
-    ...theme,
+    ...base,
     palette: {
-      ...theme.palette,
+      ...base.palette,
       ...(patch.palette ?? {}),
     },
+    ...(patch.shellSurface !== undefined ? { shellSurface: patch.shellSurface } : {}),
     ...(patch.glassOpacity !== undefined ? { glassOpacity: patch.glassOpacity } : {}),
     ...(patch.borderRadius !== undefined ? { borderRadius: patch.borderRadius } : {}),
   };
 
-  if (patch.palette && patch.recordPaletteOverrides !== false) {
-    const overrides = trackPaletteOverrides(theme, patch.palette);
-    if (overrides) {
-      next = { ...next, paletteOverrides: overrides };
+  if (patch.widgets) {
+    const widgets = { ...base.widgets };
+    for (const [id, partial] of Object.entries(patch.widgets)) {
+      const widgetId = id as CanvasWidgetId;
+      widgets[widgetId] = { ...widgets[widgetId], ...partial };
     }
+    next = { ...next, widgets };
   }
 
-  if (patch.paletteExtractedFromUrl === null) {
-    const { paletteExtractedFromUrl: _removed, ...withoutMarker } = next;
-    next = withoutMarker;
-  } else if (patch.paletteExtractedFromUrl !== undefined) {
-    next = { ...next, paletteExtractedFromUrl: patch.paletteExtractedFromUrl };
+  if (patch.appliedPresetId === null) {
+    const { appliedPresetId: _removed, ...withoutPreset } = next;
+    next = withoutPreset;
+  } else if (patch.appliedPresetId !== undefined) {
+    next = { ...next, appliedPresetId: patch.appliedPresetId };
   }
 
   if (patch.backgroundUrl === null) {
-    const {
-      backgroundUrl: _backgroundUrl,
-      paletteExtractedFromUrl: _paletteExtractedFromUrl,
-      ...withoutBackground
-    } = next;
+    const { backgroundUrl: _removed, ...withoutBackground } = next;
     return withoutBackground;
   }
 
   if (patch.backgroundUrl !== undefined) {
     const trimmed = patch.backgroundUrl.trim();
-    const nextBackgroundUrl = trimmed || undefined;
-    const backgroundChanged = nextBackgroundUrl !== theme.backgroundUrl;
-
-    next = trimmed ? { ...next, backgroundUrl: trimmed } : { ...next, backgroundUrl: undefined };
-
-    if (backgroundChanged) {
-      const { paletteExtractedFromUrl: _paletteExtractedFromUrl, ...withoutMarker } = next;
-      next = withoutMarker;
-    }
+    next = trimmed
+      ? { ...next, backgroundUrl: trimmed }
+      : { ...next, backgroundUrl: undefined };
   }
 
   return next;

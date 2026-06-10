@@ -1,6 +1,6 @@
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
 import type { FractionalOrderKey } from "@/fractional-order/fractional-order";
-import type { CanvasWidgetConfig } from "@/canvas-widgets/types";
+import type { CanvasWidgetConfig, CanvasWidgetId } from "@/canvas-widgets/types";
 import type { FocusRadio } from "@/focus-radio/types";
 
 export type Link = {
@@ -36,7 +36,7 @@ export type CanvasWidgetStyle = {
 
 export type Theme = {
   palette: ThemePalette;
-  shellSurface: ShellSurface;
+  shellSurface?: ShellSurface;
   backgroundUrl?: string;
   glassOpacity: number;
   borderRadius: number;

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useApplyLibraryPatch, useLibrary, useMutateLibrary, useSaveLibrary } from "@/hooks/use-library";
-import { usePaletteExtraction } from "@/hooks/use-palette-extraction";
 import { usePomodoroPhaseAdvance } from "@/hooks/use-pomodoro-phase-advance";
 import type { Library, Workspace } from "@/library/types";
 import { getShellLayout } from "@/shell-frame/layout";
@@ -42,7 +41,6 @@ export function Shell() {
   const { data: library, isLoading } = useLibrary();
   const applyLibraryPatch = useApplyLibraryPatch();
   const saveLibraryMutation = useSaveLibrary();
-  const { paletteExtractionErrors, retryPaletteExtraction } = usePaletteExtraction(library);
   const [panelBounds, setPanelBounds] = useState<PanelBounds>(readPanelBounds);
   const workspaceTransition = useSyncExternalStore(
     subscribeWorkspaceTransition,
@@ -109,8 +107,6 @@ export function Shell() {
       activeWorkspace={activeWorkspace}
       panelBounds={panelBounds}
       workspaceTransition={workspaceTransition}
-      paletteExtractionErrors={paletteExtractionErrors}
-      retryPaletteExtraction={retryPaletteExtraction}
       onReorderGroup={handleReorderGroup}
       onSwitchWorkspace={switchWorkspace}
       saveLibraryMutation={saveLibraryMutation}
@@ -123,8 +119,6 @@ type ShellLoadedProps = {
   activeWorkspace: Workspace;
   panelBounds: PanelBounds;
   workspaceTransition: ReturnType<typeof getWorkspaceTransitionSnapshot>;
-  paletteExtractionErrors: ReturnType<typeof usePaletteExtraction>["paletteExtractionErrors"];
-  retryPaletteExtraction: ReturnType<typeof usePaletteExtraction>["retryPaletteExtraction"];
   onReorderGroup: (groupId: string, targetSlotIndex: number) => void;
   onSwitchWorkspace: (workspaceId: string) => void;
   saveLibraryMutation: ReturnType<typeof useSaveLibrary>;
@@ -135,8 +129,6 @@ function ShellLoaded({
   activeWorkspace,
   panelBounds,
   workspaceTransition,
-  paletteExtractionErrors,
-  retryPaletteExtraction,
   onReorderGroup,
   onSwitchWorkspace,
   saveLibraryMutation,
@@ -227,12 +219,7 @@ function ShellLoaded({
         />
 
         <Launcher library={library} />
-        <ShellConfigDialog
-          library={library}
-          workspaceName={activeWorkspace.name}
-          paletteExtractionErrors={paletteExtractionErrors}
-          onRetryPaletteExtraction={retryPaletteExtraction}
-        />
+        <ShellConfigDialog library={library} workspaceName={activeWorkspace.name} />
       </div>
     </FocusRadioPlaybackProvider>
   );

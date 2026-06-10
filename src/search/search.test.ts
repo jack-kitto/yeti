@@ -3,6 +3,7 @@ import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey } from "@/fractional-order/fractional-order";
 import { filterLinks, searchLinks, searchWorkspaces } from "./search";
 import type { Library, Link } from "@/library/types";
+import { createTestTheme } from "@/theme/theme-defaults";
 
 function link(id: string, title: string): Link {
   return { id, url: `https://${id}.example.com`, title };
@@ -15,7 +16,7 @@ function makeLibrary(catalog: Link[], placedIds: string[], activeWorkspaceId = "
       {
         id: "work",
         name: "Work",
-        theme: {
+        theme: createTestTheme({
           palette: {
             background: "#000",
             surface: "#111",
@@ -24,7 +25,7 @@ function makeLibrary(catalog: Link[], placedIds: string[], activeWorkspaceId = "
           },
           glassOpacity: 0.7,
           borderRadius: 16,
-        },
+        }),
         placements: {
           edges: {
             left:

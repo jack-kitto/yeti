@@ -3,6 +3,7 @@ import { initialKey } from "@/fractional-order/fractional-order";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { updateFocusRadioPlayback } from "@/focus-radio/stations";
 import type { Library, Workspace } from "@/library/types";
+import { createTestTheme } from "@/theme/theme-defaults";
 import { loadOrSeedLibrary } from "@/library/library";
 import { createInMemoryLibraryStore } from "@/library/store";
 import { deserializeSnapshot, serializeSnapshot } from "@/snapshot/snapshot";
@@ -16,11 +17,11 @@ function workspace(overrides: Partial<Workspace> = {}): Workspace {
   return {
     id: "ws-1",
     name: "Work",
-    theme: {
+    theme: createTestTheme({
       palette: { background: "#000", surface: "#111", text: "#fff", accent: "#f00" },
       glassOpacity: 0.5,
       borderRadius: 12,
-    },
+    }),
     placements: { edges: { left: [], top: [], bottom: [] } },
     internalTools: {
       pomodoro: {

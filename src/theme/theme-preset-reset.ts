@@ -1,9 +1,10 @@
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { ThemePatch, Workspace } from "@/library/types";
+import { getLayoutPreset, isLayoutPresetId } from "./layout-presets";
 import { getThemePreset, isThemePresetId } from "./theme-presets";
 
 export function resetShellThemeToPreset(workspace: Workspace): ThemePatch | null {
-  const presetId = workspace.theme.appliedPresetId;
+  const presetId = workspace.theme.appliedThemePresetId ?? workspace.theme.appliedPresetId;
   if (!presetId || !isThemePresetId(presetId)) {
     return null;
   }
@@ -27,7 +28,7 @@ export function resetWidgetThemeToPreset(
   workspace: Workspace,
   widgetId: CanvasWidgetId,
 ): ThemePatch | null {
-  const presetId = workspace.theme.appliedPresetId;
+  const presetId = workspace.theme.appliedThemePresetId ?? workspace.theme.appliedPresetId;
   if (!presetId || !isThemePresetId(presetId)) {
     return null;
   }
@@ -40,7 +41,33 @@ export function resetWidgetThemeToPreset(
 
   return {
     widgets: {
-      [widgetId]: { ...widgetStyle },
+      [widgetId]: {
+        text: widgetStyle.text,
+        textMuted: widgetStyle.textMuted,
+        textShadow: widgetStyle.textShadow,
+      },
+    },
+  };
+}
+
+export function resetWidgetLayoutToPreset(
+  workspace: Workspace,
+  widgetId: CanvasWidgetId,
+): ThemePatch | null {
+  const presetId = workspace.theme.appliedLayoutPresetId ?? "default";
+  if (!isLayoutPresetId(presetId)) {
+    return null;
+  }
+
+  const preset = getLayoutPreset(presetId);
+  const widgetLayout = preset?.widgets[widgetId];
+  if (!widgetLayout) {
+    return null;
+  }
+
+  return {
+    widgets: {
+      [widgetId]: { ...widgetLayout },
     },
   };
 }

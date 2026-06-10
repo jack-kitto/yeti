@@ -77,7 +77,10 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
     return null;
   }
 
-  if (workspace.theme.appliedPresetId === "editorial") {
+  if (
+    workspace.theme.appliedLayoutPresetId === "editorial" ||
+    workspace.theme.appliedPresetId === "editorial"
+  ) {
     return <EditorialCanvasStack workspace={workspace} layout={layout} />;
   }
 

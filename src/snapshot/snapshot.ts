@@ -164,6 +164,12 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
             ...(workspace.theme.appliedPresetId
               ? { appliedPresetId: workspace.theme.appliedPresetId }
               : {}),
+            ...(workspace.theme.appliedThemePresetId
+              ? { appliedThemePresetId: workspace.theme.appliedThemePresetId }
+              : {}),
+            ...(workspace.theme.appliedLayoutPresetId
+              ? { appliedLayoutPresetId: workspace.theme.appliedLayoutPresetId }
+              : {}),
           }),
           placements: normalizeWorkspacePlacements({
             edges: {

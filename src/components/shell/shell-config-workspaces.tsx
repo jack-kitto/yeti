@@ -242,7 +242,9 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
 
             <div className={THEME_PRESET_GRID_CLASS}>
               {THEME_PRESETS.map((preset) => {
-                const isSelected = selectedWorkspace.theme.appliedPresetId === preset.id;
+                const isSelected =
+                  (selectedWorkspace.theme.appliedThemePresetId ??
+                    selectedWorkspace.theme.appliedPresetId) === preset.id;
                 return (
                   <button
                     key={preset.id}

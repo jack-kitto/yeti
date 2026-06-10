@@ -73,9 +73,10 @@ describe("updateWorkspaceTheme", () => {
     const updated = applyThemePresetToWorkspace(withToggles, workspaceId, "ocean");
     const workspace = updated.workspaces.find((entry) => entry.id === workspaceId)!;
 
-    expect(workspace.theme.appliedPresetId).toBe("ocean");
+    expect(workspace.theme.appliedThemePresetId).toBe("ocean");
     expect(workspace.theme.palette).toEqual(preset.theme.palette);
-    expect(workspace.theme.widgets).toEqual(preset.theme.widgets);
+    expect(workspace.theme.widgets.clock?.text).toBe(preset.theme.widgets.clock?.text);
+    expect(workspace.theme.widgets.clock?.zone).toBe("upper-center");
     expect(workspace.canvasWidgets.clock).toBe(false);
   });
 

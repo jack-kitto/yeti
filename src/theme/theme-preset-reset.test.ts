@@ -58,7 +58,11 @@ describe("resetWidgetThemeToPreset", () => {
 
     expect(patch).toEqual({
       widgets: {
-        clock: preset.theme.widgets.clock,
+        clock: {
+          text: preset.theme.widgets.clock?.text,
+          textMuted: preset.theme.widgets.clock?.textMuted,
+          textShadow: preset.theme.widgets.clock?.textShadow,
+        },
       },
     });
   });

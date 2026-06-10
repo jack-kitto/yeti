@@ -67,7 +67,7 @@ describe("theme preset catalog", () => {
 });
 
 describe("applyThemePreset", () => {
-  it("copies preset theme fields and sets appliedPresetId", () => {
+  it("copies colour fields without moving widget zones", () => {
     const workspace = {
       id: "ws-1",
       name: "Test",
@@ -81,11 +81,12 @@ describe("applyThemePreset", () => {
     const preset = getThemePreset("forest")!;
     const updated = applyThemePreset(workspace, "forest");
 
-    expect(updated.theme.appliedPresetId).toBe("forest");
+    expect(updated.theme.appliedThemePresetId).toBe("forest");
     expect(updated.theme.palette).toEqual(preset.theme.palette);
     expect(updated.theme.backgroundUrl).toBe(preset.theme.backgroundUrl);
     expect(updated.theme.borderRadius).toBe(preset.theme.borderRadius);
-    expect(updated.theme.widgets).toEqual(preset.theme.widgets);
+    expect(updated.theme.widgets.clock?.text).toBe(preset.theme.widgets.clock?.text);
+    expect(updated.theme.widgets.clock?.zone).toBe("upper-center");
     expect(updated.canvasWidgets.clock).toBe(false);
   });
 });

@@ -80,7 +80,7 @@ describe("themeToCssVars", () => {
       },
       borderRadius: 0,
       widgets: {},
-      appliedPresetId: "editorial",
+      appliedLayoutPresetId: "editorial",
     });
 
     expect(vars["--canvas-widget-clock-time-size"]).toBe("clamp(4rem, 12vw, 7rem)");

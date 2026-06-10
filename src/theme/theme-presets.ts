@@ -1,5 +1,6 @@
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { CanvasWidgetStyle, Theme, ThemePalette, Workspace } from "@/library/types";
+import { resolveTheme } from "./theme-defaults";
 
 export const THEME_PRESET_IDS = [
   "work",
@@ -415,10 +416,33 @@ export function applyThemePreset(workspace: Workspace, presetId: ThemePresetId):
     throw new Error(`Unknown theme preset "${presetId}"`);
   }
 
+  const resolved = resolveTheme(workspace.theme);
+  const widgets = { ...resolved.widgets };
+
+  for (const widgetId of Object.keys(preset.theme.widgets) as CanvasWidgetId[]) {
+    const presetStyle = preset.theme.widgets[widgetId]!;
+    widgets[widgetId] = {
+      ...widgets[widgetId],
+      text: presetStyle.text,
+      textMuted: presetStyle.textMuted,
+      textShadow: presetStyle.textShadow,
+    };
+  }
+
+  const { shellBorderColor: _removedBorder, ...themeWithoutBorder } = resolved;
+
   return {
     ...workspace,
     theme: {
-      ...preset.theme,
+      ...themeWithoutBorder,
+      palette: { ...preset.theme.palette },
+      ...(preset.theme.shellBorderColor
+        ? { shellBorderColor: preset.theme.shellBorderColor }
+        : {}),
+      backgroundUrl: preset.theme.backgroundUrl,
+      borderRadius: preset.theme.borderRadius,
+      widgets,
+      appliedThemePresetId: presetId,
       appliedPresetId: presetId,
     },
   };

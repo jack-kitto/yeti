@@ -1,6 +1,7 @@
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { Library, Theme, ThemePatch } from "@/library/types";
 import { resolveTheme } from "./theme-defaults";
+import { applyLayoutPreset, type LayoutPresetId } from "./layout-presets";
 import { applyThemePreset, type ThemePresetId } from "./theme-presets";
 
 function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
@@ -37,6 +38,20 @@ function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
     next = { ...next, appliedPresetId: patch.appliedPresetId };
   }
 
+  if (patch.appliedThemePresetId === null) {
+    const { appliedThemePresetId: _removed, ...withoutThemePreset } = next;
+    next = withoutThemePreset;
+  } else if (patch.appliedThemePresetId !== undefined) {
+    next = { ...next, appliedThemePresetId: patch.appliedThemePresetId };
+  }
+
+  if (patch.appliedLayoutPresetId === null) {
+    const { appliedLayoutPresetId: _removed, ...withoutLayoutPreset } = next;
+    next = withoutLayoutPreset;
+  } else if (patch.appliedLayoutPresetId !== undefined) {
+    next = { ...next, appliedLayoutPresetId: patch.appliedLayoutPresetId };
+  }
+
   if (patch.backgroundUrl === null) {
     const { backgroundUrl: _removed, ...withoutBackground } = next;
     return withoutBackground;
@@ -50,6 +65,23 @@ function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
   }
 
   return next;
+}
+
+export function applyLayoutPresetToWorkspace(
+  library: Library,
+  workspaceId: string,
+  presetId: LayoutPresetId,
+): Library {
+  if (!library.workspaces.some((workspace) => workspace.id === workspaceId)) {
+    throw new Error(`Workspace "${workspaceId}" not found`);
+  }
+
+  return {
+    ...library,
+    workspaces: library.workspaces.map((workspace) =>
+      workspace.id === workspaceId ? applyLayoutPreset(workspace, presetId) : workspace,
+    ),
+  };
 }
 
 export function applyThemePresetToWorkspace(

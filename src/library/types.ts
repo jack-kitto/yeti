@@ -38,7 +38,10 @@ export type Theme = {
   backgroundUrl?: string;
   borderRadius: number;
   widgets: Partial<Record<CanvasWidgetId, CanvasWidgetStyle>>;
+  /** @deprecated Use appliedThemePresetId */
   appliedPresetId?: string;
+  appliedThemePresetId?: string;
+  appliedLayoutPresetId?: string;
 };
 
 export type ThemePatch = {
@@ -47,7 +50,10 @@ export type ThemePatch = {
   backgroundUrl?: string | null;
   borderRadius?: number;
   widgets?: Partial<Record<CanvasWidgetId, Partial<CanvasWidgetStyle>>>;
+  /** @deprecated Use appliedThemePresetId */
   appliedPresetId?: string | null;
+  appliedThemePresetId?: string | null;
+  appliedLayoutPresetId?: string | null;
 };
 
 export type EdgeGroupLinkPlacement = {

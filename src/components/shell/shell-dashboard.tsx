@@ -5,11 +5,13 @@ import { buildControlCenterWorkspaceRows } from "@/control-center/workspaces";
 import type { Library } from "@/library/types";
 import { ControlCenterCalendarTab } from "./control-center-calendar-tab";
 import { ControlCenterMediaTab } from "./control-center-media-tab";
+import { ControlCenterPresetsTab } from "./control-center-presets-tab";
 import { FocusRadioMediaSessionStrip } from "./focus-radio-media-session-strip";
 import { useFocusRadioPlayback } from "./focus-radio-playback-context";
 
 const TABS = [
   { id: "workspaces", label: "Workspaces" },
+  { id: "presets", label: "Presets" },
   { id: "calendar", label: "Calendar" },
   { id: "media", label: "Media" },
 ] as const;
@@ -97,6 +99,8 @@ export function ShellDashboard({ library, onSwitchWorkspace }: ShellDashboardPro
       <div className="shell-dashboard-body">
         {activeTab === "workspaces" ? (
           <ControlCenterWorkspacesTab library={library} onSwitchWorkspace={onSwitchWorkspace} />
+        ) : activeTab === "presets" ? (
+          <ControlCenterPresetsTab library={library} />
         ) : activeTab === "calendar" ? (
           <ControlCenterCalendarTab library={library} active />
         ) : (

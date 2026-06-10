@@ -52,7 +52,7 @@ export function themeToCssVars(theme: Theme): Record<string, string> {
     vars[widgetCssVarName(widgetId, "text-shadow")] = style.textShadow;
   }
 
-  Object.assign(vars, editorialTypographyCssVars(theme.appliedPresetId));
+  Object.assign(vars, editorialTypographyCssVars(theme));
 
   return vars;
 }

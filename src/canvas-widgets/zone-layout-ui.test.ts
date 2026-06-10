@@ -9,6 +9,10 @@ describe("canvas zone layout UI", () => {
     "utf8",
   );
 
+  it("scopes editorial typography via appliedPresetId on the canvas stage", () => {
+    expect(stackSource).toContain('data-applied-preset={workspace.theme.appliedPresetId ?? undefined}');
+  });
+
   it("uses a five-zone grid driven by buildCanvasZoneLayout", () => {
     expect(stackSource).toContain("buildCanvasZoneLayout");
     expect(stackSource).toContain("canvas-zone-upper-center");

@@ -1,5 +1,6 @@
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { Theme, ThemePalette } from "@/library/types";
+import { editorialTypographyCssVars } from "./editorial-typography";
 import { shellBackdropBlur, shellFillAlphas } from "./shell-surface-vars";
 import { resolveTheme } from "./theme-defaults";
 
@@ -54,6 +55,8 @@ export function themeToCssVars(theme: Theme): Record<string, string> {
     vars[widgetCssVarName(widgetId, "text-muted")] = style.textMuted;
     vars[widgetCssVarName(widgetId, "text-shadow")] = style.textShadow;
   }
+
+  Object.assign(vars, editorialTypographyCssVars(theme.appliedPresetId));
 
   return vars;
 }

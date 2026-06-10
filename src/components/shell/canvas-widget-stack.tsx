@@ -94,7 +94,10 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
   }
 
   return (
-    <div className="canvas-widget-stage">
+    <div
+      className="canvas-widget-stage"
+      data-applied-preset={workspace.theme.appliedPresetId ?? undefined}
+    >
       {CANVAS_ZONES.map((zone) => {
         const widgets = layout[zone];
         if (widgets.length === 0) {

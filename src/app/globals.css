@@ -554,10 +554,10 @@ body {
 
 .canvas-widget-clock-time {
   margin: 0;
-  font-size: clamp(2.5rem, 6vw, 3.5rem);
-  font-weight: 300;
+  font-size: var(--canvas-widget-clock-time-size, clamp(2.5rem, 6vw, 3.5rem));
+  font-weight: var(--canvas-widget-clock-time-weight, 300);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--canvas-widget-clock-time-tracking, -0.02em);
   line-height: 1;
   color: var(--canvas-widget-clock-text, var(--qs-color-text));
   text-shadow: var(--canvas-widget-clock-text-shadow, none);

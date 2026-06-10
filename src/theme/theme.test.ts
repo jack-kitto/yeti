@@ -76,6 +76,45 @@ describe("themeToCssVars", () => {
     expect(vars["--qs-shell-fill-strength"]).toBe("1");
   });
 
+  it("sets hero clock typography vars for the editorial preset", () => {
+    const vars = themeToCssVars({
+      palette: {
+        background: "#ffffff",
+        surface: "#ffffff",
+        text: "#000000",
+        accent: "#000000",
+      },
+      shellSurface: "solid",
+      glassOpacity: 1,
+      borderRadius: 0,
+      widgets: {},
+      appliedPresetId: "editorial",
+    });
+
+    expect(vars["--canvas-widget-clock-time-size"]).toBe("clamp(4rem, 12vw, 7rem)");
+    expect(vars["--canvas-widget-clock-time-weight"]).toBe("700");
+    expect(vars["--canvas-widget-clock-time-tracking"]).toBe("-0.04em");
+  });
+
+  it("omits editorial hero clock vars for other presets", () => {
+    const vars = themeToCssVars({
+      palette: {
+        background: "#f5f0e8",
+        surface: "#fffdf9",
+        text: "#2c2419",
+        accent: "#c17f59",
+      },
+      shellSurface: "glass",
+      glassOpacity: 0.72,
+      borderRadius: 20,
+      widgets: {},
+      appliedPresetId: "work",
+    });
+
+    expect(vars["--canvas-widget-clock-time-size"]).toBeUndefined();
+    expect(vars["--canvas-widget-clock-time-weight"]).toBeUndefined();
+  });
+
   it("maps per-canvas-widget colours to CSS custom properties", () => {
     const palette = {
       background: "#f5f0e8",

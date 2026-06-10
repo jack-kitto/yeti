@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,12 +12,12 @@ Remove canvas image-sampling contrast (`useCanvasTextContrast` and related modul
 
 ## Acceptance criteria
 
-- [ ] Enabled widgets render in their configured **canvas zone** with correct in-zone stack order
-- [ ] All six widget types can be assigned to any v1 zone via theme data
-- [ ] Per-widget `text`, `textMuted`, and `textShadow` apply to primary and secondary copy
-- [ ] No runtime image sampling for canvas text colours
-- [ ] Empty zones render nothing; disabled widgets are skipped regardless of theme placement
-- [ ] Tests cover zone ordering/grouping logic and widget style application
+- [x] Enabled widgets render in their configured **canvas zone** with correct in-zone stack order
+- [x] All six widget types can be assigned to any v1 zone via theme data
+- [x] Per-widget `text`, `textMuted`, and `textShadow` apply to primary and secondary copy
+- [x] No runtime image sampling for canvas text colours
+- [x] Empty zones render nothing; disabled widgets are skipped regardless of theme placement
+- [x] Tests cover zone ordering/grouping logic and widget style application
 
 ## Blocked by
 

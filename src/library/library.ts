@@ -7,7 +7,8 @@ import {
   updateCatalogLink as updateCatalogLinkInLibrary,
 } from "./catalog";
 import { deserializeSnapshot, importSnapshotFromUrl } from "@/snapshot/snapshot";
-import { updateWorkspaceTheme } from "@/theme/workspace-theme";
+import { applyThemePresetToWorkspace, updateWorkspaceTheme } from "@/theme/workspace-theme";
+import type { ThemePresetId } from "@/theme/theme-presets";
 import {
   createWorkspace as createWorkspaceInLibrary,
   deleteWorkspace as deleteWorkspaceFromLibrary,
@@ -161,6 +162,19 @@ export async function updateWorkspaceThemeInLibrary(
   }
 
   return saveLibrary(store, updateWorkspaceTheme(library, workspaceId, patch));
+}
+
+export async function applyThemePresetInLibrary(
+  store: LibraryStore,
+  workspaceId: string,
+  presetId: ThemePresetId,
+): Promise<Library> {
+  const library = await store.read();
+  if (!library) {
+    throw new Error("Library not initialized");
+  }
+
+  return saveLibrary(store, applyThemePresetToWorkspace(library, workspaceId, presetId));
 }
 
 export async function importLibrarySnapshot(store: LibraryStore, yaml: string): Promise<Library> {

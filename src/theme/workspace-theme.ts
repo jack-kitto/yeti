@@ -1,6 +1,7 @@
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { Library, Theme, ThemePatch } from "@/library/types";
 import { resolveTheme } from "./theme-defaults";
+import { applyThemePreset, type ThemePresetId } from "./theme-presets";
 
 function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
   const base = resolveTheme(theme);
@@ -44,6 +45,23 @@ function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
   }
 
   return next;
+}
+
+export function applyThemePresetToWorkspace(
+  library: Library,
+  workspaceId: string,
+  presetId: ThemePresetId,
+): Library {
+  if (!library.workspaces.some((workspace) => workspace.id === workspaceId)) {
+    throw new Error(`Workspace "${workspaceId}" not found`);
+  }
+
+  return {
+    ...library,
+    workspaces: library.workspaces.map((workspace) =>
+      workspace.id === workspaceId ? applyThemePreset(workspace, presetId) : workspace,
+    ),
+  };
 }
 
 export function updateWorkspaceTheme(

@@ -14,8 +14,10 @@ import {
   resetLibrary,
   saveLibrary,
   updateCatalogLink,
+  applyThemePresetInLibrary,
   updateWorkspaceThemeInLibrary,
 } from "@/library/library";
+import type { ThemePresetId } from "@/theme/theme-presets";
 import { createIndexedDbLibraryStore } from "@/library/indexed-db-store";
 import type {
   CatalogLinkInput,
@@ -152,6 +154,23 @@ export function useUpdateWorkspaceTheme() {
   return useMutation({
     mutationFn: ({ workspaceId, patch }: { workspaceId: string; patch: ThemePatch }) =>
       updateWorkspaceThemeInLibrary(store, workspaceId, patch),
+    onSuccess: (library) => {
+      queryClient.setQueryData(["library"], library);
+    },
+  });
+}
+
+export function useApplyThemePreset() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workspaceId,
+      presetId,
+    }: {
+      workspaceId: string;
+      presetId: ThemePresetId;
+    }) => applyThemePresetInLibrary(store, workspaceId, presetId),
     onSuccess: (library) => {
       queryClient.setQueryData(["library"], library);
     },

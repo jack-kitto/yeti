@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { setCanvasWidgetEnabled } from "@/canvas-widgets/config";
 import { loadOrSeedLibrary } from "@/library/library";
 import { createInMemoryLibraryStore } from "@/library/store";
-import { updateWorkspaceTheme } from "./workspace-theme";
+import { getThemePreset } from "./theme-presets";
+import { applyThemePresetToWorkspace, updateWorkspaceTheme } from "./workspace-theme";
 
 describe("updateWorkspaceTheme", () => {
   it("updates the palette on a workspace theme", async () => {
@@ -62,6 +64,21 @@ describe("updateWorkspaceTheme", () => {
     const workspace = updated.workspaces.find((entry) => entry.id === workspaceId);
     expect(workspace?.theme.widgets.clock?.text).toBe("#ffffff");
     expect(workspace?.theme.widgets.clock?.zone).toBe("upper-center");
+  });
+
+  it("applies a theme preset to a workspace without changing canvas widget toggles", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const workspaceId = library.activeWorkspaceId;
+    const withToggles = setCanvasWidgetEnabled(library, workspaceId, "clock", false);
+    const preset = getThemePreset("ocean")!;
+
+    const updated = applyThemePresetToWorkspace(withToggles, workspaceId, "ocean");
+    const workspace = updated.workspaces.find((entry) => entry.id === workspaceId)!;
+
+    expect(workspace.theme.appliedPresetId).toBe("ocean");
+    expect(workspace.theme.palette).toEqual(preset.theme.palette);
+    expect(workspace.theme.widgets).toEqual(preset.theme.widgets);
+    expect(workspace.canvasWidgets.clock).toBe(false);
   });
 
   it("clears the background image when backgroundUrl is null", async () => {

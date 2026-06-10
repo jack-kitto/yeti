@@ -7,6 +7,7 @@ import { listEnabledCanvasWidgets } from "@/canvas-widgets/config";
 import { pickQuote } from "@/canvas-widgets/quote";
 import { formatWelcomeMessage } from "@/canvas-widgets/welcome";
 import { CanvasNowPlayingWidget } from "./canvas-now-playing-widget";
+import { CanvasPomodoroWidget } from "./canvas-pomodoro-widget";
 
 type CanvasWidgetStackProps = {
   workspace: Workspace;
@@ -80,6 +81,8 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
             return <CanvasQuoteWidget key={widgetId} />;
           case "nowPlaying":
             return <CanvasNowPlayingWidget key={widgetId} />;
+          case "pomodoro":
+            return <CanvasPomodoroWidget key={widgetId} workspace={workspace} />;
         }
       })}
     </div>

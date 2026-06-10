@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -13,12 +13,12 @@ Add **pomodoro** **canvas widget** — per-workspace settings toggle, snapshot r
 
 ## Acceptance criteria
 
-- [ ] `CanvasWidgetId` includes `pomodoro`; settings toggle per workspace
-- [ ] Widget shows phase, time remaining, active task name, split summary
-- [ ] Start/pause controls on canvas; dense config stays on **right rim**
-- [ ] Snapshot export/import round-trips widget toggle
-- [ ] Slice 2: visual progress indicator (hourglass/particles) tracks `endsAt` countdown
-- [ ] Styling/animation quality matches clock/quote/nowPlaying widgets
+- [x] `CanvasWidgetId` includes `pomodoro`; settings toggle per workspace
+- [x] Widget shows phase, time remaining, active task name, split summary
+- [x] Start/pause controls on canvas; dense config stays on **right rim**
+- [x] Snapshot export/import round-trips widget toggle
+- [x] Slice 2: visual progress indicator (hourglass/particles) tracks `endsAt` countdown
+- [x] Styling/animation quality matches clock/quote/nowPlaying widgets
 
 ## Blocked by
 

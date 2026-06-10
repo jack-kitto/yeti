@@ -3,7 +3,13 @@ import type { CanvasWidgetId, CanvasWidgetConfig } from "./types";
 
 export type { CanvasWidgetId, CanvasWidgetConfig };
 
-export const CANVAS_WIDGET_IDS: CanvasWidgetId[] = ["clock", "welcome", "quote", "nowPlaying"];
+export const CANVAS_WIDGET_IDS: CanvasWidgetId[] = [
+  "clock",
+  "welcome",
+  "quote",
+  "nowPlaying",
+  "pomodoro",
+];
 
 export function createDefaultCanvasWidgets(): CanvasWidgetConfig {
   return {
@@ -11,6 +17,7 @@ export function createDefaultCanvasWidgets(): CanvasWidgetConfig {
     welcome: true,
     quote: true,
     nowPlaying: true,
+    pomodoro: false,
   };
 }
 

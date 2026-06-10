@@ -69,7 +69,14 @@ describe("createDefaultCanvasWidgets", () => {
       welcome: true,
       quote: true,
       nowPlaying: true,
+      pomodoro: false,
     });
+  });
+});
+
+describe("CANVAS_WIDGET_IDS", () => {
+  it("includes the pomodoro canvas widget in canonical order", () => {
+    expect(CANVAS_WIDGET_IDS).toContain("pomodoro");
   });
 });
 
@@ -97,11 +104,11 @@ describe("listEnabledCanvasWidgets", () => {
         tasks: [],
         customFocusSplit: null,
       },
-      canvasWidgets: { clock: true, welcome: false, quote: true, nowPlaying: false },
+      canvasWidgets: { clock: true, welcome: false, quote: true, nowPlaying: false, pomodoro: false },
     });
 
     expect(listEnabledCanvasWidgets(workspace)).toEqual(["clock", "quote"]);
-    expect(CANVAS_WIDGET_IDS).toEqual(["clock", "welcome", "quote", "nowPlaying"]);
+    expect(CANVAS_WIDGET_IDS).toEqual(["clock", "welcome", "quote", "nowPlaying", "pomodoro"]);
   });
 });
 

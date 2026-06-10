@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,13 +14,13 @@ Refresh the **starter template** Work and Personal workspaces to use fully-autho
 
 ## Acceptance criteria
 
-- [ ] Six **theme presets** exist with designer-intentional background + per-widget pairings
-- [ ] Applying a preset updates shell palette, **shell surface**, background, and per-widget styling on the workspace
-- [ ] **Canvas widget** on/off toggles are unchanged after preset apply
-- [ ] `appliedPresetId` is stored on the workspace theme for reset support
-- [ ] Settings shows a preset picker grid; active workspace updates live on selection
-- [ ] Starter template Work and Personal use two of the six presets
-- [ ] Tests cover preset apply semantics (copied fields, untouched toggles, `appliedPresetId`)
+- [x] Six **theme presets** exist with designer-intentional background + per-widget pairings
+- [x] Applying a preset updates shell palette, **shell surface**, background, and per-widget styling on the workspace
+- [x] **Canvas widget** on/off toggles are unchanged after preset apply
+- [x] `appliedPresetId` is stored on the workspace theme for reset support
+- [x] Settings shows a preset picker grid; active workspace updates live on selection
+- [x] Starter template Work and Personal use two of the six presets
+- [x] Tests cover preset apply semantics (copied fields, untouched toggles, `appliedPresetId`)
 
 ## Blocked by
 

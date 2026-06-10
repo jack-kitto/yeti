@@ -16,7 +16,10 @@ import {
   THEME_PRESET_GRID_CLASS,
 } from "@/theme/theme-preset-picker-layout";
 import { updateWorkspaceIcsFeedUrl } from "@/calendar/workspace-ics";
-import type { Library, ThemePalette } from "@/library/types";
+import type { Library, ShellSurface, ThemePalette } from "@/library/types";
+import { resetShellThemeToPreset } from "@/theme/theme-preset-reset";
+import { DEFAULT_SHELL_SURFACE } from "@/theme/theme-defaults";
+import { ShellConfigThemeWidgets } from "./shell-config-theme-widgets";
 
 type ShellConfigWorkspacesProps = {
   library: Library;
@@ -296,6 +299,21 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
             </div>
 
             <label className="shell-config-color-field">
+              <span className="shell-config-form-label">Shell surface</span>
+              <select
+                className="shell-config-input"
+                value={selectedWorkspace.theme.shellSurface ?? DEFAULT_SHELL_SURFACE}
+                onChange={(event) =>
+                  patchTheme({ shellSurface: event.target.value as ShellSurface })
+                }
+              >
+                <option value="solid">Solid</option>
+                <option value="glass">Glass</option>
+                <option value="transparent">Transparent</option>
+              </select>
+            </label>
+
+            <label className="shell-config-color-field">
               <span className="shell-config-form-label">Background image URL</span>
               <input
                 type="url"
@@ -339,7 +357,26 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
                 className="shell-config-range"
               />
             </label>
+
+            {selectedWorkspace.theme.appliedPresetId ? (
+              <div className="shell-config-form-actions shell-config-form-actions-start">
+                <button
+                  type="button"
+                  className="shell-config-action"
+                  onClick={() => {
+                    const resetPatch = resetShellThemeToPreset(selectedWorkspace);
+                    if (resetPatch) {
+                      patchTheme(resetPatch);
+                    }
+                  }}
+                >
+                  Reset shell to preset
+                </button>
+              </div>
+            ) : null}
           </div>
+
+          <ShellConfigThemeWidgets workspace={selectedWorkspace} onPatch={patchTheme} />
 
           <div className="shell-config-form">
             <p className="shell-config-form-label">Calendar</p>

@@ -45,7 +45,7 @@ describe("themeToCssVars", () => {
       widgets: {},
     };
 
-    expect(themeToCssVars(theme)).toEqual({
+    expect(themeToCssVars(theme)).toMatchObject({
       "--qs-color-background": "#f5f0e8",
       "--qs-color-surface": "#fffdf9",
       "--qs-color-text": "#2c2419",
@@ -54,6 +54,37 @@ describe("themeToCssVars", () => {
       "--qs-background-image": "url(https://example.com/bg.jpg)",
       "--qs-glass-opacity": "0.72",
       "--qs-border-radius": "20px",
+    });
+  });
+
+  it("maps per-canvas-widget colours to CSS custom properties", () => {
+    const palette = {
+      background: "#f5f0e8",
+      surface: "#fffdf9",
+      text: "#2c2419",
+      accent: "#c17f59",
+    };
+    const theme: Theme = {
+      palette,
+      shellSurface: "glass",
+      glassOpacity: 0.72,
+      borderRadius: 20,
+      widgets: {
+        clock: {
+          zone: "upper-center",
+          order: 0,
+          text: "#ffffff",
+          textMuted: "#cccccc",
+          textShadow: "0 1px 3px rgba(0,0,0,0.6)",
+        },
+      },
+    };
+
+    expect(themeToCssVars(theme)).toMatchObject({
+      "--canvas-widget-clock-text": "#ffffff",
+      "--canvas-widget-clock-text-muted": "#cccccc",
+      "--canvas-widget-clock-text-shadow": "0 1px 3px rgba(0,0,0,0.6)",
+      "--canvas-widget-welcome-text": palette.text,
     });
   });
 });

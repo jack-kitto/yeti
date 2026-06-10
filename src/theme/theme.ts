@@ -1,4 +1,6 @@
+import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { Theme, ThemePalette } from "@/library/types";
+import { resolveTheme } from "./theme-defaults";
 
 function parseHexChannel(hex: string, offset: number): number {
   return Number.parseInt(hex.trim().replace("#", "").slice(offset, offset + 2), 16);
@@ -25,17 +27,31 @@ export function lerpPalette(from: ThemePalette, to: ThemePalette, t: number): Th
   };
 }
 
+function widgetCssVarName(widgetId: CanvasWidgetId, suffix: "text" | "text-muted" | "text-shadow") {
+  return `--canvas-widget-${widgetId}-${suffix}`;
+}
+
 export function themeToCssVars(theme: Theme): Record<string, string> {
-  return {
-    "--qs-color-background": theme.palette.background,
-    "--qs-color-surface": theme.palette.surface,
-    "--qs-color-text": theme.palette.text,
-    "--qs-color-accent": theme.palette.accent,
-    "--qs-shell-surface": theme.shellSurface,
-    "--qs-background-image": theme.backgroundUrl ? `url(${theme.backgroundUrl})` : "none",
-    "--qs-glass-opacity": String(theme.glassOpacity),
-    "--qs-border-radius": `${theme.borderRadius}px`,
+  const resolved = resolveTheme(theme);
+  const vars: Record<string, string> = {
+    "--qs-color-background": resolved.palette.background,
+    "--qs-color-surface": resolved.palette.surface,
+    "--qs-color-text": resolved.palette.text,
+    "--qs-color-accent": resolved.palette.accent,
+    "--qs-shell-surface": resolved.shellSurface,
+    "--qs-background-image": resolved.backgroundUrl ? `url(${resolved.backgroundUrl})` : "none",
+    "--qs-glass-opacity": String(resolved.glassOpacity),
+    "--qs-border-radius": `${resolved.borderRadius}px`,
   };
+
+  for (const widgetId of Object.keys(resolved.widgets) as CanvasWidgetId[]) {
+    const style = resolved.widgets[widgetId]!;
+    vars[widgetCssVarName(widgetId, "text")] = style.text;
+    vars[widgetCssVarName(widgetId, "text-muted")] = style.textMuted;
+    vars[widgetCssVarName(widgetId, "text-shadow")] = style.textShadow;
+  }
+
+  return vars;
 }
 
 export function applyTheme(element: HTMLElement, theme: Theme): void {

@@ -1,16 +1,24 @@
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import type { Library, Theme, Workspace, WorkspacePlacements } from "@/library/types";
+import {
+  createDefaultWidgetStyles,
+  DEFAULT_SHELL_SURFACE,
+} from "@/theme/theme-defaults";
+
+const defaultPalette = {
+  background: "#f5f0e8",
+  surface: "#fffdf9",
+  text: "#2c2419",
+  accent: "#c17f59",
+} as const;
 
 export const DEFAULT_WORKSPACE_THEME: Theme = {
-  palette: {
-    background: "#f5f0e8",
-    surface: "#fffdf9",
-    text: "#2c2419",
-    accent: "#c17f59",
-  },
+  palette: { ...defaultPalette },
+  shellSurface: DEFAULT_SHELL_SURFACE,
   glassOpacity: 0.72,
   borderRadius: 20,
+  widgets: createDefaultWidgetStyles(defaultPalette),
 };
 
 const EMPTY_PLACEMENTS: WorkspacePlacements = {

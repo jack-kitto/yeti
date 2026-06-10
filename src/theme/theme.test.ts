@@ -38,9 +38,11 @@ describe("themeToCssVars", () => {
         text: "#2c2419",
         accent: "#c17f59",
       },
+      shellSurface: "glass",
       backgroundUrl: "https://example.com/bg.jpg",
       glassOpacity: 0.72,
       borderRadius: 20,
+      widgets: {},
     };
 
     expect(themeToCssVars(theme)).toEqual({
@@ -48,6 +50,7 @@ describe("themeToCssVars", () => {
       "--qs-color-surface": "#fffdf9",
       "--qs-color-text": "#2c2419",
       "--qs-color-accent": "#c17f59",
+      "--qs-shell-surface": "glass",
       "--qs-background-image": "url(https://example.com/bg.jpg)",
       "--qs-glass-opacity": "0.72",
       "--qs-border-radius": "20px",

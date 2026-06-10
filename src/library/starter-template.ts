@@ -2,6 +2,10 @@ import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { rebalanceKeys } from "@/fractional-order/fractional-order";
+import {
+  createDefaultWidgetStyles,
+  DEFAULT_SHELL_SURFACE,
+} from "@/theme/theme-defaults";
 import type { EdgeGroup, Library, Link, Theme, Workspace } from "./types";
 
 function link(id: string, url: string, title: string): Link {
@@ -62,28 +66,36 @@ function workspace(
   };
 }
 
+const workPalette = {
+  background: "#f5f0e8",
+  surface: "#fffdf9",
+  text: "#2c2419",
+  accent: "#c17f59",
+} as const;
+
+const personalPalette = {
+  background: "#1a1d24",
+  surface: "#252a33",
+  text: "#e8e6e3",
+  accent: "#7eb8da",
+} as const;
+
 const workTheme: Theme = {
-  palette: {
-    background: "#f5f0e8",
-    surface: "#fffdf9",
-    text: "#2c2419",
-    accent: "#c17f59",
-  },
+  palette: { ...workPalette },
+  shellSurface: DEFAULT_SHELL_SURFACE,
   backgroundUrl: "https://images.unsplash.com/photo-1497215728101-856f1ea4214f?w=1920",
   glassOpacity: 0.72,
   borderRadius: 20,
+  widgets: createDefaultWidgetStyles(workPalette),
 };
 
 const personalTheme: Theme = {
-  palette: {
-    background: "#1a1d24",
-    surface: "#252a33",
-    text: "#e8e6e3",
-    accent: "#7eb8da",
-  },
+  palette: { ...personalPalette },
+  shellSurface: DEFAULT_SHELL_SURFACE,
   backgroundUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920",
   glassOpacity: 0.65,
   borderRadius: 20,
+  widgets: createDefaultWidgetStyles(personalPalette),
 };
 
 export const STARTER_CATALOG: Link[] = [

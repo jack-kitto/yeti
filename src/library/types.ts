@@ -17,22 +17,41 @@ export type ThemePalette = {
   accent: string;
 };
 
+export type ShellSurface = "solid" | "glass" | "transparent";
+
+export type CanvasZone =
+  | "center"
+  | "upper-center"
+  | "lower-left"
+  | "lower-right"
+  | "bottom-center";
+
+export type CanvasWidgetStyle = {
+  zone: CanvasZone;
+  order: number;
+  text: string;
+  textMuted: string;
+  textShadow: string;
+};
+
 export type Theme = {
   palette: ThemePalette;
+  shellSurface: ShellSurface;
   backgroundUrl?: string;
-  paletteOverrides?: Partial<ThemePalette>;
-  paletteExtractedFromUrl?: string;
   glassOpacity: number;
   borderRadius: number;
+  widgets: Partial<Record<CanvasWidgetId, CanvasWidgetStyle>>;
+  appliedPresetId?: string;
 };
 
 export type ThemePatch = {
   palette?: Partial<ThemePalette>;
+  shellSurface?: ShellSurface;
   backgroundUrl?: string | null;
-  paletteExtractedFromUrl?: string | null;
-  recordPaletteOverrides?: boolean;
   glassOpacity?: number;
   borderRadius?: number;
+  widgets?: Partial<Record<CanvasWidgetId, Partial<CanvasWidgetStyle>>>;
+  appliedPresetId?: string | null;
 };
 
 export type EdgeGroupLinkPlacement = {

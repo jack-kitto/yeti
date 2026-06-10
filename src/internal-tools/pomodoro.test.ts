@@ -52,6 +52,7 @@ describe("resetPomodoro", () => {
       phase: "shortBreak",
       endsAt: "2026-06-09T12:25:00.000Z",
       chimeEnabled: true,
+      activeTaskId: "task-1",
     });
 
     expect(reset).toMatchObject({
@@ -60,16 +61,8 @@ describe("resetPomodoro", () => {
       running: false,
       endsAt: null,
       chimeEnabled: true,
-    });
-  });
-
-  it("clears the active focus task", () => {
-    const reset = resetPomodoro({
-      ...createDefaultPomodoroState(),
       activeTaskId: "task-1",
     });
-
-    expect(reset.activeTaskId).toBeNull();
   });
 });
 

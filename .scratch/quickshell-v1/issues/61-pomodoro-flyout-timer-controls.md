@@ -17,7 +17,7 @@ Fix pomodoro flyout UX gaps found after issue 55:
 - [x] Primary timer controls sit below status, above scrollable split config
 - [x] Internal tool flyout scrolls split config; dismiss sits outside scroll area
 - [x] **Clear focus** button when a task is armed
-- [x] **Reset** clears `activeTaskId`
+- [x] **Reset** resets timer phase without clearing armed task (**Clear focus** clears `activeTaskId`)
 - [x] Tests cover clear focus and reset behavior
 
 ## Comments

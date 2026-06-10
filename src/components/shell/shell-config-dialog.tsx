@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import type { Library } from "@/library/types";
+import type { Library, Theme } from "@/library/types";
 import { useConfigStore, type ConfigSection } from "@/store/config-store";
 import { ShellConfigCanvasWidgets } from "./shell-config-canvas-widgets";
 import { ShellConfigCatalog } from "./shell-config-catalog";
@@ -13,6 +13,8 @@ import { ShellConfigWorkspaces } from "./shell-config-workspaces";
 type ShellConfigDialogProps = {
   library: Library;
   workspaceName: string;
+  paletteExtractionErrors: Record<string, string>;
+  onRetryPaletteExtraction: (workspaceId: string, theme: Theme) => Promise<void>;
 };
 
 const SECTIONS: { id: ConfigSection; label: string; description: string }[] = [
@@ -24,7 +26,14 @@ const SECTIONS: { id: ConfigSection; label: string; description: string }[] = [
   { id: "library", label: "Library", description: "Reset and maintenance" },
 ];
 
-function sectionContent(section: ConfigSection, library: Library) {
+function sectionContent(
+  section: ConfigSection,
+  library: Library,
+  paletteProps: Pick<
+    ShellConfigDialogProps,
+    "paletteExtractionErrors" | "onRetryPaletteExtraction"
+  >,
+) {
   switch (section) {
     case "links":
       return <ShellConfigCatalog library={library} />;
@@ -33,7 +42,7 @@ function sectionContent(section: ConfigSection, library: Library) {
     case "canvas":
       return <ShellConfigCanvasWidgets library={library} />;
     case "workspaces":
-      return <ShellConfigWorkspaces library={library} />;
+      return <ShellConfigWorkspaces library={library} {...paletteProps} />;
     case "focusRadio":
       return <ShellConfigFocusRadio library={library} />;
     case "library":
@@ -41,7 +50,12 @@ function sectionContent(section: ConfigSection, library: Library) {
   }
 }
 
-export function ShellConfigDialog({ library, workspaceName }: ShellConfigDialogProps) {
+export function ShellConfigDialog({
+  library,
+  workspaceName,
+  paletteExtractionErrors,
+  onRetryPaletteExtraction,
+}: ShellConfigDialogProps) {
   const { open, section, openSection, close } = useConfigStore();
   const active = SECTIONS.find((entry) => entry.id === section) ?? SECTIONS[0];
 
@@ -99,7 +113,10 @@ export function ShellConfigDialog({ library, workspaceName }: ShellConfigDialogP
         </nav>
 
         <div className="shell-config-dialog-body shell-config-dialog-body-scroll">
-          {sectionContent(section, library)}
+          {sectionContent(section, library, {
+            paletteExtractionErrors,
+            onRetryPaletteExtraction,
+          })}
         </div>
       </div>
     </div>

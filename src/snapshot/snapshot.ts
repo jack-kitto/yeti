@@ -114,6 +114,12 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
       theme: {
         palette: { ...workspace.theme.palette },
         ...(workspace.theme.backgroundUrl ? { backgroundUrl: workspace.theme.backgroundUrl } : {}),
+        ...(workspace.theme.paletteOverrides
+          ? { paletteOverrides: { ...workspace.theme.paletteOverrides } }
+          : {}),
+        ...(workspace.theme.paletteExtractedFromUrl
+          ? { paletteExtractedFromUrl: workspace.theme.paletteExtractedFromUrl }
+          : {}),
         glassOpacity: workspace.theme.glassOpacity,
         borderRadius: workspace.theme.borderRadius,
       },
@@ -157,6 +163,12 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
             palette: { ...workspace.theme.palette },
             ...(workspace.theme.backgroundUrl
               ? { backgroundUrl: workspace.theme.backgroundUrl }
+              : {}),
+            ...(workspace.theme.paletteOverrides
+              ? { paletteOverrides: { ...workspace.theme.paletteOverrides } }
+              : {}),
+            ...(workspace.theme.paletteExtractedFromUrl
+              ? { paletteExtractedFromUrl: workspace.theme.paletteExtractedFromUrl }
               : {}),
             glassOpacity: workspace.theme.glassOpacity,
             borderRadius: workspace.theme.borderRadius,

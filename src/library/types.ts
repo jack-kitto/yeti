@@ -20,6 +20,8 @@ export type ThemePalette = {
 export type Theme = {
   palette: ThemePalette;
   backgroundUrl?: string;
+  paletteOverrides?: Partial<ThemePalette>;
+  paletteExtractedFromUrl?: string;
   glassOpacity: number;
   borderRadius: number;
 };
@@ -27,6 +29,8 @@ export type Theme = {
 export type ThemePatch = {
   palette?: Partial<ThemePalette>;
   backgroundUrl?: string | null;
+  paletteExtractedFromUrl?: string | null;
+  recordPaletteOverrides?: boolean;
   glassOpacity?: number;
   borderRadius?: number;
 };

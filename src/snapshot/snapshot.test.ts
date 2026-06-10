@@ -118,6 +118,34 @@ describe("serializeSnapshot", () => {
     });
   });
 
+  it("round-trips palette extraction metadata on workspace themes", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const workspaceId = library.activeWorkspaceId;
+    const withTheme = {
+      ...library,
+      workspaces: library.workspaces.map((workspace) =>
+        workspace.id === workspaceId
+          ? {
+              ...workspace,
+              theme: {
+                ...workspace.theme,
+                paletteOverrides: { accent: "#00ff00" },
+                paletteExtractedFromUrl: workspace.theme.backgroundUrl,
+              },
+            }
+          : workspace,
+      ),
+    };
+
+    const restored = deserializeSnapshot(serializeSnapshot(withTheme));
+    const workspace = restored.workspaces.find((entry) => entry.id === workspaceId);
+
+    expect(workspace?.theme.paletteOverrides).toEqual({ accent: "#00ff00" });
+    expect(workspace?.theme.paletteExtractedFromUrl).toBe(
+      withTheme.workspaces.find((entry) => entry.id === workspaceId)?.theme.backgroundUrl,
+    );
+  });
+
   it("keeps theme background images as URL references in the snapshot", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
     const snapshot = libraryToSnapshot(library);

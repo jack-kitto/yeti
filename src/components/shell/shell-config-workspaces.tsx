@@ -10,10 +10,12 @@ import {
   useUpdateWorkspaceTheme,
 } from "@/hooks/use-library";
 import { updateWorkspaceIcsFeedUrl } from "@/calendar/workspace-ics";
-import type { Library, ThemePalette } from "@/library/types";
+import type { Library, Theme, ThemePalette } from "@/library/types";
 
 type ShellConfigWorkspacesProps = {
   library: Library;
+  paletteExtractionErrors: Record<string, string>;
+  onRetryPaletteExtraction: (workspaceId: string, theme: Theme) => Promise<void>;
 };
 
 const PALETTE_FIELDS: { key: keyof ThemePalette; label: string }[] = [
@@ -23,7 +25,11 @@ const PALETTE_FIELDS: { key: keyof ThemePalette; label: string }[] = [
   { key: "accent", label: "Accent" },
 ];
 
-export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
+export function ShellConfigWorkspaces({
+  library,
+  paletteExtractionErrors,
+  onRetryPaletteExtraction,
+}: ShellConfigWorkspacesProps) {
   const applyLibraryPatch = useApplyLibraryPatch();
   const createWorkspace = useCreateWorkspace();
   const renameWorkspace = useRenameWorkspace();
@@ -33,6 +39,7 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState(library.activeWorkspaceId);
   const [workspaceName, setWorkspaceName] = useState("");
   const [newWorkspaceName, setNewWorkspaceName] = useState("");
+  const [backgroundUrlDraft, setBackgroundUrlDraft] = useState("");
 
   const selectedWorkspace =
     library.workspaces.find((workspace) => workspace.id === selectedWorkspaceId) ??
@@ -49,6 +56,38 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
   useEffect(() => {
     setWorkspaceName(selectedWorkspace?.name ?? "");
   }, [selectedWorkspace?.id, selectedWorkspace?.name]);
+
+  useEffect(() => {
+    setBackgroundUrlDraft(selectedWorkspace?.theme.backgroundUrl ?? "");
+  }, [selectedWorkspace?.id, selectedWorkspace?.theme.backgroundUrl]);
+
+  useEffect(() => {
+    if (!selectedWorkspace) {
+      return;
+    }
+
+    const workspaceId = selectedWorkspace.id;
+    const current = selectedWorkspace.theme.backgroundUrl ?? "";
+
+    const timer = window.setTimeout(() => {
+      const trimmed = backgroundUrlDraft.trim();
+      if (trimmed === current) {
+        return;
+      }
+
+      updateWorkspaceTheme.mutate({
+        workspaceId,
+        patch: { backgroundUrl: trimmed || null },
+      });
+    }, 400);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    backgroundUrlDraft,
+    selectedWorkspace?.id,
+    selectedWorkspace?.theme.backgroundUrl,
+    updateWorkspaceTheme,
+  ]);
 
   function handleCreateWorkspace(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -108,6 +147,8 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
   if (!selectedWorkspace) {
     return null;
   }
+
+  const paletteExtractionError = paletteExtractionErrors[selectedWorkspace.id];
 
   return (
     <div className="shell-config-dialog-section shell-config-dialog-section-fill">
@@ -223,12 +264,29 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
               <span className="shell-config-form-label">Background image URL</span>
               <input
                 type="url"
-                value={selectedWorkspace.theme.backgroundUrl ?? ""}
-                onChange={(event) => patchTheme({ backgroundUrl: event.target.value || null })}
+                value={backgroundUrlDraft}
+                onChange={(event) => setBackgroundUrlDraft(event.target.value)}
                 placeholder="https://…"
                 className="shell-config-input"
               />
             </label>
+
+            {paletteExtractionError ? (
+              <div className="shell-config-theme-feedback">
+                <p className="shell-config-error" role="status">
+                  {paletteExtractionError} Palette colors were left unchanged.
+                </p>
+                <button
+                  type="button"
+                  className="shell-config-action"
+                  onClick={() =>
+                    void onRetryPaletteExtraction(selectedWorkspace.id, selectedWorkspace.theme)
+                  }
+                >
+                  Retry palette extraction
+                </button>
+              </div>
+            ) : null}
 
             <label className="shell-config-color-field">
               <span className="shell-config-form-label">

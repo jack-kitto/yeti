@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useApplyLibraryPatch, useLibrary, useSaveLibrary } from "@/hooks/use-library";
+import { usePaletteExtraction } from "@/hooks/use-palette-extraction";
 import { applyTheme } from "@/theme/theme";
 import { reorderEdgeGroupOnRim } from "@/placement/placement";
 import { getShellLayout } from "@/shell-frame/layout";
@@ -33,6 +34,7 @@ export function Shell() {
   const { data: library, isLoading } = useLibrary();
   const applyLibraryPatch = useApplyLibraryPatch();
   const saveLibraryMutation = useSaveLibrary();
+  const { paletteExtractionErrors, retryPaletteExtraction } = usePaletteExtraction(library);
   const [panelBounds, setPanelBounds] = useState<PanelBounds>(readPanelBounds);
 
   const activeWorkspace = library?.workspaces.find((w) => w.id === library.activeWorkspaceId);
@@ -111,7 +113,12 @@ export function Shell() {
         />
 
         <Launcher library={library} />
-        <ShellConfigDialog library={library} workspaceName={activeWorkspace.name} />
+        <ShellConfigDialog
+          library={library}
+          workspaceName={activeWorkspace.name}
+          paletteExtractionErrors={paletteExtractionErrors}
+          onRetryPaletteExtraction={retryPaletteExtraction}
+        />
       </div>
     </FocusRadioPlaybackProvider>
   );

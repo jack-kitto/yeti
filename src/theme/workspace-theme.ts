@@ -1,7 +1,23 @@
-import type { Library, Theme, ThemePatch } from "@/library/types";
+import type { Library, Theme, ThemePalette, ThemePatch } from "@/library/types";
+
+function trackPaletteOverrides(
+  theme: Theme,
+  palettePatch: Partial<ThemePalette>,
+): Partial<ThemePalette> | undefined {
+  const overrides: Partial<ThemePalette> = { ...theme.paletteOverrides };
+
+  for (const key of Object.keys(palettePatch) as (keyof ThemePalette)[]) {
+    const value = palettePatch[key];
+    if (value !== undefined) {
+      overrides[key] = value;
+    }
+  }
+
+  return Object.keys(overrides).length > 0 ? overrides : undefined;
+}
 
 function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
-  const next: Theme = {
+  let next: Theme = {
     ...theme,
     palette: {
       ...theme.palette,
@@ -11,14 +27,40 @@ function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
     ...(patch.borderRadius !== undefined ? { borderRadius: patch.borderRadius } : {}),
   };
 
+  if (patch.palette && patch.recordPaletteOverrides !== false) {
+    const overrides = trackPaletteOverrides(theme, patch.palette);
+    if (overrides) {
+      next = { ...next, paletteOverrides: overrides };
+    }
+  }
+
+  if (patch.paletteExtractedFromUrl === null) {
+    const { paletteExtractedFromUrl: _removed, ...withoutMarker } = next;
+    next = withoutMarker;
+  } else if (patch.paletteExtractedFromUrl !== undefined) {
+    next = { ...next, paletteExtractedFromUrl: patch.paletteExtractedFromUrl };
+  }
+
   if (patch.backgroundUrl === null) {
-    const { backgroundUrl: _removed, ...withoutBackground } = next;
+    const {
+      backgroundUrl: _backgroundUrl,
+      paletteExtractedFromUrl: _paletteExtractedFromUrl,
+      ...withoutBackground
+    } = next;
     return withoutBackground;
   }
 
   if (patch.backgroundUrl !== undefined) {
     const trimmed = patch.backgroundUrl.trim();
-    return trimmed ? { ...next, backgroundUrl: trimmed } : { ...next, backgroundUrl: undefined };
+    const nextBackgroundUrl = trimmed || undefined;
+    const backgroundChanged = nextBackgroundUrl !== theme.backgroundUrl;
+
+    next = trimmed ? { ...next, backgroundUrl: trimmed } : { ...next, backgroundUrl: undefined };
+
+    if (backgroundChanged) {
+      const { paletteExtractedFromUrl: _paletteExtractedFromUrl, ...withoutMarker } = next;
+      next = withoutMarker;
+    }
   }
 
   return next;

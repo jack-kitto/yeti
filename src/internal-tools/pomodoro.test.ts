@@ -196,6 +196,34 @@ describe("setCustomFocusSplit", () => {
     expect(updated.pomodoro.splitId).toBe("custom");
     expect(tools.customFocusSplit).toBeNull();
   });
+
+  it("accepts custom splits longer than built-in presets", () => {
+    const tools = createDefaultWorkspaceInternalTools();
+
+    const updated = setCustomFocusSplit(tools, {
+      workMinutes: 120,
+      shortBreakMinutes: 20,
+      longBreakMinutes: 45,
+    });
+
+    expect(updated.customFocusSplit).toMatchObject({
+      workMinutes: 120,
+      shortBreakMinutes: 20,
+      longBreakMinutes: 45,
+    });
+  });
+
+  it("rejects non-positive split minute values", () => {
+    const tools = createDefaultWorkspaceInternalTools();
+
+    expect(
+      setCustomFocusSplit(tools, {
+        workMinutes: 0,
+        shortBreakMinutes: 5,
+        longBreakMinutes: 15,
+      }),
+    ).toBe(tools);
+  });
 });
 
 describe("resolveFocusSplit", () => {

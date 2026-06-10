@@ -106,11 +106,9 @@ export type CustomFocusSplitDraft = {
 };
 
 const MIN_SPLIT_MINUTES = 1;
-const MAX_WORK_MINUTES = 60;
-const MAX_BREAK_MINUTES = 30;
 
-function isValidSplitMinutes(value: number, max: number): boolean {
-  return Number.isInteger(value) && value >= MIN_SPLIT_MINUTES && value <= max;
+function isValidSplitMinutes(value: number): boolean {
+  return Number.isInteger(value) && value >= MIN_SPLIT_MINUTES;
 }
 
 export function setCustomFocusSplit(
@@ -118,9 +116,9 @@ export function setCustomFocusSplit(
   draft: CustomFocusSplitDraft,
 ): WorkspaceInternalTools {
   if (
-    !isValidSplitMinutes(draft.workMinutes, MAX_WORK_MINUTES) ||
-    !isValidSplitMinutes(draft.shortBreakMinutes, MAX_BREAK_MINUTES) ||
-    !isValidSplitMinutes(draft.longBreakMinutes, MAX_BREAK_MINUTES)
+    !isValidSplitMinutes(draft.workMinutes) ||
+    !isValidSplitMinutes(draft.shortBreakMinutes) ||
+    !isValidSplitMinutes(draft.longBreakMinutes)
   ) {
     return tools;
   }

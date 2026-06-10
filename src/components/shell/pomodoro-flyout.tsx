@@ -214,7 +214,6 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
             <input
               type="number"
               min={1}
-              max={60}
               value={customDraft.workMinutes}
               onChange={(event) =>
                 setCustomDraft((draft) => ({
@@ -231,7 +230,6 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
             <input
               type="number"
               min={1}
-              max={30}
               value={customDraft.shortBreakMinutes}
               onChange={(event) =>
                 setCustomDraft((draft) => ({
@@ -248,7 +246,6 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
             <input
               type="number"
               min={1}
-              max={30}
               value={customDraft.longBreakMinutes}
               onChange={(event) =>
                 setCustomDraft((draft) => ({

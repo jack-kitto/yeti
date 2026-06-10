@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -10,10 +10,10 @@ Remove the 60-minute cap on custom **focus split** work intervals. Validate only
 
 ## Acceptance criteria
 
-- [ ] Custom split accepts any positive integer minutes (no preset maximum)
-- [ ] Invalid values (0, negative, non-integer) rejected in domain logic and UI
-- [ ] HTML `max` attributes removed from custom split inputs
-- [ ] Tests cover validation edge cases
+- [x] Custom split accepts any positive integer minutes (no preset maximum)
+- [x] Invalid values (0, negative, non-integer) rejected in domain logic and UI
+- [x] HTML `max` attributes removed from custom split inputs
+- [x] Tests cover validation edge cases
 
 ## Blocked by
 

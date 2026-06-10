@@ -6,6 +6,7 @@ import { formatClockDisplay } from "@/canvas-widgets/clock";
 import { listEnabledCanvasWidgets } from "@/canvas-widgets/config";
 import { pickQuote } from "@/canvas-widgets/quote";
 import { formatWelcomeMessage } from "@/canvas-widgets/welcome";
+import { CanvasFocusTasksWidget } from "./canvas-focus-tasks-widget";
 import { CanvasNowPlayingWidget } from "./canvas-now-playing-widget";
 import { CanvasPomodoroWidget } from "./canvas-pomodoro-widget";
 
@@ -83,6 +84,8 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
             return <CanvasNowPlayingWidget key={widgetId} />;
           case "pomodoro":
             return <CanvasPomodoroWidget key={widgetId} workspace={workspace} />;
+          case "focusTasks":
+            return <CanvasFocusTasksWidget key={widgetId} workspace={workspace} />;
         }
       })}
     </div>

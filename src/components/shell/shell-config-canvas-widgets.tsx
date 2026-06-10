@@ -15,6 +15,7 @@ const WIDGET_LABELS: Record<CanvasWidgetId, string> = {
   quote: "Quote",
   nowPlaying: "Now playing",
   pomodoro: "Pomodoro",
+  focusTasks: "Focus tasks",
 };
 
 type ShellConfigCanvasWidgetsProps = {

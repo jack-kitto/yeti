@@ -9,6 +9,7 @@ export const CANVAS_WIDGET_IDS: CanvasWidgetId[] = [
   "quote",
   "nowPlaying",
   "pomodoro",
+  "focusTasks",
 ];
 
 export function createDefaultCanvasWidgets(): CanvasWidgetConfig {
@@ -18,6 +19,7 @@ export function createDefaultCanvasWidgets(): CanvasWidgetConfig {
     quote: true,
     nowPlaying: true,
     pomodoro: false,
+    focusTasks: false,
   };
 }
 

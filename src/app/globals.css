@@ -639,6 +639,109 @@ body {
   transform: scale(0.96);
 }
 
+.canvas-focus-tasks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 22rem);
+}
+
+.canvas-focus-tasks-heading {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
+}
+
+.canvas-focus-tasks-empty {
+  margin: 0;
+  font-size: 13px;
+  color: color-mix(in srgb, var(--qs-color-text) 60%, transparent);
+}
+
+.canvas-focus-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.canvas-focus-tasks-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--qs-color-text) 4%, transparent);
+}
+
+.canvas-focus-tasks-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  width: 100%;
+}
+
+.canvas-focus-tasks-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--qs-color-text);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.canvas-focus-tasks-estimate {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--qs-color-text) 68%, transparent);
+}
+
+.canvas-focus-tasks-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.canvas-focus-tasks-action {
+  border: 0;
+  border-radius: 999px;
+  padding: 5px 12px;
+  background: color-mix(in srgb, var(--qs-color-accent) 16%, transparent);
+  color: var(--qs-color-accent);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    transform 140ms var(--qs-press-ease),
+    background 140ms ease,
+    opacity 140ms ease;
+}
+
+.canvas-focus-tasks-action:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--qs-color-accent) 24%, transparent);
+}
+
+.canvas-focus-tasks-action:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.canvas-focus-tasks-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
 .shell-dashboard-media-empty,
 .shell-dashboard-media {
   display: flex;

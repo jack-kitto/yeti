@@ -10,6 +10,7 @@ import { pickQuote } from "./quote";
 import { formatWelcomeMessage } from "./welcome";
 import { loadOrSeedLibrary } from "@/library/library";
 import { createInMemoryLibraryStore } from "@/library/store";
+import { deserializeSnapshot, serializeSnapshot } from "@/snapshot/snapshot";
 import { ensureWorkspaceCanvasWidgets } from "./defaults";
 
 describe("formatClockDisplay", () => {
@@ -70,6 +71,7 @@ describe("createDefaultCanvasWidgets", () => {
       quote: true,
       nowPlaying: true,
       pomodoro: false,
+      focusTasks: false,
     });
   });
 });
@@ -77,6 +79,10 @@ describe("createDefaultCanvasWidgets", () => {
 describe("CANVAS_WIDGET_IDS", () => {
   it("includes the pomodoro canvas widget in canonical order", () => {
     expect(CANVAS_WIDGET_IDS).toContain("pomodoro");
+  });
+
+  it("includes the focus tasks canvas widget in canonical order", () => {
+    expect(CANVAS_WIDGET_IDS).toContain("focusTasks");
   });
 });
 
@@ -104,11 +110,38 @@ describe("listEnabledCanvasWidgets", () => {
         tasks: [],
         customFocusSplit: null,
       },
-      canvasWidgets: { clock: true, welcome: false, quote: true, nowPlaying: false, pomodoro: false },
+      canvasWidgets: {
+        clock: true,
+        welcome: false,
+        quote: true,
+        nowPlaying: false,
+        pomodoro: false,
+        focusTasks: false,
+      },
     });
 
     expect(listEnabledCanvasWidgets(workspace)).toEqual(["clock", "quote"]);
-    expect(CANVAS_WIDGET_IDS).toEqual(["clock", "welcome", "quote", "nowPlaying", "pomodoro"]);
+    expect(CANVAS_WIDGET_IDS).toEqual([
+      "clock",
+      "welcome",
+      "quote",
+      "nowPlaying",
+      "pomodoro",
+      "focusTasks",
+    ]);
+  });
+});
+
+describe("focusTasks canvas widget snapshot", () => {
+  it("round-trips the per-workspace toggle through export and import", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const workspaceId = library.activeWorkspaceId;
+    const enabled = setCanvasWidgetEnabled(library, workspaceId, "focusTasks", true);
+
+    const restored = deserializeSnapshot(serializeSnapshot(enabled));
+    const workspace = restored.workspaces.find((entry) => entry.id === workspaceId)!;
+
+    expect(workspace.canvasWidgets.focusTasks).toBe(true);
   });
 });
 

@@ -13,7 +13,7 @@ describe("theme preset catalog", () => {
     expect(THEME_PRESETS.map((preset) => preset.id)).toEqual([
       "work",
       "personal",
-      "midnight",
+      "editorial",
       "forest",
       "sunset",
       "ocean",
@@ -21,11 +21,30 @@ describe("theme preset catalog", () => {
     expect(THEME_PRESETS.map((preset) => preset.name)).toEqual([
       "Work",
       "Personal",
-      "Midnight",
+      "Editorial",
       "Forest",
       "Sunset",
       "Ocean",
     ]);
+  });
+
+  it("ships an Editorial preset with monochrome corner widget placement", () => {
+    const editorial = getThemePreset("editorial")!;
+
+    expect(editorial.theme.palette).toEqual({
+      background: "#ffffff",
+      surface: "#ffffff",
+      text: "#000000",
+      accent: "#000000",
+    });
+    expect(editorial.theme.shellSurface).toBe("solid");
+    expect(editorial.theme.backgroundUrl).toBe("");
+    expect(editorial.theme.widgets.quote?.zone).toBe("upper-center");
+    expect(editorial.theme.widgets.focusTasks?.zone).toBe("lower-right");
+    expect(editorial.theme.widgets.welcome?.zone).toBe("lower-left");
+    expect(editorial.theme.widgets.clock?.zone).toBe("lower-left");
+    expect(editorial.theme.widgets.welcome?.order).toBe(0);
+    expect(editorial.theme.widgets.clock?.order).toBe(1);
   });
 
   it("each preset defines a complete theme with per-widget styling", () => {

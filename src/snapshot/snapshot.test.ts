@@ -62,6 +62,36 @@ describe("serializeSnapshot", () => {
     expect(restored.workspaces[0]?.internalTools).toEqual(library.workspaces[0]!.internalTools);
   });
 
+  it("round-trips focus countdown fields on the pomodoro record", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const workspace = library.workspaces[0]!;
+
+    library.workspaces[0] = {
+      ...workspace,
+      internalTools: {
+        ...workspace.internalTools,
+        pomodoro: {
+          ...workspace.internalTools.pomodoro,
+          mode: "countdown",
+          countdownMinutes: 30,
+          running: true,
+          endsAt: "2026-06-09T12:30:00.000Z",
+          activeTaskId: "task-1",
+        },
+      },
+    };
+
+    const restored = deserializeSnapshot(serializeSnapshot(library));
+
+    expect(restored.workspaces[0]?.internalTools.pomodoro).toMatchObject({
+      mode: "countdown",
+      countdownMinutes: 30,
+      running: true,
+      endsAt: "2026-06-09T12:30:00.000Z",
+      activeTaskId: "task-1",
+    });
+  });
+
   it("backfills missing internal tools fields when importing older snapshots", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
     const snapshot = libraryToSnapshot(library);

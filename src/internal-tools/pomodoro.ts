@@ -49,6 +49,7 @@ export function getFocusSplit(splitId: string): FocusSplit {
 
 export function createDefaultPomodoroState(): PomodoroState {
   return {
+    mode: "pomodoro",
     splitId: DEFAULT_SPLIT_ID,
     phase: "work",
     running: false,
@@ -56,6 +57,7 @@ export function createDefaultPomodoroState(): PomodoroState {
     chimeEnabled: false,
     activeTaskId: null,
     completedWorkSessions: 0,
+    countdownMinutes: null,
   };
 }
 
@@ -77,6 +79,29 @@ function phaseMinutes(phase: PomodoroPhase, split: FocusSplit): number {
   return split.longBreakMinutes;
 }
 
+function isValidCountdownMinutes(value: number): boolean {
+  return Number.isInteger(value) && value > 0;
+}
+
+export function startCountdown(
+  state: PomodoroState,
+  minutes: number,
+  now: Date,
+): PomodoroState {
+  if (!isValidCountdownMinutes(minutes)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    mode: "countdown",
+    countdownMinutes: minutes,
+    phase: "work",
+    running: true,
+    endsAt: new Date(now.getTime() + minutes * 60_000).toISOString(),
+  };
+}
+
 export function startPomodoro(
   state: PomodoroState,
   now: Date,
@@ -85,6 +110,8 @@ export function startPomodoro(
   const minutes = phaseMinutes(state.phase, split);
   return {
     ...state,
+    mode: "pomodoro",
+    countdownMinutes: null,
     running: true,
     endsAt: new Date(now.getTime() + minutes * 60_000).toISOString(),
   };
@@ -215,6 +242,14 @@ export function resetPomodoro(state: PomodoroState): PomodoroState {
   };
 }
 
+export function completeCountdown(state: PomodoroState): PomodoroState {
+  return {
+    ...state,
+    running: false,
+    endsAt: null,
+  };
+}
+
 const WORK_SESSIONS_BEFORE_LONG_BREAK = 4;
 
 export function advancePomodoroPhase(state: PomodoroState): PomodoroState {
@@ -264,7 +299,19 @@ export function displayPomodoroSeconds(
     return remainingSeconds(state, now);
   }
 
+  if (state.mode === "countdown" && state.countdownMinutes !== null) {
+    return state.countdownMinutes * 60;
+  }
+
   return phaseMinutes(state.phase, split) * 60;
+}
+
+export function formatPomodoroTimerLabel(state: PomodoroState): string {
+  if (state.mode === "countdown") {
+    return "Countdown";
+  }
+
+  return formatPomodoroPhaseLabel(state.phase);
 }
 
 export function formatTimerSeconds(totalSeconds: number): string {

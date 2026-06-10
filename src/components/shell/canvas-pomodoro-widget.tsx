@@ -6,9 +6,10 @@ import { useLibrary, useSaveLibrary } from "@/hooks/use-library";
 import type { Workspace } from "@/library/types";
 import {
   advancePomodoroPhase,
+  completeCountdown,
   displayPomodoroSeconds,
   formatFocusSplitSummary,
-  formatPomodoroPhaseLabel,
+  formatPomodoroTimerLabel,
   formatTimerSeconds,
   isPomodoroPhaseComplete,
   pausePomodoro,
@@ -47,6 +48,8 @@ export function CanvasPomodoroWidget({ workspace }: CanvasPomodoroWidgetProps) {
     }
 
     playChimeIfEnabled(pomodoro.chimeEnabled);
+    const nextPomodoro =
+      pomodoro.mode === "countdown" ? completeCountdown(pomodoro) : advancePomodoroPhase(pomodoro);
     saveLibrary.mutate({
       ...library,
       workspaces: library.workspaces.map((entry) =>
@@ -55,7 +58,7 @@ export function CanvasPomodoroWidget({ workspace }: CanvasPomodoroWidgetProps) {
               ...entry,
               internalTools: {
                 ...entry.internalTools,
-                pomodoro: advancePomodoroPhase(pomodoro),
+                pomodoro: nextPomodoro,
               },
             }
           : entry,
@@ -97,13 +100,17 @@ export function CanvasPomodoroWidget({ workspace }: CanvasPomodoroWidgetProps) {
         </div>
       </div>
       <div className="canvas-pomodoro-copy">
-        <p className="canvas-pomodoro-phase">{formatPomodoroPhaseLabel(pomodoro.phase)}</p>
+        <p className="canvas-pomodoro-phase">{formatPomodoroTimerLabel(pomodoro)}</p>
         <p className="canvas-pomodoro-timer" aria-live="polite">
           {formatTimerSeconds(seconds)}
         </p>
-        <p className="canvas-pomodoro-split">
-          {split.label} · {formatFocusSplitSummary(split)}
-        </p>
+        {pomodoro.mode === "countdown" ? (
+          <p className="canvas-pomodoro-split">{pomodoro.countdownMinutes} min focus countdown</p>
+        ) : (
+          <p className="canvas-pomodoro-split">
+            {split.label} · {formatFocusSplitSummary(split)}
+          </p>
+        )}
         {activeTask ? <p className="canvas-pomodoro-task">{activeTask.title}</p> : null}
       </div>
       <div className="canvas-pomodoro-actions">

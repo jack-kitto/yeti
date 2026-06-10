@@ -10,6 +10,7 @@ import {
   moveFocusTask,
   setFocusTaskEstimate,
   setFocusTaskToday,
+  startCountdownFromEstimate,
   startFocusOnTask,
 } from "./tasks";
 
@@ -69,6 +70,29 @@ describe("focus tasks", () => {
       running: false,
       endsAt: null,
     });
+  });
+
+  it("starts a focus countdown from a task estimate", () => {
+    let tools = addFocusTask(createDefaultWorkspaceInternalTools(), "Ship tasks", "task-1", 25);
+    const now = new Date("2026-06-09T12:00:00.000Z");
+
+    tools = startCountdownFromEstimate(tools, "task-1", now);
+
+    expect(tools.pomodoro).toMatchObject({
+      mode: "countdown",
+      activeTaskId: "task-1",
+      countdownMinutes: 25,
+      running: true,
+      endsAt: "2026-06-09T12:25:00.000Z",
+    });
+  });
+
+  it("refuses to start a countdown when the task has no estimate", () => {
+    const tools = addFocusTask(createDefaultWorkspaceInternalTools(), "Ship tasks", "task-1");
+
+    expect(startCountdownFromEstimate(tools, "task-1", new Date("2026-06-09T12:00:00.000Z"))).toBe(
+      tools,
+    );
   });
 
   it("clears the armed focus task without changing the timer", () => {

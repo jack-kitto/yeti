@@ -1,4 +1,5 @@
 import { initialKey, insertBetween, sortByKey } from "@/fractional-order/fractional-order";
+import { startCountdown } from "./pomodoro";
 import type { FocusTask, WorkspaceInternalTools } from "./types";
 
 export function listTodayTasks(tools: WorkspaceInternalTools): FocusTask[] {
@@ -60,6 +61,29 @@ export function getActiveFocusTask(tools: WorkspaceInternalTools): FocusTask | n
   return tools.tasks.find((task) => task.id === activeTaskId && !task.completed) ?? null;
 }
 
+export function startCountdownFromEstimate(
+  tools: WorkspaceInternalTools,
+  taskId: string,
+  now: Date,
+): WorkspaceInternalTools {
+  const task = tools.tasks.find((item) => item.id === taskId && !item.completed);
+  if (!task || task.estimateMinutes === undefined || !isValidEstimateMinutes(task.estimateMinutes)) {
+    return tools;
+  }
+
+  return {
+    ...tools,
+    pomodoro: startCountdown(
+      {
+        ...tools.pomodoro,
+        activeTaskId: taskId,
+      },
+      task.estimateMinutes,
+      now,
+    ),
+  };
+}
+
 export function startFocusOnTask(
   tools: WorkspaceInternalTools,
   taskId: string,
@@ -73,6 +97,8 @@ export function startFocusOnTask(
     ...tools,
     pomodoro: {
       ...tools.pomodoro,
+      mode: "pomodoro",
+      countdownMinutes: null,
       activeTaskId: taskId,
       phase: "work",
       running: false,

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   advancePomodoroPhase,
   BUILTIN_FOCUS_SPLITS,
+  completeCountdown,
   createDefaultWorkspaceInternalTools,
   displayPomodoroSeconds,
   formatTimerSeconds,
@@ -16,9 +17,33 @@ import {
   setCustomFocusSplit,
   setPomodoroChimeEnabled,
   setPomodoroSplit,
+  startCountdown,
   startPomodoro,
 } from "./pomodoro";
 import { createDefaultPomodoroState } from "./pomodoro";
+
+describe("createDefaultPomodoroState", () => {
+  it("starts in pomodoro mode with no countdown duration", () => {
+    expect(createDefaultPomodoroState()).toMatchObject({
+      mode: "pomodoro",
+      countdownMinutes: null,
+    });
+  });
+});
+
+describe("startCountdown", () => {
+  it("arms a single-interval timer for the requested minutes", () => {
+    const now = new Date("2026-06-09T12:00:00.000Z");
+    const started = startCountdown(createDefaultPomodoroState(), 30, now);
+
+    expect(started).toMatchObject({
+      mode: "countdown",
+      countdownMinutes: 30,
+      running: true,
+      endsAt: "2026-06-09T12:30:00.000Z",
+    });
+  });
+});
 
 describe("startPomodoro", () => {
   it("sets endsAt from the active split work interval", () => {
@@ -27,6 +52,17 @@ describe("startPomodoro", () => {
 
     expect(started.running).toBe(true);
     expect(started.endsAt).toBe("2026-06-09T12:25:00.000Z");
+    expect(started.mode).toBe("pomodoro");
+    expect(started.countdownMinutes).toBeNull();
+  });
+
+  it("replaces an active countdown with a pomodoro session", () => {
+    const now = new Date("2026-06-09T12:00:00.000Z");
+    const countdown = startCountdown(createDefaultPomodoroState(), 20, now);
+    const started = startPomodoro(countdown, now);
+
+    expect(started.mode).toBe("pomodoro");
+    expect(started.countdownMinutes).toBeNull();
   });
 });
 
@@ -93,6 +129,18 @@ describe("formatPomodoroPhaseLabel", () => {
 });
 
 describe("displayPomodoroSeconds", () => {
+  it("previews countdown duration when idle in countdown mode", () => {
+    const idleCountdown = {
+      ...createDefaultPomodoroState(),
+      mode: "countdown" as const,
+      countdownMinutes: 45,
+    };
+
+    expect(
+      displayPomodoroSeconds(idleCountdown, getFocusSplit("classic"), new Date("2026-06-09T12:00:00.000Z")),
+    ).toBe(45 * 60);
+  });
+
   it("previews the current phase duration when the timer is idle", () => {
     const split = getFocusSplit("classic");
     const idle = createDefaultPomodoroState();
@@ -234,6 +282,22 @@ describe("resolveFocusSplit", () => {
         customFocusSplit: custom,
       }),
     ).toEqual(custom);
+  });
+});
+
+describe("completeCountdown", () => {
+  it("stops a finished countdown without advancing pomodoro phases", () => {
+    const running = startCountdown(createDefaultPomodoroState(), 15, new Date("2026-06-09T12:00:00.000Z"));
+    const completed = completeCountdown(running);
+
+    expect(completed).toMatchObject({
+      mode: "countdown",
+      countdownMinutes: 15,
+      phase: "work",
+      running: false,
+      endsAt: null,
+      completedWorkSessions: 0,
+    });
   });
 });
 

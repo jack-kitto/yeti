@@ -10,6 +10,8 @@ export function internalToolZoneId(toolId: InternalToolId): string {
 
 export type PomodoroPhase = "work" | "shortBreak" | "longBreak";
 
+export type PomodoroTimerMode = "pomodoro" | "countdown";
+
 export type FocusSplit = {
   id: string;
   label: string;
@@ -19,8 +21,10 @@ export type FocusSplit = {
 };
 
 export type PomodoroState = {
+  mode: PomodoroTimerMode;
   splitId: string;
   phase: PomodoroPhase;
+  countdownMinutes: number | null;
   running: boolean;
   endsAt: string | null;
   chimeEnabled: boolean;

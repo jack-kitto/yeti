@@ -16,6 +16,8 @@ export function ensureWorkspaceInternalTools(workspace: Workspace): Workspace {
       pomodoro: {
         ...defaults.pomodoro,
         ...internalTools.pomodoro,
+        mode: internalTools.pomodoro.mode ?? "pomodoro",
+        countdownMinutes: internalTools.pomodoro.countdownMinutes ?? null,
         completedWorkSessions: internalTools.pomodoro.completedWorkSessions ?? 0,
       },
       customFocusSplit: internalTools.customFocusSplit ?? null,

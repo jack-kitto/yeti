@@ -9,6 +9,7 @@ import { useLibrary, useSaveLibrary } from "@/hooks/use-library";
 import type { Workspace } from "@/library/types";
 import {
   completeFocusTask,
+  startCountdownFromEstimate,
   startFocusOnTask,
 } from "@/internal-tools/tasks";
 import { getLatestShellZones } from "@/shell-frame/shell-state";
@@ -86,6 +87,12 @@ export function CanvasFocusTasksWidget({ workspace }: CanvasFocusTasksWidgetProp
                       ? "Start countdown"
                       : "Add an estimate to start countdown"
                   }
+                  onClick={() => {
+                    updateInternalTools(
+                      startCountdownFromEstimate(workspace.internalTools, task.id, new Date()),
+                    );
+                    pinInternalToolZone("pomodoro", getLatestShellZones());
+                  }}
                 >
                   Start countdown
                 </button>

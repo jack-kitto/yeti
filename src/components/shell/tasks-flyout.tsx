@@ -16,6 +16,7 @@ import {
   moveFocusTask,
   setFocusTaskEstimate,
   setFocusTaskToday,
+  startCountdownFromEstimate,
   startFocusOnTask,
 } from "@/internal-tools/tasks";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
@@ -138,6 +139,22 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
                   }}
                 >
                   Focus
+                </button>
+                <button
+                  type="button"
+                  className="shell-flyout-more shell-tool-task-action-btn"
+                  title={
+                    task.estimateMinutes
+                      ? "Start countdown"
+                      : "Add an estimate to start countdown"
+                  }
+                  disabled={!task.estimateMinutes}
+                  onClick={() => {
+                    onChange(startCountdownFromEstimate(internalTools, task.id, new Date()));
+                    pinInternalToolZone("pomodoro", getLatestShellZones());
+                  }}
+                >
+                  Countdown
                 </button>
                 <button
                   type="button"

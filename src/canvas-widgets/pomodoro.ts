@@ -10,11 +10,8 @@ export function canvasPomodoroFillLevel(
   now: Date,
 ): number {
   const split = resolveFocusSplit(pomodoro.splitId, tools);
-  const phaseSeconds = displayPomodoroSeconds(
-    { ...pomodoro, running: false, endsAt: null },
-    split,
-    now,
-  );
+  const idle = { ...pomodoro, running: false, endsAt: null };
+  const phaseSeconds = displayPomodoroSeconds(idle, split, now);
 
   if (phaseSeconds <= 0) {
     return 0;

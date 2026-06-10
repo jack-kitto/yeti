@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import {
   advancePomodoroPhase,
   BUILTIN_FOCUS_SPLITS,
+  completeCountdown,
   CUSTOM_SPLIT_ID,
   displayPomodoroSeconds,
   formatFocusSplitSummary,
-  formatPomodoroPhaseLabel,
+  formatPomodoroTimerLabel,
   formatTimerSeconds,
   isPomodoroPhaseComplete,
   pausePomodoro,
@@ -73,7 +74,10 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
     playChimeIfEnabled(pomodoro.chimeEnabled);
     onChange({
       ...internalTools,
-      pomodoro: advancePomodoroPhase(pomodoro),
+      pomodoro:
+        pomodoro.mode === "countdown"
+          ? completeCountdown(pomodoro)
+          : advancePomodoroPhase(pomodoro),
     });
   }, [internalTools, now, onChange, pomodoro]);
 
@@ -97,13 +101,19 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
         </div>
       ) : null}
       <div className={POMODORO_FLYOUT_STATUS_CLASS}>
-        <p className={POMODORO_FLYOUT_PHASE_CLASS}>{formatPomodoroPhaseLabel(pomodoro.phase)}</p>
+        <p className={POMODORO_FLYOUT_PHASE_CLASS}>{formatPomodoroTimerLabel(pomodoro)}</p>
         <p className="shell-tool-timer" aria-live="polite">
           {formatTimerSeconds(seconds)}
         </p>
-        <p className={POMODORO_FLYOUT_SPLIT_SUMMARY_CLASS}>
-          {split.label} · {formatFocusSplitSummary(split)}
-        </p>
+        {pomodoro.mode === "countdown" ? (
+          <p className={POMODORO_FLYOUT_SPLIT_SUMMARY_CLASS}>
+            {pomodoro.countdownMinutes} min focus countdown
+          </p>
+        ) : (
+          <p className={POMODORO_FLYOUT_SPLIT_SUMMARY_CLASS}>
+            {split.label} · {formatFocusSplitSummary(split)}
+          </p>
+        )}
       </div>
       <div className={POMODORO_FLYOUT_PRIMARY_ACTIONS_CLASS}>
         {pomodoro.running ? (
@@ -157,6 +167,8 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
         </button>
       </div>
       <div className={POMODORO_FLYOUT_SCROLL_CLASS}>
+      {pomodoro.mode === "pomodoro" ? (
+      <>
       <fieldset className="shell-tool-split-picker">
         <legend className="shell-tool-split-label">Focus split</legend>
         <div className="shell-tool-split-options">
@@ -262,6 +274,8 @@ export function PomodoroFlyout({ internalTools, onChange }: PomodoroFlyoutProps)
           Save custom split
         </button>
       </form>
+      </>
+      ) : null}
       </div>
     </div>
   );

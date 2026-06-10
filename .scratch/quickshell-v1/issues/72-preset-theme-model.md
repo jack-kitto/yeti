@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,11 +14,11 @@ Extend each workspace **theme** with `shellSurface` (`solid` | `glass` | `transp
 
 ## Acceptance criteria
 
-- [ ] `Theme` type matches PRD shape: `shellSurface`, `widgets` record, `appliedPresetId`; extraction fields removed
-- [ ] `extract-colors`, `palette-extraction`, and `usePaletteExtraction` removed; no runtime extraction on background URL change
-- [ ] `applyTheme` / `themeToCssVars` apply shell palette, `shellSurface`, `glassOpacity`, and per-widget colour variables
-- [ ] Canvas widgets use theme CSS variables (not image sampling or semi-transparent `color-mix` on primary copy)
-- [ ] Tests cover theme-to-CSS-var mapping and default widget style fallbacks
+- [x] `Theme` type matches PRD shape: `shellSurface`, `widgets` record, `appliedPresetId`; extraction fields removed
+- [x] `extract-colors`, `palette-extraction`, and `usePaletteExtraction` removed; no runtime extraction on background URL change
+- [x] `applyTheme` / `themeToCssVars` apply shell palette, `shellSurface`, `glassOpacity`, and per-widget colour variables
+- [x] Canvas widgets use theme CSS variables (not image sampling or semi-transparent `color-mix` on primary copy)
+- [x] Tests cover theme-to-CSS-var mapping and default widget style fallbacks
 
 ## Blocked by
 

@@ -40,7 +40,7 @@ import {
   type ShellZoneLayout,
 } from "@/shell-frame/layout";
 import { BUILTIN_SURFACE } from "@/shell-frame/rim";
-import { registerShellFrameListener } from "@/shell-frame/shell-animation";
+import { subscribeShellFrame } from "@/shell-frame/shell-animation";
 import {
   getShellState,
   setLatestShellZones,
@@ -223,7 +223,7 @@ export function ShellEdgeLayer({
   }, [zones, library]);
 
   useEffect(() => {
-    registerShellFrameListener(({ layout: frameLayout, pocket }) => {
+    return subscribeShellFrame(({ layout: frameLayout, pocket }) => {
       const positioned = updateZonePositions(zonesRef.current, frameLayout);
       const state = getShellState();
       const flyoutReveal = getFlyoutRevealProgress(state);
@@ -339,8 +339,6 @@ export function ShellEdgeLayer({
         }
       }
     });
-
-    return () => registerShellFrameListener(null);
   }, []);
 
   useEffect(() => {

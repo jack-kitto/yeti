@@ -17,6 +17,7 @@ import { CanvasWidgetStack } from "./canvas-widget-stack";
 import { Launcher } from "./launcher";
 import { ShellConfigDialog } from "./shell-config-dialog";
 import { ShellCanvas } from "./shell-canvas";
+import { ShellRimBackdrop } from "./shell-rim-backdrop";
 import { FocusRadioPlaybackProvider } from "./focus-radio-playback-context";
 import { ShellEdgeLayer } from "./shell-edge-layer";
 
@@ -200,6 +201,7 @@ function ShellLoaded({
           </div>
         </main>
 
+        <ShellRimBackdrop theme={displayTheme} />
         <ShellCanvas theme={displayTheme} />
 
         <ShellEdgeLayer

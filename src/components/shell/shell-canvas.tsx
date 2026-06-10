@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import type { Theme } from "@/library/types";
 import {
-  registerShellFrameListener,
   startShellAnimation,
   stopShellAnimation,
   themeToShellColors,
@@ -27,7 +26,6 @@ export function ShellCanvas({ theme }: ShellCanvasProps) {
     startShellAnimation(canvas, () => themeToShellColors(themeRef.current));
     return () => {
       stopShellAnimation();
-      registerShellFrameListener(null);
     };
   }, []);
 

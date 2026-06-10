@@ -153,6 +153,31 @@ body {
   outline-offset: -1px;
 }
 
+.shell-rim-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.shell-rim-backdrop-fill {
+  width: 100%;
+  height: 100%;
+  background: color-mix(
+    in srgb,
+    var(--qs-color-surface) calc(var(--qs-shell-fill-strength, 0.72) * 55%),
+    transparent
+  );
+  backdrop-filter: blur(var(--qs-shell-backdrop-blur, 24px));
+  -webkit-backdrop-filter: blur(var(--qs-shell-backdrop-blur, 24px));
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .shell-rim-backdrop {
+    display: none;
+  }
+}
+
 .shell-rim-hit {
   position: absolute;
   pointer-events: auto;

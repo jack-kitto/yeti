@@ -14,11 +14,22 @@ type FrameListener = (frame: {
   pocket: ReturnType<typeof getRenderPocket>;
 }) => void;
 
-let frameListener: FrameListener | null = null;
+const frameListeners = new Set<FrameListener>();
 let rafId: number | null = null;
 
+export function subscribeShellFrame(listener: FrameListener): () => void {
+  frameListeners.add(listener);
+  return () => {
+    frameListeners.delete(listener);
+  };
+}
+
+/** @deprecated Use subscribeShellFrame */
 export function registerShellFrameListener(listener: FrameListener | null) {
-  frameListener = listener;
+  frameListeners.clear();
+  if (listener) {
+    frameListeners.add(listener);
+  }
 }
 
 export function startShellAnimation(canvas: HTMLCanvasElement, getTheme: () => ShellThemeColors) {
@@ -54,7 +65,9 @@ export function startShellAnimation(canvas: HTMLCanvasElement, getTheme: () => S
 
     const pocket = getRenderPocket(layout, getShellState());
     drawShell(canvas, layout, pocket, getTheme());
-    frameListener?.({ layout, pocket });
+    for (const listener of frameListeners) {
+      listener({ layout, pocket });
+    }
     rafId = requestAnimationFrame(tick);
   };
 

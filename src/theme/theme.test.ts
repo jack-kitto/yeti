@@ -54,7 +54,26 @@ describe("themeToCssVars", () => {
       "--qs-background-image": "url(https://example.com/bg.jpg)",
       "--qs-glass-opacity": "0.72",
       "--qs-border-radius": "20px",
+      "--qs-shell-backdrop-blur": "24px",
     });
+  });
+
+  it("uses no backdrop blur and full fill strength for solid shell surface", () => {
+    const vars = themeToCssVars({
+      palette: {
+        background: "#f5f0e8",
+        surface: "#fffdf9",
+        text: "#2c2419",
+        accent: "#c17f59",
+      },
+      shellSurface: "solid",
+      glassOpacity: 0.72,
+      borderRadius: 20,
+      widgets: {},
+    });
+
+    expect(vars["--qs-shell-backdrop-blur"]).toBe("0px");
+    expect(vars["--qs-shell-fill-strength"]).toBe("1");
   });
 
   it("maps per-canvas-widget colours to CSS custom properties", () => {

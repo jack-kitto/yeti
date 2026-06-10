@@ -34,3 +34,5 @@ Allow the same catalog link in multiple edge groups. Placements are independent 
 Implemented via `src/placement/placement-mutations.ts` (pure mutations + 10 tests), `mutateLibrary` persistence, and `ShellConfigPlacements` in the config panel.
 
 Per-workspace isolation comes from targeting `library.activeWorkspaceId`; switching workspaces in the shell shows each workspace's placements independently.
+
+**Superseded AC (grill 2025-06):** Pin-related acceptance criteria (canvas pin assignment, pin strip reflection) are obsolete — pins removed in issue 32 / schema stripped in issue 48. Edge group placement AC remains current.

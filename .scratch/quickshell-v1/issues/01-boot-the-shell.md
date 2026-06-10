@@ -27,3 +27,7 @@ Add Library module unit tests (Vitest + fake-indexeddb or injectable in-memory a
 ## Blocked by
 
 None — can start immediately
+
+## Comments
+
+**Superseded scope (issue 47):** Pin strip and canvas workspace switcher described in "What to build" were removed in issues 32 and 26 respectively. Boot criteria at ship time were met; current product model is in `PRD.md` and `CONTEXT.md`.

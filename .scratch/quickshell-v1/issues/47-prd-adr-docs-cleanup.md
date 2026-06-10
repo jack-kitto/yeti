@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,10 +12,10 @@ Remove or mark obsolete: canvas **pin strip**, canvas **workspace switcher**, ho
 
 ## Acceptance criteria
 
-- [ ] PRD user stories no longer describe removed pin/switcher/right-rim-config flows
-- [ ] PRD reflects two-surface model (ADR 0004) and current settings entry points
-- [ ] ADR 0001 no longer lists pin positions as active v1 library surface (or notes removal)
-- [ ] Issue 07 / other done issues with pin-specific AC annotated or trimmed in Comments only if needed
+- [x] PRD user stories no longer describe removed pin/switcher/right-rim-config flows
+- [x] PRD reflects two-surface model (ADR 0004) and current settings entry points
+- [x] ADR 0001 no longer lists pin positions as active v1 library surface (or notes removal)
+- [x] Issue 07 / other done issues with pin-specific AC annotated or trimmed in Comments only if needed
 
 ## Blocked by
 

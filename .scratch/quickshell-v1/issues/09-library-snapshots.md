@@ -51,3 +51,5 @@ Add Snapshot round-trip unit tests.
 ## Comments
 
 Implemented via `src/snapshot/snapshot.ts` (7 tests), library import persistence (2 tests), and snapshot export/import UI in `ShellConfigLibrary`.
+
+**Schema note (issue 48):** `placements.pins` removed from active v1 format. Legacy snapshots with pin data import successfully but pins are stripped on load. Current schema uses `edgeGroups` per edge; see `src/snapshot/snapshot.ts` for the canonical shape.

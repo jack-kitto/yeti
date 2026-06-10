@@ -12,11 +12,11 @@ Migrate or strip `placements.pins` on load; stop seeding pin data in the starter
 
 ## Acceptance criteria
 
-- [ ] `WorkspacePlacements` no longer includes pins (or loads legacy snapshots by dropping pin data)
-- [ ] Starter template seeds zero pins
-- [ ] Snapshot round-trip no longer reads/writes pin placements
-- [ ] Placement/settings UI and shell no longer reference pin mutations
-- [ ] Existing tests updated; no dead pin-strip code paths remain
+- [x] `WorkspacePlacements` no longer includes pins (or loads legacy snapshots by dropping pin data)
+- [x] Starter template seeds zero pins
+- [x] Snapshot round-trip no longer reads/writes pin placements
+- [x] Placement/settings UI and shell no longer reference pin mutations
+- [x] Existing tests updated; no dead pin-strip code paths remain
 
 ## Blocked by
 

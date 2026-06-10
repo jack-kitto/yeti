@@ -1,0 +1,9 @@
+# Preset themes with explicit per-widget styling (no palette extraction)
+
+Yeti workspace **themes** were originally driven by client-side palette extraction from the background image (`extract-colors`), with follow-up contrast heuristics and a second runtime layer that sampled image regions for **canvas widget** text. Human QA showed the result was unreliable — canvas copy on wallpaper backdrops was often unreadable, and the two-layer colour model was hard to reason about.
+
+We chose **preset-only theming**: six bundled **theme presets** (copy-on-apply onto the workspace's inline theme), explicit shell palette tokens, **shell surface** style (`solid` | `glass` | `transparent` plus `glassOpacity`), and per-**canvas widget** placement (**canvas zone**, in-zone order) and colors (`text`, `textMuted`, `textShadow`). Background images are decorative; changing a background does not auto-adjust styling. **Canvas widget** on/off toggles are unchanged when a preset is applied. Theme shape changes require **library reset** (no migration). Custom background URLs are allowed; users fix readability manually or re-apply a preset.
+
+**Considered:** Auto-extraction as default (rejected — unreadable canvas text on arbitrary images). Runtime image-zone sampling for canvas text (rejected — duplicates preset intent, CORS fragility, fights explicit per-widget tokens). First-class theme records in the library (rejected for v1 — embedded copy-on-apply is simpler). Extraction as opt-in advanced action (rejected — presets-only keeps one mental model).
+
+**Consequences:** Remove `extract-colors`, `palette-extraction`, `paletteOverrides`, `paletteExtractedFromUrl`, and canvas image-sampling contrast code. Issues 44 and 63 are superseded. Workspace transitions must lerp the expanded theme shape. Issue 66 (shell `backdrop-filter`) aligns with `shellSurface: glass | transparent`.

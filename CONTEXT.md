@@ -35,8 +35,16 @@ A named shell context (e.g. Work, Personal). One workspace is active at a time. 
 _Avoid_: Profile, project, environment
 
 **Theme**:
-The visual identity of a workspace — color palette, background image, glass/surface styling, and related look-and-feel settings. Each workspace has its own theme. By default, palette colors are **extracted** from the background image (via client-side color extraction, e.g. [extract-colors](https://github.com/Namide/extract-colors)); the user can override any token manually in **settings**.
-_Avoid_: Skin, appearance preset
+The visual identity of a workspace — explicit shell color palette, **shell surface** style, background (image or solid color), **canvas widget** placement, and per-widget colors. Stored inline on the workspace record; each workspace owns its own theme. All colors are defined by the theme; the background image is decorative only — Yeti does not auto-extract or sample colors from images. Changing the background does not auto-adjust styling; users fix readability manually in **settings** or re-apply a **theme preset**. Preset authors pair each background with per-widget colors so widgets stay readable. Users start from a **theme preset** (copy-on-apply) or build manually; edits are workspace-local.
+_Avoid_: Skin, appearance preset, extracted palette, shared theme library
+
+**Shell surface**:
+How the **shell** rim and **notch** are rendered — `solid` (opaque fill, no blur), `glass` (frosted `backdrop-filter` with tinted surface color), or `transparent` (lighter frosted fill, minimal shell presence). Set per **theme** together with `glassOpacity`, which fine-tunes fill strength within `glass` and `transparent` modes. Distinct from the canvas background.
+_Avoid_: Texture, material, skin
+
+**Theme preset**:
+A bundled, designer-tested theme in Yeti's built-in catalog — six in v1 (including Work and Personal). Selecting a preset copies shell palette, **shell surface**, background, and per-**canvas widget** zone/colors onto the workspace's theme — presets are not persisted library records and edits after apply stay on that workspace only. **Canvas widget** on/off toggles are not changed by preset apply; only visual styling and placement update. From **settings**, users can override any section and **reset** individual sections back to the last applied preset.
+_Avoid_: Theme template, skin pack, theme library entry
 
 **Workspace transition**:
 The motion when changing active **workspace**. The canvas plane (widgets + **theme**) moves horizontally; rim frames stay anchored. The shell expands outward until it fills the screen and hides the canvas, the workspace swaps underneath, then the shell contracts back to its resting rim size.
@@ -53,11 +61,15 @@ The interactive content revealed inside an open **notch** — link rows, command
 _Avoid_: Flyout card, dropdown panel, modal
 
 **Canvas**:
-The large central area and primary focus surface. In v1: **canvas widgets** only — ambient home content with no pins and no workspace switcher. Enabled widgets stack vertically at optical center with a slight upward bias (~40% from top). Links are reached via **edge groups**, the **command bar**, and the **launcher**.
+The large central area and primary focus surface. In v1: **canvas widgets** only — ambient home content with no pins and no workspace switcher. Widget placement and colors come from the workspace **theme**, not a fixed global layout. Links are reached via **edge groups**, the **command bar**, and the **launcher**.
 _Avoid_: Dashboard, homepage, main content, pin strip
 
+**Canvas zone**:
+A named anchor region on the **canvas** where **canvas widgets** can be placed. v1 zones: `center`, `upper-center`, `lower-left`, `lower-right`, `bottom-center`. Each enabled widget is assigned a zone and a stack order within that zone. Zones are fixed in v1 — users choose zone and order in the **theme**, not free pixel positioning.
+_Avoid_: Grid slot, pin point, widget dock
+
 **Canvas widget**:
-A small configurable block on the **canvas** — visible when enabled (some types have extra visibility rules — e.g. **now playing** stays on canvas while paused until the user **dismisses** it; dismiss is a per-workspace flag in the **library**, separate from the settings on/off toggle, and clears on the next **play** from anywhere). v1 types: clock/date, welcome message, **quote**, **now playing**, **focus tasks**, and **pomodoro**. On/off toggles are **per-workspace** (stored on the workspace record); configured from **settings**. Ambient and minimal; not duplicated in the **control center**. **Focus tasks** and **pomodoro** canvas widgets read the same per-workspace **internal tool** state as the **right rim** — no duplicate task or timer store. Canvas offers glance + primary actions (start/pause timer, start focus/countdown, complete task); dense editing (reorder, estimates, split config, backlog toggle) stays on the **right rim**.
+A small configurable block on the **canvas** — visible when enabled (some types have extra visibility rules — e.g. **now playing** stays on canvas while paused until the user **dismisses** it; dismiss is a per-workspace flag in the **library**, separate from the settings on/off toggle, and clears on the next **play** from anywhere). v1 types: clock/date, welcome message, **quote**, **now playing**, **focus tasks**, and **pomodoro**. On/off toggles are **per-workspace**; each widget's **canvas zone**, in-zone stack order, and colors (`text`, `textMuted`, `textShadow`) are **per-widget** settings within the workspace **theme**. Ambient and minimal; not duplicated in the **control center**. **Focus tasks** and **pomodoro** canvas widgets read the same per-workspace **internal tool** state as the **right rim** — no duplicate task or timer store. Canvas offers glance + primary actions (start/pause timer, start focus/countdown, complete task); dense editing (reorder, estimates, split config, backlog toggle) stays on the **right rim**.
 _Avoid_: Widget, tile, card
 
 **Quote**:

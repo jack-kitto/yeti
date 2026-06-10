@@ -30,3 +30,5 @@ None
 **QA 2026-06-10:** Shell rim contrast is good; canvas widgets (clock, quote, etc.) are hard to read on image-backed workspaces after async extraction. Current mapper picks highest-area light color as background and darkest as text without verifying separation against the actual backdrop.
 
 **Shipped 2026-06-10:** `MIN_CANVAS_TEXT_CONTRAST_RATIO` (4.5, WCAG AA normal text) enforced in `mapExtractedColorsToPalette` via `ensureCanvasTextContrast`. Canvas widgets get a subtle backdrop `text-shadow` fallback in `globals.css`.
+
+**Superseded 2026-06-10 (grill-with-docs):** ADR `docs/adr/0007-preset-themes-no-extraction.md` — per-widget explicit colours in **theme** replace extraction heuristics and canvas image sampling. Discard uncommitted `canvas-text-contrast` work; implement via issues 72–79.

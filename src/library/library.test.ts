@@ -12,6 +12,7 @@ import {
   resetLibrary,
   saveLibrary,
 } from "./library";
+import { getThemePreset } from "@/theme/theme-presets";
 import { STARTER_CATALOG } from "./starter-template";
 import { createInMemoryLibraryStore } from "./store";
 import { EDGE_PREVIEW_LIMIT } from "@/placement/placement";
@@ -34,6 +35,21 @@ describe("loadOrSeedLibrary", () => {
 
     expect(work.theme.backgroundUrl).not.toBe(personal.theme.backgroundUrl);
     expect(work.theme.palette.background).not.toBe(personal.theme.palette.background);
+  });
+
+  it("seeds Work and Personal from the theme preset catalog", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const work = library.workspaces.find((workspace) => workspace.name === "Work")!;
+    const personal = library.workspaces.find((workspace) => workspace.name === "Personal")!;
+    const workPreset = getThemePreset("work")!;
+    const personalPreset = getThemePreset("personal")!;
+
+    expect(work.theme.appliedPresetId).toBe("work");
+    expect(work.theme.palette).toEqual(workPreset.theme.palette);
+    expect(work.theme.widgets).toEqual(workPreset.theme.widgets);
+    expect(personal.theme.appliedPresetId).toBe("personal");
+    expect(personal.theme.palette).toEqual(personalPreset.theme.palette);
+    expect(personal.theme.widgets).toEqual(personalPreset.theme.widgets);
   });
 
   it("seeds workspaces without pin placements", async () => {

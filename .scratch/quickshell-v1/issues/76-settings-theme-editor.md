@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,12 +12,12 @@ Add per-section **reset to preset**: shell block and each widget block can resto
 
 ## Acceptance criteria
 
-- [ ] User can edit shell palette, **shell surface**, `glassOpacity`, and background on the active workspace with live shell preview
-- [ ] User can edit per-widget zone, order, and colours for each widget type in collapsible sections
-- [ ] "Reset" on the shell section restores shell/background fields from the last applied **theme preset**
-- [ ] "Reset" on each widget section restores that widget's fields from the last applied preset
-- [ ] Reset is unavailable when `appliedPresetId` is unset
-- [ ] Tests cover reset-to-preset behaviour for shell and widget sections
+- [x] User can edit shell palette, **shell surface**, `glassOpacity`, and background on the active workspace with live shell preview
+- [x] User can edit per-widget zone, order, and colours for each widget type in collapsible sections
+- [x] "Reset" on the shell section restores shell/background fields from the last applied **theme preset**
+- [x] "Reset" on each widget section restores that widget's fields from the last applied preset
+- [x] Reset is unavailable when `appliedPresetId` is unset
+- [x] Tests cover reset-to-preset behaviour for shell and widget sections
 
 ## Blocked by
 

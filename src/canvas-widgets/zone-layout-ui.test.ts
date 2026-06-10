@@ -13,6 +13,12 @@ describe("canvas zone layout UI", () => {
     expect(stackSource).toContain('data-applied-preset={workspace.theme.appliedPresetId ?? undefined}');
   });
 
+  it("applies editorial preset font and widget polish via scoped CSS", () => {
+    expect(stackSource).toContain("editorialFont");
+    expect(css).toContain('[data-applied-preset="editorial"] .canvas-widget-quote');
+    expect(css).toContain('[data-applied-preset="editorial"] .canvas-focus-tasks-header');
+  });
+
   it("uses a five-zone grid driven by buildCanvasZoneLayout", () => {
     expect(stackSource).toContain("buildCanvasZoneLayout");
     expect(stackSource).toContain("canvas-zone-upper-center");

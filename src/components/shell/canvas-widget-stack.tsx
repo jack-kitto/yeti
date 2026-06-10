@@ -12,6 +12,7 @@ import {
 } from "@/canvas-widgets/zone-layout";
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { CanvasZone } from "@/library/types";
+import { editorialFont } from "@/theme/editorial-font";
 import { CanvasFocusTasksWidget } from "./canvas-focus-tasks-widget";
 import { CanvasNowPlayingWidget } from "./canvas-now-playing-widget";
 import { CanvasPomodoroWidget } from "./canvas-pomodoro-widget";
@@ -93,9 +94,11 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
     return null;
   }
 
+  const isEditorial = workspace.theme.appliedPresetId === "editorial";
+
   return (
     <div
-      className="canvas-widget-stage"
+      className={`canvas-widget-stage${isEditorial ? ` ${editorialFont.className}` : ""}`}
       data-applied-preset={workspace.theme.appliedPresetId ?? undefined}
     >
       {CANVAS_ZONES.map((zone) => {

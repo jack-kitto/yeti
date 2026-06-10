@@ -37,7 +37,9 @@ export function CanvasFocusTasksWidget({ workspace }: CanvasFocusTasksWidgetProp
   }
 
   return (
-    <ul className="canvas-focus-tasks-list">
+    <div className="canvas-focus-tasks">
+      <p className="canvas-focus-tasks-header">Tasks for today</p>
+      <ul className="canvas-focus-tasks-list">
       {tasks.map((task) => (
         <li key={task.id}>
           <button
@@ -50,6 +52,7 @@ export function CanvasFocusTasksWidget({ workspace }: CanvasFocusTasksWidgetProp
           </button>
         </li>
       ))}
-    </ul>
+      </ul>
+    </div>
   );
 }

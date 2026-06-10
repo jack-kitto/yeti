@@ -8,11 +8,7 @@ function link(id: string, title: string): Link {
   return { id, url: `https://${id}.example.com`, title };
 }
 
-function makeLibrary(
-  catalog: Link[],
-  placedIds: string[],
-  activeWorkspaceId = "work",
-): Library {
+function makeLibrary(catalog: Link[], placedIds: string[], activeWorkspaceId = "work"): Library {
   return {
     catalog,
     workspaces: [
@@ -59,23 +55,15 @@ function makeLibrary(
 
 describe("searchLinks", () => {
   it("returns placed links in the active workspace that fuzzy-match the query", () => {
-    const library = makeLibrary(
-      [link("github", "GitHub"), link("mdn", "MDN")],
-      ["github"],
-    );
+    const library = makeLibrary([link("github", "GitHub"), link("mdn", "MDN")], ["github"]);
 
     const results = searchLinks(library, "git");
 
-    expect(results).toEqual([
-      { link: library.catalog[0], source: "workspace" },
-    ]);
+    expect(results).toEqual([{ link: library.catalog[0], source: "workspace" }]);
   });
 
   it("ranks placed workspace links above unplaced catalog links", () => {
-    const library = makeLibrary(
-      [link("github", "GitHub"), link("gitlab", "GitLab")],
-      ["github"],
-    );
+    const library = makeLibrary([link("github", "GitHub"), link("gitlab", "GitLab")], ["github"]);
 
     const results = searchLinks(library, "git");
 
@@ -88,9 +76,7 @@ describe("searchLinks", () => {
 
     const results = searchLinks(library, "arch");
 
-    expect(results).toEqual([
-      { link: library.catalog[0], source: "catalog" },
-    ]);
+    expect(results).toEqual([{ link: library.catalog[0], source: "catalog" }]);
   });
 
   it("matches non-contiguous substrings in link titles", () => {

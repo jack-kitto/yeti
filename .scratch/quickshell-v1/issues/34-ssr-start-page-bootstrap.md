@@ -16,13 +16,13 @@ No URL-encoded themes or link payloads. Bookmark `/start` as the browser new-tab
 
 ### Tracer bullets
 
-| Issue | Slice |
-|-------|-------|
-| 35 | Route split — landing, `/home`, `/start` stub |
-| 36 | Start page SSR shell + loading gate |
-| 37 | Start page IDB search + starter fallback |
-| 38 | Settings — `/start` URL copy |
-| 39 | Bundle split verification |
+| Issue | Slice                                         |
+| ----- | --------------------------------------------- |
+| 35    | Route split — landing, `/home`, `/start` stub |
+| 36    | Start page SSR shell + loading gate           |
+| 37    | Start page IDB search + starter fallback      |
+| 38    | Settings — `/start` URL copy                  |
+| 39    | Bundle split verification                     |
 
 Implement in order (35 → 36 → 37; 38 parallel after 35; 39 after 37).
 

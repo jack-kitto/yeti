@@ -8,10 +8,7 @@ describe("settings button layout", () => {
 
   it("keeps the settings handle hover state inside its bounds", () => {
     const rule = css.match(
-      new RegExp(
-        `\\.${SETTINGS_BUTTON_CLASS}\\.shell-icon-btn-ghost:hover[^}]*\\{[^}]+\\}`,
-        "s",
-      ),
+      new RegExp(`\\.${SETTINGS_BUTTON_CLASS}\\.shell-icon-btn-ghost:hover[^}]*\\{[^}]+\\}`, "s"),
     );
     expect(rule).not.toBeNull();
     expect(rule![0]).toMatch(/transform:\s*none/);
@@ -19,7 +16,9 @@ describe("settings button layout", () => {
   });
 
   it("still lifts other ghost handles on hover", () => {
-    const genericGhostHover = css.match(/\.shell-icon-btn-ghost:hover,\s*\n\.shell-icon-btn-ghost\.active\s*\{[^}]+\}/s);
+    const genericGhostHover = css.match(
+      /\.shell-icon-btn-ghost:hover,\s*\n\.shell-icon-btn-ghost\.active\s*\{[^}]+\}/s,
+    );
     expect(genericGhostHover).not.toBeNull();
     expect(genericGhostHover![0]).toMatch(/translateY\(-1px\)/);
   });

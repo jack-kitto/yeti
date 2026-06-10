@@ -9,14 +9,7 @@ export type ShellThemeColors = {
   shadow: string;
 };
 
-function addTopPocket(
-  path: Path2D,
-  x1: number,
-  x2: number,
-  y: number,
-  depth: number,
-  r: number,
-) {
+function addTopPocket(path: Path2D, x1: number, x2: number, y: number, depth: number, r: number) {
   path.lineTo(x1 - r, y);
   path.quadraticCurveTo(x1, y, x1, y + r);
   path.lineTo(x1, y + depth - r);
@@ -45,14 +38,7 @@ function addBottomPocket(
   path.quadraticCurveTo(x1, y, x1 - r, y);
 }
 
-function addLeftPocket(
-  path: Path2D,
-  x: number,
-  y2: number,
-  y1: number,
-  depth: number,
-  r: number,
-) {
+function addLeftPocket(path: Path2D, x: number, y2: number, y1: number, depth: number, r: number) {
   path.lineTo(x, y2 + r);
   path.quadraticCurveTo(x, y2, x + r, y2);
   path.lineTo(x + depth - r, y2);
@@ -63,14 +49,7 @@ function addLeftPocket(
   path.quadraticCurveTo(x, y1, x, y1 - r);
 }
 
-function addRightPocket(
-  path: Path2D,
-  x: number,
-  y1: number,
-  y2: number,
-  depth: number,
-  r: number,
-) {
+function addRightPocket(path: Path2D, x: number, y1: number, y2: number, depth: number, r: number) {
   path.lineTo(x, y1 - r);
   path.quadraticCurveTo(x, y1, x - r, y1);
   path.lineTo(x - depth + r, y1);
@@ -82,12 +61,8 @@ function addRightPocket(
 }
 
 /** Inner viewport boundary — pockets bulge inward over the canvas. */
-function generateInnerBoundary(
-  layout: ShellLayout,
-  pocket: RenderPocket,
-): Path2D {
-  const { panelX: x, panelY: y, panelRight: right, panelBottom: bottom, shellRadius: rr } =
-    layout;
+function generateInnerBoundary(layout: ShellLayout, pocket: RenderPocket): Path2D {
+  const { panelX: x, panelY: y, panelRight: right, panelBottom: bottom, shellRadius: rr } = layout;
   const path = new Path2D();
   path.moveTo(x + rr, y);
 
@@ -142,10 +117,7 @@ function generateInnerBoundary(
   return path;
 }
 
-function generateTopNotchFill(
-  layout: ShellLayout,
-  pocket: RenderPocket,
-): Path2D {
+function generateTopNotchFill(layout: ShellLayout, pocket: RenderPocket): Path2D {
   const x1 = pocket.anchor - pocket.span;
   const x2 = pocket.anchor + pocket.span;
   const y = layout.panelY;
@@ -167,10 +139,7 @@ function generateTopNotchFill(
   return path;
 }
 
-function generateBottomNotchFill(
-  layout: ShellLayout,
-  pocket: RenderPocket,
-): Path2D {
+function generateBottomNotchFill(layout: ShellLayout, pocket: RenderPocket): Path2D {
   const x1 = pocket.anchor - pocket.span;
   const x2 = pocket.anchor + pocket.span;
   const y = layout.panelBottom;
@@ -192,10 +161,7 @@ function generateBottomNotchFill(
   return path;
 }
 
-function generateLeftNotchFill(
-  layout: ShellLayout,
-  pocket: RenderPocket,
-): Path2D {
+function generateLeftNotchFill(layout: ShellLayout, pocket: RenderPocket): Path2D {
   const x = layout.panelX;
   const y1 = pocket.anchor - pocket.span;
   const y2 = pocket.anchor + pocket.span;
@@ -218,10 +184,7 @@ function generateLeftNotchFill(
   return path;
 }
 
-function generateRightNotchFill(
-  layout: ShellLayout,
-  pocket: RenderPocket,
-): Path2D {
+function generateRightNotchFill(layout: ShellLayout, pocket: RenderPocket): Path2D {
   const x = layout.panelRight;
   const y1 = pocket.anchor - pocket.span;
   const y2 = pocket.anchor + pocket.span;
@@ -244,10 +207,7 @@ function generateRightNotchFill(
   return path;
 }
 
-function generateNotchFillPath(
-  layout: ShellLayout,
-  pocket: RenderPocket,
-): Path2D | null {
+function generateNotchFillPath(layout: ShellLayout, pocket: RenderPocket): Path2D | null {
   if (!pocket.active || pocket.depth < 1) {
     return null;
   }

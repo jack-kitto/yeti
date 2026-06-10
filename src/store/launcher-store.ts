@@ -18,8 +18,6 @@ export const useLauncherStore = create<LauncherState>((set) => ({
   showFullCatalog: false,
   openFromEdgeGroup: (edge, edgeGroupId) =>
     set({ open: true, edge, edgeGroupId, showFullCatalog: false }),
-  close: () =>
-    set({ open: false, edge: null, edgeGroupId: null, showFullCatalog: false }),
-  toggleCatalog: () =>
-    set((state) => ({ showFullCatalog: !state.showFullCatalog })),
+  close: () => set({ open: false, edge: null, edgeGroupId: null, showFullCatalog: false }),
+  toggleCatalog: () => set((state) => ({ showFullCatalog: !state.showFullCatalog })),
 }));

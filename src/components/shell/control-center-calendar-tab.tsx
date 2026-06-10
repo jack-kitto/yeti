@@ -107,7 +107,11 @@ export function ControlCenterCalendarTab({ library, active }: ControlCenterCalen
       {state.status === "error" ? (
         <div className="shell-dashboard-calendar-error">
           <p>{state.message}</p>
-          <button type="button" className="shell-dashboard-setup-button" onClick={() => void loadFeed()}>
+          <button
+            type="button"
+            className="shell-dashboard-setup-button"
+            onClick={() => void loadFeed()}
+          >
             Retry
           </button>
         </div>
@@ -161,9 +165,7 @@ export function ControlCenterCalendarTab({ library, active }: ControlCenterCalen
         })}
       </ul>
 
-      {overflow > 0 ? (
-        <p className="shell-dashboard-calendar-overflow">+{overflow} more</p>
-      ) : null}
+      {overflow > 0 ? <p className="shell-dashboard-calendar-overflow">+{overflow} more</p> : null}
     </div>
   );
 }

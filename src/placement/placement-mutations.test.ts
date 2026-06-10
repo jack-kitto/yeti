@@ -27,8 +27,8 @@ describe("addEdgeGroup", () => {
   it("adds an edge group to the active workspace on the chosen edge", async () => {
     const library = await seededLibrary();
     const workspaceId = library.activeWorkspaceId;
-    const beforeCount = library.workspaces.find((w) => w.id === workspaceId)!
-      .placements.edges.left.length;
+    const beforeCount = library.workspaces.find((w) => w.id === workspaceId)!.placements.edges.left
+      .length;
 
     const updated = addEdgeGroup(library, workspaceId, "left", {
       name: "Side projects",
@@ -116,9 +116,9 @@ describe("edge group link placements", () => {
       linkId,
     );
 
-    expect(resolveEdgeGroupLinks(updated, "left", first.id).some((link) => link.id === linkId)).toBe(
-      true,
-    );
+    expect(
+      resolveEdgeGroupLinks(updated, "left", first.id).some((link) => link.id === linkId),
+    ).toBe(true);
     expect(
       resolveEdgeGroupLinks(updated, "left", second.id).some((link) => link.id === linkId),
     ).toBe(true);
@@ -128,13 +128,7 @@ describe("edge group link placements", () => {
     const seeded = await libraryWithFreshLink();
     const linkId = seeded.catalog.find((link) => link.url.includes("fresh-link"))!.id;
     const group = resolveEdgeGroups(seeded, "left")[0];
-    const withLink = addLinkToEdgeGroup(
-      seeded,
-      seeded.activeWorkspaceId,
-      "left",
-      group.id,
-      linkId,
-    );
+    const withLink = addLinkToEdgeGroup(seeded, seeded.activeWorkspaceId, "left", group.id, linkId);
 
     const updated = removeLinkFromEdgeGroup(
       withLink,
@@ -144,9 +138,9 @@ describe("edge group link placements", () => {
       linkId,
     );
 
-    expect(resolveEdgeGroupLinks(updated, "left", group.id).some((link) => link.id === linkId)).toBe(
-      false,
-    );
+    expect(
+      resolveEdgeGroupLinks(updated, "left", group.id).some((link) => link.id === linkId),
+    ).toBe(false);
     expect(updated.catalog.some((link) => link.id === linkId)).toBe(true);
   });
 
@@ -155,15 +149,15 @@ describe("edge group link placements", () => {
     const withGroup = addEdgeGroup(seeded, seeded.activeWorkspaceId, "left", {
       name: "Reorder test",
     });
-    const group = resolveEdgeGroups(withGroup, "left").find((entry) => entry.name === "Reorder test")!;
+    const group = resolveEdgeGroups(withGroup, "left").find(
+      (entry) => entry.name === "Reorder test",
+    )!;
     const firstId = withGroup.catalog.find((link) => link.url.includes("fresh-link"))!.id;
     const withSecondLink = addCatalogLink(withGroup, {
       url: "https://second-fresh.example.com",
       title: "Second fresh",
     });
-    const secondId = withSecondLink.catalog.find((link) =>
-      link.url.includes("second-fresh"),
-    )!.id;
+    const secondId = withSecondLink.catalog.find((link) => link.url.includes("second-fresh"))!.id;
 
     const withLinks = addLinkToEdgeGroup(
       addLinkToEdgeGroup(

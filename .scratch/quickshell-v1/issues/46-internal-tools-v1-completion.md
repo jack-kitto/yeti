@@ -24,16 +24,16 @@ Close the gap between issue 28's minimal ship and **CONTEXT.md** for **internal 
 
 ## Child issues (UX refinement — grill 2026-06)
 
-| Issue | Scope |
-|-------|--------|
-| 53 | Tasks flyout layout polish |
-| 54 | Pomodoro flyout clarity (phase + split) |
-| 55 | Start focus opens pomodoro flyout (no auto-start) |
-| 56 | Custom split uncapped positive minutes |
-| 57 | Canvas pomodoro widget (+ hourglass animation) |
-| 58 | Canvas focus tasks widget |
-| 59 | Focus countdown mode |
-| 60 | Now playing canvas widget refinement |
+| Issue | Scope                                             |
+| ----- | ------------------------------------------------- |
+| 53    | Tasks flyout layout polish                        |
+| 54    | Pomodoro flyout clarity (phase + split)           |
+| 55    | Start focus opens pomodoro flyout (no auto-start) |
+| 56    | Custom split uncapped positive minutes            |
+| 57    | Canvas pomodoro widget (+ hourglass animation)    |
+| 58    | Canvas focus tasks widget                         |
+| 59    | Focus countdown mode                              |
+| 60    | Now playing canvas widget refinement              |
 
 ## Blocked by
 

@@ -10,12 +10,7 @@ import {
   resolveWorkspacePlacedLinks,
 } from "./placement";
 
-function edgeGroup(
-  id: string,
-  name: string,
-  orderKey: string,
-  linkIds: string[],
-): EdgeGroup {
+function edgeGroup(id: string, name: string, orderKey: string, linkIds: string[]): EdgeGroup {
   let previous: string | null = null;
   const links = linkIds.map((linkId) => {
     const orderKeyForLink = previous === null ? initialKey() : insertBetween(previous, null);
@@ -82,10 +77,7 @@ describe("resolveEdgeGroups", () => {
     const first = initialKey();
     const second = insertBetween(first, null);
     const library = makeLibrary({
-      left: [
-        edgeGroup("docs", "Docs", second, []),
-        edgeGroup("dev", "Dev tools", first, []),
-      ],
+      left: [edgeGroup("docs", "Docs", second, []), edgeGroup("dev", "Dev tools", first, [])],
     });
 
     const groups = resolveEdgeGroups(library, "left");
@@ -100,9 +92,7 @@ describe("resolveEdgeGroupLinks", () => {
     const third = insertBetween(first, null);
     const second = insertBetween(first, third);
     const library = makeLibrary({
-      left: [
-        edgeGroup("dev", "Dev tools", first, ["gamma", "alpha", "beta"]),
-      ],
+      left: [edgeGroup("dev", "Dev tools", first, ["gamma", "alpha", "beta"])],
     });
     library.catalog.find((link) => link.id === "alpha")!.title = "alpha";
     library.catalog.find((link) => link.id === "beta")!.title = "beta";

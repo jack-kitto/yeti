@@ -13,9 +13,7 @@ describe("tasks flyout layout", () => {
   const css = readFileSync(resolve(__dirname, "../app/globals.css"), "utf8");
 
   it("scrolls the task list inside a capped region so the add form stays visible", () => {
-    const rule = css.match(
-      new RegExp(`\\.${TASKS_FLYOUT_LIST_SCROLL_CLASS}\\s*\\{[^}]+\\}`, "s"),
-    );
+    const rule = css.match(new RegExp(`\\.${TASKS_FLYOUT_LIST_SCROLL_CLASS}\\s*\\{[^}]+\\}`, "s"));
     expect(rule).not.toBeNull();
     expect(rule![0]).toMatch(/max-height/);
     expect(rule![0]).toMatch(/overflow-y:\s*auto/);

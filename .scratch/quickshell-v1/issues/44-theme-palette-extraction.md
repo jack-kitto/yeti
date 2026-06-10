@@ -30,6 +30,7 @@ None — issue 08 (manual theme editing) is done
 Follow-up from `.scratch/quickshell-v1/issues/08-config-themes-workspaces.md` (grill 2025-06). Domain language: `CONTEXT.md` → **Theme**.
 
 Suggested tracer bullets:
+
 1. Pure function: image/colors → `ThemePalette` mapping + tests
 2. Wire to settings background URL change + live apply
 3. Override / re-extract semantics + starter template backfill if needed

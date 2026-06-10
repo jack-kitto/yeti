@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  LIBRARY_DB_NAME,
-  PRODUCT_NAME,
-  SNAPSHOT_DOWNLOAD_FILENAME,
-} from "./branding";
+import { LIBRARY_DB_NAME, PRODUCT_NAME, SNAPSHOT_DOWNLOAD_FILENAME } from "./branding";
 
 describe("Yeti branding constants", () => {
   it("uses yeti as the IndexedDB database name", () => {

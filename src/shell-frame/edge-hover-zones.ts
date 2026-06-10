@@ -53,19 +53,13 @@ export function computeStackedRimTraps({
   }
 
   return handleCentersY.map((centerY, index) => {
-    const prevBound =
-      index === 0 ? rimStartY : (handleCentersY[index - 1]! + centerY) / 2;
+    const prevBound = index === 0 ? rimStartY : (handleCentersY[index - 1]! + centerY) / 2;
     const nextBound =
-      index === handleCentersY.length - 1
-        ? rimEndY
-        : (centerY + handleCentersY[index + 1]!) / 2;
+      index === handleCentersY.length - 1 ? rimEndY : (centerY + handleCentersY[index + 1]!) / 2;
 
     const segmentHeight = nextBound - prevBound;
     const height = Math.max(segmentHeight, minHitPx);
-    const top =
-      segmentHeight >= minHitPx
-        ? prevBound
-        : centerY - minHitPx / 2;
+    const top = segmentHeight >= minHitPx ? prevBound : centerY - minHitPx / 2;
 
     return {
       top,

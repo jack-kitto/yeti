@@ -171,14 +171,14 @@ _Avoid_: Factory reset, clear cache, re-seed
 ## Example dialogue
 
 > **Dev:** I want Railway in my Work workspace but not Personal.  
-> **Expert:** Add Railway once to the catalog, place it on Work's left **edge groups**. Skip Personal placements — it won't appear there unless you search via the **command bar** catalog fallback.  
->  
+> **Expert:** Add Railway once to the catalog, place it on Work's left **edge groups**. Skip Personal placements — it won't appear there unless you search via the **command bar** catalog fallback.
+>
 > **Dev:** Can the same link be in two edge groups?  
-> **Expert:** Yes. Placements are independent per **edge group** within a workspace. One catalog entry, multiple surfaces.  
->  
+> **Expert:** Yes. Placements are independent per **edge group** within a workspace. One catalog entry, multiple surfaces.
+>
 > **Dev:** I want two icons on the left edge — dev tools and docs.  
-> **Expert:** Two **edge groups** on the left edge, each with its own **edge handle** and flyout anchor. Same link can appear in both groups if you place it twice.  
->  
+> **Expert:** Two **edge groups** on the left edge, each with its own **edge handle** and flyout anchor. Same link can appear in both groups if you place it twice.
+>
 > **Dev:** How do I switch to Personal?  
 > **Expert:** Type in the **command bar**, use a **keyboard shortcut**, or open the **control center** workspaces tab — no switcher on the canvas.
 

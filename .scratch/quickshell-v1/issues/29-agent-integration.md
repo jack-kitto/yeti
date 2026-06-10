@@ -32,14 +32,14 @@ Yeti is shaping into a **minimal dev productivity workstation** (focus tasks + p
 
 **High-value feature ideas**
 
-| Idea | What it does | Fits where |
-|------|----------------|------------|
-| **Ticket → focus task** | Paste issue URL or description; agent returns title + time estimate + "today" suggestion | Command bar or tasks flyout |
-| **Day planning** | Merge calendar glance + backlog; propose today's focus list | Control center calendar tab or morning command-bar action |
-| **Focus session coach** | During pomodoro: "stuck?", "scope this smaller", break reminders | Right-rim agent tool or pomodoro flyout panel |
-| **Post-session capture** | After work interval: one-line log ("shipped X", blockers) appended to task | Tasks flyout |
-| **Estimate sanity check** | Challenge estimates against task description before **Start focus** | Tasks flyout |
-| **Workspace-aware persona** | Work workspace → professional tone + work links context; Personal → lighter | System prompt per workspace, opt-in context |
+| Idea                        | What it does                                                                             | Fits where                                                |
+| --------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| **Ticket → focus task**     | Paste issue URL or description; agent returns title + time estimate + "today" suggestion | Command bar or tasks flyout                               |
+| **Day planning**            | Merge calendar glance + backlog; propose today's focus list                              | Control center calendar tab or morning command-bar action |
+| **Focus session coach**     | During pomodoro: "stuck?", "scope this smaller", break reminders                         | Right-rim agent tool or pomodoro flyout panel             |
+| **Post-session capture**    | After work interval: one-line log ("shipped X", blockers) appended to task               | Tasks flyout                                              |
+| **Estimate sanity check**   | Challenge estimates against task description before **Start focus**                      | Tasks flyout                                              |
+| **Workspace-aware persona** | Work workspace → professional tone + work links context; Personal → lighter              | System prompt per workspace, opt-in context               |
 
 **Lower value / avoid**
 

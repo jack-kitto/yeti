@@ -22,12 +22,9 @@ export function moveEdgeGroupToSlot(
   const [moved] = reordered.splice(fromIndex, 1);
   reordered.splice(targetIndex, 0, moved);
 
-  const beforeKey =
-    targetIndex === 0 ? null : reordered[targetIndex - 1].orderKey;
+  const beforeKey = targetIndex === 0 ? null : reordered[targetIndex - 1].orderKey;
   const afterKey =
-    targetIndex === reordered.length - 1
-      ? null
-      : reordered[targetIndex + 1].orderKey;
+    targetIndex === reordered.length - 1 ? null : reordered[targetIndex + 1].orderKey;
   const newOrderKey = insertBetween(beforeKey, afterKey);
 
   return groups.map((group) =>

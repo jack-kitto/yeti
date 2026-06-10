@@ -15,8 +15,8 @@ describe("buildControlCenterWorkspaceRows", () => {
     expect(rows.find((row) => row.active)).toMatchObject({
       id: activeId,
       name: library.workspaces.find((workspace) => workspace.id === activeId)!.name,
-      accentColor: library.workspaces.find((workspace) => workspace.id === activeId)!.theme
-        .palette.accent,
+      accentColor: library.workspaces.find((workspace) => workspace.id === activeId)!.theme.palette
+        .accent,
     });
   });
 });

@@ -105,13 +105,7 @@ export function CanvasNowPlayingVisualizer({
     return () => window.cancelAnimationFrame(animationId);
   }, [active]);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="canvas-now-playing-visualizer"
-      aria-hidden
-    />
-  );
+  return <canvas ref={canvasRef} className="canvas-now-playing-visualizer" aria-hidden />;
 }
 
 function readBarLevel(barIndex: number, frequencyData: Uint8Array): number {

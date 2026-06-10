@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  getStartPageShellContent,
-  initialStartPagePhase,
-} from "./start-page-shell";
+import { getStartPageShellContent, initialStartPagePhase } from "./start-page-shell";
 
 describe("start page shell", () => {
   it("shows loading copy and a home station footer link", () => {

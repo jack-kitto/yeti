@@ -23,4 +23,4 @@ None — can start immediately
 
 ## Comments
 
-Follow-up from issue 26 Comments: *"update PRD/CONTEXT in the same pass or a follow-up docs issue."* CONTEXT.md is largely current; PRD is not.
+Follow-up from issue 26 Comments: _"update PRD/CONTEXT in the same pass or a follow-up docs issue."_ CONTEXT.md is largely current; PRD is not.

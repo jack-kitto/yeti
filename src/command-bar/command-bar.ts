@@ -62,10 +62,7 @@ export function buildCommandBarActionResults(query: string): CommandBarActionRes
   });
 }
 
-export function buildCommandBarRows(
-  library: Library,
-  query: string,
-): CommandBarResult[] {
+export function buildCommandBarRows(library: Library, query: string): CommandBarResult[] {
   if (isCommandBarActionMode(query)) {
     return buildCommandBarActionResults(query);
   }
@@ -73,18 +70,14 @@ export function buildCommandBarRows(
   return buildCommandBarResults(library, query);
 }
 
-export function buildCommandBarResults(
-  library: Library,
-  query: string,
-): CommandBarResult[] {
-  const workspaceResults: CommandBarWorkspaceResult[] = searchWorkspaces(
-    library,
-    query,
-  ).map((workspace) => ({
-    kind: "workspace",
-    workspaceId: workspace.id,
-    name: workspace.name,
-  }));
+export function buildCommandBarResults(library: Library, query: string): CommandBarResult[] {
+  const workspaceResults: CommandBarWorkspaceResult[] = searchWorkspaces(library, query).map(
+    (workspace) => ({
+      kind: "workspace",
+      workspaceId: workspace.id,
+      name: workspace.name,
+    }),
+  );
 
   const linkResults: CommandBarLinkResult[] = searchLinks(library, query).map(
     ({ link, source }) => ({
@@ -171,7 +164,7 @@ export function shortcutMatchesEvent(
   binding: string,
 ): boolean {
   const parts = binding.split("+").map((part) => normalizeShortcutPart(part.trim()));
-  const keyPart = parts[parts.length - 1].toLowerCase();
+  const keyPart = parts.at(-1)!.toLowerCase();
   const modifiers = new Set(parts.slice(0, -1));
 
   return (

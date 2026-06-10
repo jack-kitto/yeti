@@ -1,11 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  useAddCatalogLink,
-  useDeleteCatalogLink,
-  useUpdateCatalogLink,
-} from "@/hooks/use-library";
+import { useAddCatalogLink, useDeleteCatalogLink, useUpdateCatalogLink } from "@/hooks/use-library";
 import { resolveLinkTitle } from "@/link-display/link-display";
 import type { Link, Library } from "@/library/types";
 
@@ -88,10 +84,7 @@ export function ShellConfigCatalog({ library }: ShellConfigCatalogProps) {
     };
 
     if (editingLinkId) {
-      updateCatalogLink.mutate(
-        { linkId: editingLinkId, patch: input },
-        { onSuccess: cancelForm },
-      );
+      updateCatalogLink.mutate({ linkId: editingLinkId, patch: input }, { onSuccess: cancelForm });
       return;
     }
 
@@ -139,9 +132,7 @@ export function ShellConfigCatalog({ library }: ShellConfigCatalogProps) {
                   }`}
                 >
                   <div className="shell-config-catalog-copy">
-                    <span className="shell-config-catalog-title">
-                      {resolveLinkTitle(link)}
-                    </span>
+                    <span className="shell-config-catalog-title">{resolveLinkTitle(link)}</span>
                     <span className="shell-config-catalog-url">{link.url}</span>
                   </div>
                   <div className="shell-config-catalog-actions">
@@ -169,9 +160,7 @@ export function ShellConfigCatalog({ library }: ShellConfigCatalogProps) {
         <div className="shell-config-split-pane shell-config-form-pane">
           {formVisible ? (
             <form className="shell-config-form shell-config-form-panel" onSubmit={handleSubmit}>
-              <p className="shell-config-form-label">
-                {editingLinkId ? "Edit link" : "Add link"}
-              </p>
+              <p className="shell-config-form-label">{editingLinkId ? "Edit link" : "Add link"}</p>
               <input
                 type="url"
                 required

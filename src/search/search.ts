@@ -39,9 +39,7 @@ function getPlacedLinkIds(workspace: Workspace): Set<string> {
 }
 
 export function searchLinks(library: Library, query: string): LinkSearchResult[] {
-  const workspace = library.workspaces.find(
-    (w) => w.id === library.activeWorkspaceId,
-  );
+  const workspace = library.workspaces.find((w) => w.id === library.activeWorkspaceId);
 
   if (!workspace || !query.trim()) {
     return [];
@@ -75,15 +73,10 @@ export function filterLinks(links: Link[], query: string): Link[] {
   return links.filter((link) => fuzzyMatch(query, resolveLinkTitle(link)));
 }
 
-export function searchWorkspaces(
-  library: Library,
-  query: string,
-): Workspace[] {
+export function searchWorkspaces(library: Library, query: string): Workspace[] {
   if (!query.trim()) {
     return [];
   }
 
-  return library.workspaces.filter((workspace) =>
-    fuzzyMatch(query, workspace.name),
-  );
+  return library.workspaces.filter((workspace) => fuzzyMatch(query, workspace.name));
 }

@@ -67,15 +67,9 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
   const edgeLengthPx = useEdgeLengthPx(edge);
 
   const groups = useMemo(() => resolveEdgeGroups(library, edge), [library, edge]);
-  const maxSlots = useMemo(
-    () => computeMaxEdgeSlotCount(edgeLengthPx),
-    [edgeLengthPx],
-  );
-  const selectedGroup =
-    groups.find((group) => group.id === selectedGroupId) ?? groups[0] ?? null;
-  const groupLinks = selectedGroup
-    ? resolveEdgeGroupLinks(library, edge, selectedGroup.id)
-    : [];
+  const maxSlots = useMemo(() => computeMaxEdgeSlotCount(edgeLengthPx), [edgeLengthPx]);
+  const selectedGroup = groups.find((group) => group.id === selectedGroupId) ?? groups[0] ?? null;
+  const groupLinks = selectedGroup ? resolveEdgeGroupLinks(library, edge, selectedGroup.id) : [];
 
   useEffect(() => {
     if (groups.length === 0) {
@@ -127,9 +121,7 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
       (current) =>
         addEdgeGroup(current, workspaceId, edge, {
           name,
-          ...(newGroupForm.handleIcon.trim()
-            ? { handleIcon: newGroupForm.handleIcon.trim() }
-            : {}),
+          ...(newGroupForm.handleIcon.trim() ? { handleIcon: newGroupForm.handleIcon.trim() } : {}),
         }),
       {
         onSuccess: (updated) => {
@@ -192,14 +184,7 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
       return;
     }
     mutateLibrary.mutate((current) =>
-      moveLinkInEdgeGroup(
-        current,
-        workspaceId,
-        edge,
-        selectedGroup.id,
-        linkId,
-        targetIndex,
-      ),
+      moveLinkInEdgeGroup(current, workspaceId, edge, selectedGroup.id, linkId, targetIndex),
     );
   }
 
@@ -354,14 +339,15 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
 
               <div className="shell-config-slot-rail">
                 <p className="shell-config-form-label">
-                  Slot rail <span className="shell-config-slot-count tabular-nums">({maxSlots})</span>
+                  Slot rail{" "}
+                  <span className="shell-config-slot-count tabular-nums">({maxSlots})</span>
                 </p>
                 <div className="shell-config-slot-buttons">
                   {Array.from({ length: maxSlots }, (_, slotIndex) => {
                     const occupant = groupAtSlot(slotIndex, groups, maxSlots);
                     const isActive = currentGroupSlotIndex === slotIndex;
                     const label = occupant
-                      ? occupant.handleIcon ?? occupant.name.slice(0, 2)
+                      ? (occupant.handleIcon ?? occupant.name.slice(0, 2))
                       : String(slotIndex + 1);
 
                     return (
@@ -395,9 +381,7 @@ export function ShellConfigPlacements({ library }: ShellConfigPlacementsProps) {
                   {groupLinks.map((link, index) => (
                     <li key={link.id} className="shell-config-catalog-item">
                       <div className="shell-config-catalog-copy">
-                        <span className="shell-config-catalog-title">
-                          {resolveLinkTitle(link)}
-                        </span>
+                        <span className="shell-config-catalog-title">{resolveLinkTitle(link)}</span>
                       </div>
                       <div className="shell-config-catalog-actions">
                         <button

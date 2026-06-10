@@ -1,8 +1,6 @@
 import type { EdgeGroup } from "@/library/types";
 
-export type EdgeHandleDisplay =
-  | { kind: "image"; url: string }
-  | { kind: "glyph"; text: string };
+export type EdgeHandleDisplay = { kind: "image"; url: string } | { kind: "glyph"; text: string };
 
 function isImageUrl(value: string): boolean {
   return /^https?:\/\//i.test(value.trim());

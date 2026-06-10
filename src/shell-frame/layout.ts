@@ -82,12 +82,7 @@ export function getShellLayout(): ShellLayout {
   };
 }
 
-export function distribute(
-  start: number,
-  end: number,
-  count: number,
-  index: number,
-): number {
+export function distribute(start: number, end: number, count: number, index: number): number {
   if (count <= 1) {
     return (start + end) * 0.5;
   }
@@ -175,22 +170,14 @@ export function getTargetPocketForZone(
     const span = Math.max(Math.ceil(menuSize.height * 0.5) + 22, 82);
     const depth = Math.max(menuSize.width + layout.pocketInset * 2 + 6, 110);
     const cornerGuard = layout.shellRadius + layout.pocketCorner + span + 12;
-    const anchor = clamp(
-      zone.y,
-      layout.panelY + cornerGuard,
-      layout.panelBottom - cornerGuard,
-    );
+    const anchor = clamp(zone.y, layout.panelY + cornerGuard, layout.panelBottom - cornerGuard);
     return { rim: "right", anchor, span, depth };
   }
 
   const span = Math.max(Math.ceil(menuSize.height * 0.5) + 22, 82);
   const depth = Math.max(menuSize.width + layout.pocketInset * 2 + 6, 110);
   const cornerGuard = layout.shellRadius + layout.pocketCorner + span + 12;
-  const anchor = clamp(
-    zone.y,
-    layout.panelY + cornerGuard,
-    layout.panelBottom - cornerGuard,
-  );
+  const anchor = clamp(zone.y, layout.panelY + cornerGuard, layout.panelBottom - cornerGuard);
 
   return { rim: "left", anchor, span, depth };
 }
@@ -209,9 +196,7 @@ export function getRenderPocket(
   const anchor = clamp(
     animation.anchor,
     isHorizontal ? layout.panelX + cornerGuard : layout.panelY + cornerGuard,
-    isHorizontal
-      ? layout.panelRight - cornerGuard
-      : layout.panelBottom - cornerGuard,
+    isHorizontal ? layout.panelRight - cornerGuard : layout.panelBottom - cornerGuard,
   );
 
   return { rim, anchor, span, depth, radius, active: depth > 0.4 };
@@ -273,8 +258,7 @@ export function getSurfacePocketFit(
     return 0;
   }
 
-  const pad =
-    zone.kind === "search" ? SEARCH_NOTCH_PADDING : layout.pocketInset;
+  const pad = zone.kind === "search" ? SEARCH_NOTCH_PADDING : layout.pocketInset;
   const isHorizontal = zone.rim === "top" || zone.rim === "bottom";
 
   if (isHorizontal) {
@@ -289,10 +273,7 @@ export function getSurfacePocketFit(
   }
 
   return clamp(
-    Math.min(
-      pocket.depth / (menuSize.width + pad * 2),
-      pocket.span / (menuSize.height / 2 + pad),
-    ),
+    Math.min(pocket.depth / (menuSize.width + pad * 2), pocket.span / (menuSize.height / 2 + pad)),
     0,
     1,
   );
@@ -314,8 +295,7 @@ export function getSurfaceRevealStyle(
 ): SurfaceRevealStyle {
   const fitProgress = pocketFit ** 1.15;
   const progress = zoneRevealProgress * fitProgress;
-  const opacity =
-    zoneRevealProgress <= 0 ? 0 : Math.min(zoneRevealProgress ** 1.35, 1);
+  const opacity = zoneRevealProgress <= 0 ? 0 : Math.min(zoneRevealProgress ** 1.35, 1);
   const scale = 0.52 + fitProgress * zoneRevealProgress * 0.48;
 
   return { progress, opacity, scale };
@@ -324,9 +304,7 @@ export function getSurfaceRevealStyle(
 /** @deprecated Use getSurfacePosition */
 export const getFlyoutPosition = getSurfacePosition;
 
-export function getFlyoutRevealProgress(
-  animation: ShellAnimationSnapshot,
-): number {
+export function getFlyoutRevealProgress(animation: ShellAnimationSnapshot): number {
   if (!animation.activeZoneId && !animation.closing) {
     return 0;
   }

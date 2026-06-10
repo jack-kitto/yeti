@@ -19,13 +19,7 @@ export function LinkItem({ link, showTitle = true }: LinkItemProps) {
       title={title}
     >
       {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt=""
-          width={20}
-          height={20}
-          className="shell-image rounded-sm"
-        />
+        <img src={imageUrl} alt="" width={20} height={20} className="shell-image rounded-sm" />
       ) : (
         <span className="inline-block h-5 w-5 rounded-sm bg-black/10" />
       )}

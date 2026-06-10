@@ -15,10 +15,7 @@ import {
   nearestSlotIndex,
   slotIndexToInsertIndex,
 } from "@/edge-slots/edge-slots";
-import {
-  parseInternalToolZoneId,
-  resolveInternalToolHandle,
-} from "@/internal-tools/handles";
+import { parseInternalToolZoneId, resolveInternalToolHandle } from "@/internal-tools/handles";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
 import type { Library } from "@/library/types";
 import { resolveEdgeGroupFlyout, resolveEdgeGroups } from "@/placement/placement";
@@ -135,10 +132,7 @@ export function ShellEdgeLayer({
     (workspace) => workspace.id === library.activeWorkspaceId,
   );
 
-  const leftEdgeZones = useMemo(
-    () => zones.filter((zone) => zone.kind === "edge-group"),
-    [zones],
-  );
+  const leftEdgeZones = useMemo(() => zones.filter((zone) => zone.kind === "edge-group"), [zones]);
 
   const leftRimTraps = useMemo(
     () =>
@@ -294,8 +288,7 @@ export function ShellEdgeLayer({
             )
               ? "auto"
               : "none";
-            bridge.style.opacity =
-              state.activeZoneId === zone.id && !state.closing ? "1" : "0";
+            bridge.style.opacity = state.activeZoneId === zone.id && !state.closing ? "1" : "0";
           }
         }
 
@@ -325,8 +318,7 @@ export function ShellEdgeLayer({
             )
               ? "auto"
               : "none";
-            bridge.style.opacity =
-              state.activeZoneId === zone.id && !state.closing ? "1" : "0";
+            bridge.style.opacity = state.activeZoneId === zone.id && !state.closing ? "1" : "0";
           }
         }
       }
@@ -557,9 +549,7 @@ export function ShellEdgeLayer({
             variant="pocket"
             onSwitchWorkspace={onSwitchWorkspace}
             onFocusChange={(focused) => setZoneHover("menu", focused)}
-            onContentChange={() =>
-              measureSurfaceRef.current.get(BUILTIN_SURFACE.BOTTOM_SEARCH)?.()
-            }
+            onContentChange={() => measureSurfaceRef.current.get(BUILTIN_SURFACE.BOTTOM_SEARCH)?.()}
           />
         </div>
       );
@@ -588,15 +578,9 @@ export function ShellEdgeLayer({
           onMouseLeave={() => leaveZoneHover("menu")}
         >
           {toolId === "pomodoro" ? (
-            <PomodoroFlyout
-              internalTools={internalTools}
-              onChange={onUpdateInternalTools}
-            />
+            <PomodoroFlyout internalTools={internalTools} onChange={onUpdateInternalTools} />
           ) : (
-            <TasksFlyout
-              internalTools={internalTools}
-              onChange={onUpdateInternalTools}
-            />
+            <TasksFlyout internalTools={internalTools} onChange={onUpdateInternalTools} />
           )}
           {shellState.pinned && shellState.activeZoneId === zone.id ? (
             <button
@@ -665,72 +649,72 @@ export function ShellEdgeLayer({
   return (
     <>
       <div className="shell-edge-chrome pointer-events-none absolute inset-0 z-[15]">
-      {renderRimHit(BUILTIN_SURFACE.TOP_DASHBOARD, "shell-rim-hit-top", {
-        top: topDashboardHit.top,
-        left: topDashboardHit.left,
-        width: topDashboardHit.width,
-        height: topDashboardHit.height,
-      })}
-      {renderRimHit(BUILTIN_SURFACE.BOTTOM_SEARCH, "shell-rim-hit-bottom", {
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: rimLayout.frameBottom,
-      })}
+        {renderRimHit(BUILTIN_SURFACE.TOP_DASHBOARD, "shell-rim-hit-top", {
+          top: topDashboardHit.top,
+          left: topDashboardHit.left,
+          width: topDashboardHit.width,
+          height: topDashboardHit.height,
+        })}
+        {renderRimHit(BUILTIN_SURFACE.BOTTOM_SEARCH, "shell-rim-hit-bottom", {
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: rimLayout.frameBottom,
+        })}
 
-      <ShellSettingsButton />
+        <ShellSettingsButton />
 
-      {leftEdgeZones.map((zone, index) => {
-        const trap = leftRimTraps[index];
-        if (!trap) {
-          return null;
-        }
+        {leftEdgeZones.map((zone, index) => {
+          const trap = leftRimTraps[index];
+          if (!trap) {
+            return null;
+          }
 
-        return (
-          <div
-            key={`left-rim-${zone.id}`}
-            className="shell-rim-hit shell-edge-rim-hit"
-            style={{
-              top: trap.top,
-              left: trap.left,
-              width: trap.width,
-              height: trap.height,
-            }}
-            onMouseEnter={() => {
-              setZoneHover("rim", true);
-              requestActivateZone(zone.id, zonesRef.current);
-            }}
-            onMouseLeave={() => leaveZoneHover("rim")}
-          />
-        );
-      })}
+          return (
+            <div
+              key={`left-rim-${zone.id}`}
+              className="shell-rim-hit shell-edge-rim-hit"
+              style={{
+                top: trap.top,
+                left: trap.left,
+                width: trap.width,
+                height: trap.height,
+              }}
+              onMouseEnter={() => {
+                setZoneHover("rim", true);
+                requestActivateZone(zone.id, zonesRef.current);
+              }}
+              onMouseLeave={() => leaveZoneHover("rim")}
+            />
+          );
+        })}
 
-      {rightEdgeZones.map((zone, index) => {
-        const trap = rightRimTraps[index];
-        if (!trap) {
-          return null;
-        }
+        {rightEdgeZones.map((zone, index) => {
+          const trap = rightRimTraps[index];
+          if (!trap) {
+            return null;
+          }
 
-        return (
-          <div
-            key={`right-rim-${zone.id}`}
-            className="shell-rim-hit shell-edge-rim-hit"
-            style={{
-              top: trap.top,
-              left: trap.left,
-              width: trap.width,
-              height: trap.height,
-            }}
-            onMouseEnter={() => {
-              setZoneHover("rim", true);
-              requestActivateZone(zone.id, zonesRef.current);
-            }}
-            onMouseLeave={() => leaveZoneHover("rim")}
-          />
-        );
-      })}
+          return (
+            <div
+              key={`right-rim-${zone.id}`}
+              className="shell-rim-hit shell-edge-rim-hit"
+              style={{
+                top: trap.top,
+                left: trap.left,
+                width: trap.width,
+                height: trap.height,
+              }}
+              onMouseEnter={() => {
+                setZoneHover("rim", true);
+                requestActivateZone(zone.id, zonesRef.current);
+              }}
+              onMouseLeave={() => leaveZoneHover("rim")}
+            />
+          );
+        })}
 
-      {zones.map(renderZoneChrome)}
+        {zones.map(renderZoneChrome)}
       </div>
 
       <div className="shell-rim-menu-layer pointer-events-none absolute inset-0 z-[20]">

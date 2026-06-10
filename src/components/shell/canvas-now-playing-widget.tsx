@@ -47,13 +47,12 @@ export function CanvasNowPlayingWidget({ workspace }: CanvasNowPlayingWidgetProp
     <div className="canvas-now-playing">
       <div className="canvas-now-playing-meta">
         {nowPlaying.imageUrl ? (
-          <img
-            src={nowPlaying.imageUrl}
-            alt=""
-            className="canvas-now-playing-artwork"
-          />
+          <img src={nowPlaying.imageUrl} alt="" className="canvas-now-playing-artwork" />
         ) : (
-          <span className="canvas-now-playing-artwork canvas-now-playing-artwork-fallback" aria-hidden>
+          <span
+            className="canvas-now-playing-artwork canvas-now-playing-artwork-fallback"
+            aria-hidden
+          >
             {nowPlaying.label.slice(0, 1)}
           </span>
         )}

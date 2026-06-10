@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  defaultFaviconUrl,
-  resolveLinkImageUrl,
-  resolveLinkTitle,
-} from "./link-display";
+import { defaultFaviconUrl, resolveLinkImageUrl, resolveLinkTitle } from "./link-display";
 import type { Link } from "@/library/types";
 
 describe("resolveLinkTitle", () => {

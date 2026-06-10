@@ -66,9 +66,7 @@ export function CanvasFocusTasksWidget({ workspace }: CanvasFocusTasksWidgetProp
             <li key={task.id} className="canvas-focus-tasks-item">
               <div className="canvas-focus-tasks-copy">
                 <span className="canvas-focus-tasks-title">{task.title}</span>
-                {estimate ? (
-                  <span className="canvas-focus-tasks-estimate">{estimate}</span>
-                ) : null}
+                {estimate ? <span className="canvas-focus-tasks-estimate">{estimate}</span> : null}
               </div>
               <div className="canvas-focus-tasks-actions">
                 <button

@@ -11,9 +11,7 @@ import {
 import type { ShellZoneLayout } from "./layout";
 import type { ShellAnimationSnapshot } from "./shell-state";
 
-function baseAnimation(
-  patch: Partial<ShellAnimationSnapshot> = {},
-): ShellAnimationSnapshot {
+function baseAnimation(patch: Partial<ShellAnimationSnapshot> = {}): ShellAnimationSnapshot {
   return {
     activeZoneId: "group-a",
     previousZoneId: null,
@@ -87,10 +85,7 @@ describe("getSurfaceRevealStyle", () => {
 
   it("scales with pocket fit but reaches full opacity when the notch is open", () => {
     const layout = getShellLayout();
-    const pocket = getRenderPocket(
-      layout,
-      baseAnimation({ t: 0.35, depth: 260, span: 480 }),
-    );
+    const pocket = getRenderPocket(layout, baseAnimation({ t: 0.35, depth: 260, span: 480 }));
     const pocketFit = getSurfacePocketFit(pocket, topZone, { width: 480, height: 260 });
     const style = getSurfaceRevealStyle(1, pocketFit);
 

@@ -1,9 +1,4 @@
-import type {
-  FocusSplit,
-  PomodoroPhase,
-  PomodoroState,
-  WorkspaceInternalTools,
-} from "./types";
+import type { FocusSplit, PomodoroPhase, PomodoroState, WorkspaceInternalTools } from "./types";
 
 export const DEFAULT_SPLIT_ID = "classic";
 export const CUSTOM_SPLIT_ID = "custom";
@@ -83,11 +78,7 @@ function isValidCountdownMinutes(value: number): boolean {
   return Number.isInteger(value) && value > 0;
 }
 
-export function startCountdown(
-  state: PomodoroState,
-  minutes: number,
-  now: Date,
-): PomodoroState {
+export function startCountdown(state: PomodoroState, minutes: number, now: Date): PomodoroState {
   if (!isValidCountdownMinutes(minutes)) {
     return state;
   }
@@ -256,9 +247,7 @@ export function advancePomodoroPhase(state: PomodoroState): PomodoroState {
   if (state.phase === "work") {
     const completedWorkSessions = state.completedWorkSessions + 1;
     const nextPhase: PomodoroPhase =
-      completedWorkSessions % WORK_SESSIONS_BEFORE_LONG_BREAK === 0
-        ? "longBreak"
-        : "shortBreak";
+      completedWorkSessions % WORK_SESSIONS_BEFORE_LONG_BREAK === 0 ? "longBreak" : "shortBreak";
 
     return {
       ...state,
@@ -290,11 +279,7 @@ export function remainingSeconds(state: PomodoroState, now: Date): number {
   return Math.max(0, Math.ceil((endsAtMs - now.getTime()) / 1000));
 }
 
-export function displayPomodoroSeconds(
-  state: PomodoroState,
-  split: FocusSplit,
-  now: Date,
-): number {
+export function displayPomodoroSeconds(state: PomodoroState, split: FocusSplit, now: Date): number {
   if (state.running) {
     return remainingSeconds(state, now);
   }

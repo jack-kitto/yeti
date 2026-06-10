@@ -64,10 +64,7 @@ export function CommandBar({
   const resetLibraryMutation = useResetLibrary();
   const openSettings = useConfigStore((state) => state.openSettings);
 
-  const results = useMemo(
-    () => buildCommandBarRows(library, query),
-    [library, query],
-  );
+  const results = useMemo(() => buildCommandBarRows(library, query), [library, query]);
 
   const trimmedQuery = query.trim();
   const showResults = trimmedQuery.length > 0 && results.length > 0;
@@ -165,9 +162,7 @@ export function CommandBar({
     const direction = resolveCommandBarListNavigation(event.key, event.shiftKey);
     if (direction) {
       event.preventDefault();
-      setSelectedIndex((current) =>
-        moveCommandBarSelection(current, direction, results.length),
-      );
+      setSelectedIndex((current) => moveCommandBarSelection(current, direction, results.length));
       return;
     }
 
@@ -196,9 +191,7 @@ export function CommandBar({
             : "hover:bg-black/5"
         }`;
 
-    const preventBlur = pocketRow
-      ? (event: React.MouseEvent) => event.preventDefault()
-      : undefined;
+    const preventBlur = pocketRow ? (event: React.MouseEvent) => event.preventDefault() : undefined;
 
     if (result.kind === "workspace") {
       return (
@@ -259,11 +252,7 @@ export function CommandBar({
     return (
       <div className="shell-search-pocket">
         {showResults ? (
-          <ul
-            id="command-bar-results"
-            role="listbox"
-            className="shell-search-results"
-          >
+          <ul id="command-bar-results" role="listbox" className="shell-search-results">
             {results.map((result, index) => (
               <li key={resultKey(result)}>
                 {renderResultRow(result, index, highlightedIndex, true)}
@@ -289,9 +278,7 @@ export function CommandBar({
             aria-expanded={showResults}
             aria-controls="command-bar-results"
             aria-activedescendant={
-              highlightedResult
-                ? `command-bar-result-${resultKey(highlightedResult)}`
-                : undefined
+              highlightedResult ? `command-bar-result-${resultKey(highlightedResult)}` : undefined
             }
             role="combobox"
             aria-autocomplete="list"
@@ -330,9 +317,7 @@ export function CommandBar({
         aria-expanded={showResults}
         aria-controls="command-bar-results"
         aria-activedescendant={
-          highlightedResult
-            ? `command-bar-result-${resultKey(highlightedResult)}`
-            : undefined
+          highlightedResult ? `command-bar-result-${resultKey(highlightedResult)}` : undefined
         }
         role="combobox"
         aria-autocomplete="list"

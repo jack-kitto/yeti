@@ -67,7 +67,11 @@ export function startCountdownFromEstimate(
   now: Date,
 ): WorkspaceInternalTools {
   const task = tools.tasks.find((item) => item.id === taskId && !item.completed);
-  if (!task || task.estimateMinutes === undefined || !isValidEstimateMinutes(task.estimateMinutes)) {
+  if (
+    !task ||
+    task.estimateMinutes === undefined ||
+    !isValidEstimateMinutes(task.estimateMinutes)
+  ) {
     return tools;
   }
 
@@ -193,9 +197,7 @@ export function setFocusTaskEstimate(
 
   return {
     ...tools,
-    tasks: tools.tasks.map((item) =>
-      item.id === taskId ? { ...item, estimateMinutes } : item,
-    ),
+    tasks: tools.tasks.map((item) => (item.id === taskId ? { ...item, estimateMinutes } : item)),
   };
 }
 
@@ -221,8 +223,6 @@ export function completeFocusTask(
 ): WorkspaceInternalTools {
   return {
     ...tools,
-    tasks: tools.tasks.map((task) =>
-      task.id === taskId ? { ...task, completed: true } : task,
-    ),
+    tasks: tools.tasks.map((task) => (task.id === taskId ? { ...task, completed: true } : task)),
   };
 }

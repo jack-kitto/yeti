@@ -2,10 +2,7 @@
 
 import { useEffect } from "react";
 import type { Library } from "@/library/types";
-import {
-  useConfigStore,
-  type ConfigSection,
-} from "@/store/config-store";
+import { useConfigStore, type ConfigSection } from "@/store/config-store";
 import { ShellConfigCanvasWidgets } from "./shell-config-canvas-widgets";
 import { ShellConfigCatalog } from "./shell-config-catalog";
 import { ShellConfigFocusRadio } from "./shell-config-focus-radio";
@@ -76,12 +73,7 @@ export function ShellConfigDialog({ library, workspaceName }: ShellConfigDialogP
         onClick={close}
       />
 
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Settings"
-        className="shell-config-dialog"
-      >
+      <div role="dialog" aria-modal="true" aria-label="Settings" className="shell-config-dialog">
         <header className="shell-config-dialog-header">
           <div>
             <p className="shell-config-dialog-eyebrow">{workspaceName}</p>
@@ -98,9 +90,7 @@ export function ShellConfigDialog({ library, workspaceName }: ShellConfigDialogP
             <button
               key={entry.id}
               type="button"
-              className={`shell-config-dialog-nav-item${
-                section === entry.id ? " active" : ""
-              }`}
+              className={`shell-config-dialog-nav-item${section === entry.id ? " active" : ""}`}
               onClick={() => openSection(entry.id)}
             >
               {entry.label}

@@ -92,8 +92,7 @@ export function importsShellOnlyModules(files: Iterable<string>): string[] {
   return fileList.filter((file) =>
     SHELL_ONLY_MODULES.some(
       (shellModule) =>
-        file === shellModule ||
-        (shellModule.endsWith("/") && file.startsWith(shellModule)),
+        file === shellModule || (shellModule.endsWith("/") && file.startsWith(shellModule)),
     ),
   );
 }

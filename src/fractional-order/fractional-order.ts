@@ -5,8 +5,7 @@
 
 export type FractionalOrderKey = string;
 
-const BASE_62_DIGITS =
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const BASE_62_DIGITS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 function midpoint(a: string, b: string | null, digits: string): string {
   const zero = digits[0];
@@ -252,10 +251,7 @@ export function compareKeys(a: FractionalOrderKey, b: FractionalOrderKey): numbe
 }
 
 /** Sort items by fractional order key, preserving input order on ties. */
-export function sortByKey<T>(
-  items: readonly T[],
-  getKey: (item: T) => FractionalOrderKey,
-): T[] {
+export function sortByKey<T>(items: readonly T[], getKey: (item: T) => FractionalOrderKey): T[] {
   return items
     .map((item, index) => ({ item, index }))
     .sort((a, b) => {

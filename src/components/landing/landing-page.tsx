@@ -2,8 +2,7 @@ import Link from "next/link";
 import { getLandingPageContent } from "@/landing/landing-page";
 
 export function LandingPage() {
-  const { productName, tagline, homeStationHref, homeStationCta } =
-    getLandingPageContent();
+  const { productName, tagline, homeStationHref, homeStationCta } = getLandingPageContent();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">

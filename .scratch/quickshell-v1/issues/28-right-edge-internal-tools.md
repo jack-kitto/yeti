@@ -31,11 +31,11 @@ Decide before implementation:
 
 ### Tracer bullets
 
-| Phase | Deliverable |
-|-------|-------------|
-| A | ADR + right rim renders tool handles (pomodoro handle + flyout, minimal timer) |
-| B | Tasks handle + flyout with persisted task list per workspace |
-| C | Config or settings surface to enable/reorder right-edge tools (or document v1 fixed pair) |
+| Phase | Deliverable                                                                               |
+| ----- | ----------------------------------------------------------------------------------------- |
+| A     | ADR + right rim renders tool handles (pomodoro handle + flyout, minimal timer)            |
+| B     | Tasks handle + flyout with persisted task list per workspace                              |
+| C     | Config or settings surface to enable/reorder right-edge tools (or document v1 fixed pair) |
 
 ## Acceptance criteria
 

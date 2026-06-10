@@ -68,15 +68,12 @@ export function computeEdgeSlotCenters(
 }
 
 /** Snap a drag position to the nearest slot index. */
-export function nearestSlotIndex(
-  positionPx: number,
-  slotCenters: readonly number[],
-): number {
+export function nearestSlotIndex(positionPx: number, slotCenters: readonly number[]): number {
   let bestIndex = 0;
   let bestDistance = Infinity;
 
-  for (let index = 0; index < slotCenters.length; index++) {
-    const distance = Math.abs(positionPx - slotCenters[index]);
+  for (const [index, center] of slotCenters.entries()) {
+    const distance = Math.abs(positionPx - center);
     if (distance < bestDistance) {
       bestDistance = distance;
       bestIndex = index;

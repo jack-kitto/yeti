@@ -1,5 +1,4 @@
-const PRIVATE_IPV4_PATTERN =
-  /^(127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|0\.)/;
+const PRIVATE_IPV4_PATTERN = /^(127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|0\.)/;
 
 export function validateFocusRadioStreamUrl(
   rawUrl: string | null | undefined,

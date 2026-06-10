@@ -14,11 +14,11 @@ Developers who rice their Linux desktops (Hyprland, Quickshell) get a spatial sh
 
 Yeti is a developer-focused productivity shell with **two surfaces**:
 
-| Route | Surface |
-|-------|---------|
-| `/` | **Landing page** — minimal intro and links to home/start |
-| `/home` | **Home station** — full shell; pin and work from it all day |
-| `/start` | **Start page** — lightweight new-tab search-and-launch |
+| Route    | Surface                                                     |
+| -------- | ----------------------------------------------------------- |
+| `/`      | **Landing page** — minimal intro and links to home/start    |
+| `/home`  | **Home station** — full shell; pin and work from it all day |
+| `/start` | **Start page** — lightweight new-tab search-and-launch      |
 
 On the **home station**:
 
@@ -177,19 +177,19 @@ First run ships an opinionated **starter template**: Work and Personal workspace
 
 The implementation favors **deep modules** — simple interfaces, substantial internals, testable in isolation.
 
-| Module | Responsibility |
-|--------|----------------|
-| **Library** | Full aggregate: catalog, workspaces, themes, placements, shortcuts, focus radio, internal tools, canvas widgets |
-| **Snapshot** | YAML serialize/deserialize, version migration, URL fetch import |
-| **Search** | Fuzzy search, workspace-first ranking, catalog fallback |
-| **Placement** | Edge groups, fractional order, launcher scope |
-| **Link display** | Title/image fallback (favicon, URL-derived title) |
-| **Theme** | Workspace theme → CSS custom properties; palette extraction from background |
-| **Internal tools** | Pomodoro (splits, countdown mode), focus tasks |
-| **Focus radio** | BYO stations, playback state, stream proxy |
-| **Canvas widgets** | Per-workspace toggles, widget-specific display logic |
-| **Shell frame** | Rim geometry, notch animation, zone activation |
-| **Starter template** | Seeds library on first run |
+| Module               | Responsibility                                                                                                  |
+| -------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Library**          | Full aggregate: catalog, workspaces, themes, placements, shortcuts, focus radio, internal tools, canvas widgets |
+| **Snapshot**         | YAML serialize/deserialize, version migration, URL fetch import                                                 |
+| **Search**           | Fuzzy search, workspace-first ranking, catalog fallback                                                         |
+| **Placement**        | Edge groups, fractional order, launcher scope                                                                   |
+| **Link display**     | Title/image fallback (favicon, URL-derived title)                                                               |
+| **Theme**            | Workspace theme → CSS custom properties; palette extraction from background                                     |
+| **Internal tools**   | Pomodoro (splits, countdown mode), focus tasks                                                                  |
+| **Focus radio**      | BYO stations, playback state, stream proxy                                                                      |
+| **Canvas widgets**   | Per-workspace toggles, widget-specific display logic                                                            |
+| **Shell frame**      | Rim geometry, notch animation, zone activation                                                                  |
+| **Starter template** | Seeds library on first run                                                                                      |
 
 ### State management split
 
@@ -198,17 +198,17 @@ The implementation favors **deep modules** — simple interfaces, substantial in
 
 ### Interaction specifics
 
-| Interaction | Behavior |
-|-------------|----------|
-| Edge flyout | Hover open, pointer leave close; click handle to pin until dismiss |
-| Edge flyout content | Max 8 links, then "see more" → launcher filtered to that edge group |
-| Command bar | Bottom rim notch; fuzzy search + `:` actions |
-| Control center | Top rim notch; workspaces, calendar, media tabs |
-| Internal tools | Right rim handles; pomodoro and tasks flyouts |
-| Settings | Centered dialog via `:settings` or top-right control |
-| Canvas | Widget stack only; links via edges, command bar, launcher |
-| Link click | Always `target="_blank"` |
-| Workspace switch | Command bar, control center, Tab (empty query), workspace transition animation |
+| Interaction         | Behavior                                                                       |
+| ------------------- | ------------------------------------------------------------------------------ |
+| Edge flyout         | Hover open, pointer leave close; click handle to pin until dismiss             |
+| Edge flyout content | Max 8 links, then "see more" → launcher filtered to that edge group            |
+| Command bar         | Bottom rim notch; fuzzy search + `:` actions                                   |
+| Control center      | Top rim notch; workspaces, calendar, media tabs                                |
+| Internal tools      | Right rim handles; pomodoro and tasks flyouts                                  |
+| Settings            | Centered dialog via `:settings` or top-right control                           |
+| Canvas              | Widget stack only; links via edges, command bar, launcher                      |
+| Link click          | Always `target="_blank"`                                                       |
+| Workspace switch    | Command bar, control center, Tab (empty query), workspace transition animation |
 
 ### Data flow
 
@@ -222,16 +222,16 @@ The implementation favors **deep modules** — simple interfaces, substantial in
 
 Test **observable behavior** through module public interfaces — not React component internals.
 
-| Module | Priority |
-|--------|----------|
-| **Snapshot** | High — YAML round-trip, version field, legacy pin stripping |
-| **Search** | High — workspace-first ranking, fuzzy match |
-| **Placement** | High — edge truncation (8), per-workspace isolation |
-| **Library** | High — invariant enforcement, patch application |
-| **Internal tools** | High — pomodoro phases, countdown mode, task ordering |
-| **Canvas widgets** | Medium — visibility rules, dismiss semantics |
-| **Link display** | Medium — title/image fallback |
-| **Theme** | Low — token → CSS variable mapping |
+| Module             | Priority                                                    |
+| ------------------ | ----------------------------------------------------------- |
+| **Snapshot**       | High — YAML round-trip, version field, legacy pin stripping |
+| **Search**         | High — workspace-first ranking, fuzzy match                 |
+| **Placement**      | High — edge truncation (8), per-workspace isolation         |
+| **Library**        | High — invariant enforcement, patch application             |
+| **Internal tools** | High — pomodoro phases, countdown mode, task ordering       |
+| **Canvas widgets** | Medium — visibility rules, dismiss semantics                |
+| **Link display**   | Medium — title/image fallback                               |
+| **Theme**          | Low — token → CSS variable mapping                          |
 
 Vitest. IndexedDB in tests via in-memory store adapter.
 

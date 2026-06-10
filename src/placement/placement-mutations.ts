@@ -86,11 +86,7 @@ export function addEdgeGroup(
   }));
 }
 
-function findEdgeGroup(
-  workspace: Workspace,
-  edge: EdgePosition,
-  groupId: string,
-): EdgeGroup {
+function findEdgeGroup(workspace: Workspace, edge: EdgePosition, groupId: string): EdgeGroup {
   const group = workspace.placements.edges[edge].find((entry) => entry.id === groupId);
   if (!group) {
     throw new Error(`Edge group "${groupId}" not found on ${edge} edge`);
@@ -191,10 +187,7 @@ export function addLinkToEdgeGroup(
             entry.id === groupId
               ? {
                   ...entry,
-                  links: [
-                    ...entry.links,
-                    { linkId, orderKey: appendOrderKey(entry.links) },
-                  ],
+                  links: [...entry.links, { linkId, orderKey: appendOrderKey(entry.links) }],
                 }
               : entry,
           ),
@@ -257,9 +250,7 @@ function moveLinkToSlot(
     targetIndex === reordered.length - 1 ? null : reordered[targetIndex + 1].orderKey;
   const newOrderKey = insertBetween(beforeKey, afterKey);
 
-  return links.map((link) =>
-    link.linkId === linkId ? { ...link, orderKey: newOrderKey } : link,
-  );
+  return links.map((link) => (link.linkId === linkId ? { ...link, orderKey: newOrderKey } : link));
 }
 
 export function moveLinkInEdgeGroup(

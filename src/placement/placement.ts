@@ -25,11 +25,7 @@ export function reorderEdgeGroupOnRim(
     return library;
   }
 
-  const reordered = moveEdgeGroupToSlot(
-    workspace.placements.edges[edge],
-    groupId,
-    targetSlotIndex,
-  );
+  const reordered = moveEdgeGroupToSlot(workspace.placements.edges[edge], groupId, targetSlotIndex);
 
   return {
     ...library,
@@ -60,10 +56,7 @@ export function resolveEdgeGroupName(
   return group?.name ?? null;
 }
 
-export function resolveEdgeGroups(
-  library: Library,
-  edge: EdgePosition,
-): EdgeGroup[] {
+export function resolveEdgeGroups(library: Library, edge: EdgePosition): EdgeGroup[] {
   const workspace = activeWorkspace(library);
   if (!workspace) {
     return [];
@@ -108,10 +101,7 @@ export function resolveEdgeGroupFlyout(
   };
 }
 
-export function resolveEdgeLinksOnRim(
-  library: Library,
-  edge: EdgePosition,
-): Link[] {
+export function resolveEdgeLinksOnRim(library: Library, edge: EdgePosition): Link[] {
   const groups = resolveEdgeGroups(library, edge);
   const seen = new Set<string>();
   const links: Link[] = [];
@@ -131,9 +121,7 @@ export function resolveEdgeLinksOnRim(
 }
 
 export function resolveWorkspacePlacedLinks(library: Library): Link[] {
-  const workspace = library.workspaces.find(
-    (w) => w.id === library.activeWorkspaceId,
-  );
+  const workspace = library.workspaces.find((w) => w.id === library.activeWorkspaceId);
 
   if (!workspace) {
     return [];

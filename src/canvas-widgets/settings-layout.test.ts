@@ -11,9 +11,7 @@ describe("canvas widget settings layout", () => {
   );
 
   it("aligns checkbox and label on one row inside catalog items", () => {
-    const rule = css.match(
-      new RegExp(`\\.${CANVAS_WIDGET_TOGGLE_ROW_CLASS}\\s*\\{[^}]+\\}`, "s"),
-    );
+    const rule = css.match(new RegExp(`\\.${CANVAS_WIDGET_TOGGLE_ROW_CLASS}\\s*\\{[^}]+\\}`, "s"));
     expect(rule).not.toBeNull();
     expect(rule![0]).toMatch(/display:\s*flex/);
     expect(rule![0]).toMatch(/align-items:\s*center/);

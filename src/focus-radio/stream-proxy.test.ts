@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  resolveFocusRadioStreamProxyUrl,
-  validateFocusRadioStreamUrl,
-} from "./stream-proxy";
+import { resolveFocusRadioStreamProxyUrl, validateFocusRadioStreamUrl } from "./stream-proxy";
 
 describe("validateFocusRadioStreamUrl", () => {
   it("accepts public https stream URLs", () => {

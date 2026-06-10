@@ -35,9 +35,7 @@ export function Shell() {
   const saveLibraryMutation = useSaveLibrary();
   const [panelBounds, setPanelBounds] = useState<PanelBounds>(readPanelBounds);
 
-  const activeWorkspace = library?.workspaces.find(
-    (w) => w.id === library.activeWorkspaceId,
-  );
+  const activeWorkspace = library?.workspaces.find((w) => w.id === library.activeWorkspaceId);
 
   useEffect(() => {
     if (!activeWorkspace) {
@@ -113,10 +111,7 @@ export function Shell() {
         />
 
         <Launcher library={library} />
-        <ShellConfigDialog
-          library={library}
-          workspaceName={activeWorkspace.name}
-        />
+        <ShellConfigDialog library={library} workspaceName={activeWorkspace.name} />
       </div>
     </FocusRadioPlaybackProvider>
   );

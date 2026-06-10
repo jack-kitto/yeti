@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  resolveLinkImageUrl,
-  resolveLinkTitle,
-} from "@/link-display/link-display";
+import { resolveLinkImageUrl, resolveLinkTitle } from "@/link-display/link-display";
 import type { Library, Link } from "@/library/types";
 import {
   resolveEdgeGroupLinks,
@@ -31,13 +28,7 @@ function LauncherLinkCard({ link }: { link: Link }) {
       title={title}
     >
       {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt=""
-          width={40}
-          height={40}
-          className="shell-image rounded-lg"
-        />
+        <img src={imageUrl} alt="" width={40} height={40} className="shell-image rounded-lg" />
       ) : (
         <span className="shell-launcher-card-glyph" aria-hidden />
       )}
@@ -47,8 +38,7 @@ function LauncherLinkCard({ link }: { link: Link }) {
 }
 
 export function Launcher({ library }: LauncherProps) {
-  const { open, edge, edgeGroupId, showFullCatalog, close, toggleCatalog } =
-    useLauncherStore();
+  const { open, edge, edgeGroupId, showFullCatalog, close, toggleCatalog } = useLauncherStore();
   const [query, setQuery] = useState("");
 
   useEffect(() => {
@@ -84,10 +74,7 @@ export function Launcher({ library }: LauncherProps) {
     return resolveWorkspacePlacedLinks(library);
   }, [library, edge, edgeGroupId, showFullCatalog]);
 
-  const visibleLinks = useMemo(
-    () => filterLinks(baseLinks, query),
-    [baseLinks, query],
-  );
+  const visibleLinks = useMemo(() => filterLinks(baseLinks, query), [baseLinks, query]);
 
   if (!open) {
     return null;
@@ -96,11 +83,7 @@ export function Launcher({ library }: LauncherProps) {
   const edgeGroupName =
     edge && edgeGroupId ? resolveEdgeGroupName(library, edge, edgeGroupId) : null;
 
-  const scopeLabel = showFullCatalog
-    ? "Full catalog"
-    : edgeGroupName
-      ? edgeGroupName
-      : "Workspace";
+  const scopeLabel = showFullCatalog ? "Full catalog" : edgeGroupName ? edgeGroupName : "Workspace";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
@@ -111,12 +94,7 @@ export function Launcher({ library }: LauncherProps) {
         onClick={close}
       />
 
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Launcher"
-        className="shell-launcher-dialog"
-      >
+      <div role="dialog" aria-modal="true" aria-label="Launcher" className="shell-launcher-dialog">
         <header className="shell-launcher-header">
           <input
             type="search"

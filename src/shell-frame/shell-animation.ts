@@ -20,10 +20,7 @@ export function registerShellFrameListener(listener: FrameListener | null) {
   frameListener = listener;
 }
 
-export function startShellAnimation(
-  canvas: HTMLCanvasElement,
-  getTheme: () => ShellThemeColors,
-) {
+export function startShellAnimation(canvas: HTMLCanvasElement, getTheme: () => ShellThemeColors) {
   stopShellAnimation();
 
   const tick = () => {
@@ -51,7 +48,7 @@ export function startShellAnimation(
       span: nextSpan,
       depth: nextDepth,
       closing,
-      ...(closing === false && state.closing ? { previousZoneId: null } : {}),
+      ...(!closing && state.closing ? { previousZoneId: null } : {}),
     });
 
     const pocket = getRenderPocket(layout, getShellState());

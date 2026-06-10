@@ -7,10 +7,7 @@ import {
   resolveCommandBarListNavigation,
 } from "@/command-bar/command-bar";
 import type { Library } from "@/library/types";
-import {
-  buildStartPageSearchResults,
-  type StartPageSearchResult,
-} from "@/start/start-page-search";
+import { buildStartPageSearchResults, type StartPageSearchResult } from "@/start/start-page-search";
 
 type StartPageCommandBarProps = {
   library: Library | null;
@@ -51,8 +48,7 @@ export function StartPageCommandBar({
   const trimmedQuery = query.trim();
   const showResults = trimmedQuery.length > 0 && results.length > 0;
   const highlightedIndex = clampSelection(selectedIndex, results.length);
-  const highlightedResult =
-    highlightedIndex >= 0 ? results[highlightedIndex] : undefined;
+  const highlightedResult = highlightedIndex >= 0 ? results[highlightedIndex] : undefined;
 
   useEffect(() => {
     setSelectedIndex(initialCommandBarSelection(results.length));
@@ -73,9 +69,7 @@ export function StartPageCommandBar({
     const navigation = resolveCommandBarListNavigation(event.key, event.shiftKey);
     if (navigation) {
       event.preventDefault();
-      setSelectedIndex((current) =>
-        moveCommandBarSelection(current, navigation, results.length),
-      );
+      setSelectedIndex((current) => moveCommandBarSelection(current, navigation, results.length));
       return;
     }
 
@@ -106,9 +100,7 @@ export function StartPageCommandBar({
         aria-expanded={showResults}
         aria-controls="start-page-results"
         aria-activedescendant={
-          highlightedResult
-            ? `start-page-result-${highlightedResult.linkId}`
-            : undefined
+          highlightedResult ? `start-page-result-${highlightedResult.linkId}` : undefined
         }
         role="combobox"
         aria-autocomplete="list"

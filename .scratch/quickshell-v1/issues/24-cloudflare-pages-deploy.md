@@ -11,6 +11,7 @@ Deploy Quickshell to **Cloudflare Pages** by connecting the GitHub repo in the C
 **Recommendation:** Cloudflare Pages (not Workers) for this Next.js static/SSR app. Use the official Next.js on Pages adapter or static export, whichever fits the current App Router setup after a quick spike.
 
 Human steps in Cloudflare dashboard:
+
 1. Create Pages project → Connect to GitHub → select this repo
 2. Build command: `npm run build` (adjust if adapter adds a step)
 3. Output directory: `.next` or adapter output (document the chosen value)

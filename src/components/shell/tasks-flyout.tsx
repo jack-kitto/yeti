@@ -34,7 +34,8 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
   const [draft, setDraft] = useState("");
   const [estimateDraft, setEstimateDraft] = useState("");
   const [view, setView] = useState<TasksView>("today");
-  const visibleTasks = view === "today" ? listTodayTasks(internalTools) : listBacklogTasks(internalTools);
+  const visibleTasks =
+    view === "today" ? listTodayTasks(internalTools) : listBacklogTasks(internalTools);
 
   function handleAdd(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -144,9 +145,7 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
                   type="button"
                   className="shell-flyout-more shell-tool-task-action-btn"
                   title={
-                    task.estimateMinutes
-                      ? "Start countdown"
-                      : "Add an estimate to start countdown"
+                    task.estimateMinutes ? "Start countdown" : "Add an estimate to start countdown"
                   }
                   disabled={!task.estimateMinutes}
                   onClick={() => {

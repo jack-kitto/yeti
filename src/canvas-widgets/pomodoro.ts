@@ -1,7 +1,4 @@
-import {
-  displayPomodoroSeconds,
-  resolveFocusSplit,
-} from "@/internal-tools/pomodoro";
+import { displayPomodoroSeconds, resolveFocusSplit } from "@/internal-tools/pomodoro";
 import type { PomodoroState, WorkspaceInternalTools } from "@/internal-tools/types";
 
 export function canvasPomodoroFillLevel(

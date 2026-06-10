@@ -113,9 +113,7 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
       name: workspace.name,
       theme: {
         palette: { ...workspace.theme.palette },
-        ...(workspace.theme.backgroundUrl
-          ? { backgroundUrl: workspace.theme.backgroundUrl }
-          : {}),
+        ...(workspace.theme.backgroundUrl ? { backgroundUrl: workspace.theme.backgroundUrl } : {}),
         glassOpacity: workspace.theme.glassOpacity,
         borderRadius: workspace.theme.borderRadius,
       },
@@ -150,34 +148,34 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
       ...(link.title !== undefined ? { title: link.title } : {}),
       ...(link.image !== undefined ? { image: link.image } : {}),
     })),
-    workspaces: snapshot.workspaces.map((workspace): Workspace =>
-      ensureWorkspaceInternalTools({
-        id: workspace.id,
-        name: workspace.name,
-        theme: {
-          palette: { ...workspace.theme.palette },
-          ...(workspace.theme.backgroundUrl
-            ? { backgroundUrl: workspace.theme.backgroundUrl }
-            : {}),
-          glassOpacity: workspace.theme.glassOpacity,
-          borderRadius: workspace.theme.borderRadius,
-        },
-        placements: normalizeWorkspacePlacements({
-          edges: {
-            left: workspace.placements.edgeGroups.left.map(snapshotEdgeGroupToLibrary),
-            top: workspace.placements.edgeGroups.top.map(snapshotEdgeGroupToLibrary),
-            bottom: workspace.placements.edgeGroups.bottom.map(snapshotEdgeGroupToLibrary),
+    workspaces: snapshot.workspaces.map(
+      (workspace): Workspace =>
+        ensureWorkspaceInternalTools({
+          id: workspace.id,
+          name: workspace.name,
+          theme: {
+            palette: { ...workspace.theme.palette },
+            ...(workspace.theme.backgroundUrl
+              ? { backgroundUrl: workspace.theme.backgroundUrl }
+              : {}),
+            glassOpacity: workspace.theme.glassOpacity,
+            borderRadius: workspace.theme.borderRadius,
           },
-          pins: workspace.placements.pins,
+          placements: normalizeWorkspacePlacements({
+            edges: {
+              left: workspace.placements.edgeGroups.left.map(snapshotEdgeGroupToLibrary),
+              top: workspace.placements.edgeGroups.top.map(snapshotEdgeGroupToLibrary),
+              bottom: workspace.placements.edgeGroups.bottom.map(snapshotEdgeGroupToLibrary),
+            },
+            pins: workspace.placements.pins,
+          }),
+          internalTools: workspace.internalTools ?? createDefaultWorkspaceInternalTools(),
+          canvasWidgets: workspace.canvasWidgets ?? createDefaultCanvasWidgets(),
+          ...(workspace.canvasNowPlayingDismissed
+            ? { canvasNowPlayingDismissed: workspace.canvasNowPlayingDismissed }
+            : {}),
+          ...(workspace.icsFeedUrl ? { icsFeedUrl: workspace.icsFeedUrl } : {}),
         }),
-        internalTools:
-          workspace.internalTools ?? createDefaultWorkspaceInternalTools(),
-        canvasWidgets: workspace.canvasWidgets ?? createDefaultCanvasWidgets(),
-        ...(workspace.canvasNowPlayingDismissed
-          ? { canvasNowPlayingDismissed: workspace.canvasNowPlayingDismissed }
-          : {}),
-        ...(workspace.icsFeedUrl ? { icsFeedUrl: workspace.icsFeedUrl } : {}),
-      }),
     ),
     shortcuts: { ...snapshot.shortcuts },
     focusRadio: snapshot.focusRadio
@@ -207,7 +205,7 @@ function parseSnapshotDocument(document: unknown): LibrarySnapshot {
   }
 
   if (!Array.isArray(document.catalog) || !Array.isArray(document.workspaces)) {
-    throw new Error("Snapshot is missing catalog or workspaces");
+    throw new TypeError("Snapshot is missing catalog or workspaces");
   }
 
   if (!isRecord(document.shortcuts) || typeof document.activeWorkspaceId !== "string") {

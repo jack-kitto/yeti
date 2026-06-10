@@ -167,7 +167,9 @@ describe("ensureWorkspaceCanvasWidgets", () => {
     const seeded = await loadOrSeedLibrary(store);
     const legacy = {
       ...seeded,
-      workspaces: seeded.workspaces.map(({ canvasWidgets: _canvasWidgets, ...workspace }) => workspace),
+      workspaces: seeded.workspaces.map(
+        ({ canvasWidgets: _canvasWidgets, ...workspace }) => workspace,
+      ),
     };
     await store.write(legacy as typeof seeded);
 

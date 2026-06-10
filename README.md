@@ -33,10 +33,10 @@ Open [http://localhost:3000](http://localhost:3000), then:
 
 ## Routes
 
-| Route | Surface |
-|-------|---------|
-| `/` | Landing page |
-| `/home` | Home station — full shell |
+| Route    | Surface                              |
+| -------- | ------------------------------------ |
+| `/`      | Landing page                         |
+| `/home`  | Home station — full shell            |
 | `/start` | Start page — command bar search only |
 
 Open `/home` before relying on `/start`. The start page reads the library from IndexedDB; if none exists yet, it shows starter defaults and prompts you to open home station or import a snapshot.
@@ -45,10 +45,10 @@ Open `/home` before relying on `/start`. The start page reads the library from I
 
 Default bindings (tab-scoped — active only when a Yeti tab is focused):
 
-| Action | Default |
-|--------|---------|
+| Action            | Default                      |
+| ----------------- | ---------------------------- |
 | Focus command bar | `⌘⇧K` (Mac) / `Ctrl+Shift+K` |
-| Cycle workspace | `Ctrl+Tab` |
+| Cycle workspace   | `Ctrl+Tab`                   |
 
 **Type-to-focus:** printable keys open the command bar and insert the character when focus is not already in a text field.
 

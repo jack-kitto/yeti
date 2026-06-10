@@ -160,13 +160,12 @@ export function ControlCenterMediaTab({ library }: ControlCenterMediaTabProps) {
               aria-current={row.active ? "true" : undefined}
             >
               {row.imageUrl ? (
-                <img
-                  src={row.imageUrl}
-                  alt=""
-                  className="shell-dashboard-media-artwork"
-                />
+                <img src={row.imageUrl} alt="" className="shell-dashboard-media-artwork" />
               ) : (
-                <span className="shell-dashboard-media-artwork shell-dashboard-media-artwork-fallback" aria-hidden>
+                <span
+                  className="shell-dashboard-media-artwork shell-dashboard-media-artwork-fallback"
+                  aria-hidden
+                >
                   {row.label.slice(0, 1)}
                 </span>
               )}

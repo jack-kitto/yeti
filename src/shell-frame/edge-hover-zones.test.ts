@@ -57,18 +57,10 @@ describe("computeEdgeHoverBridge", () => {
 
 describe("shouldEnableHoverBridge", () => {
   it("stays active while traversing handle, bridge, or menu", () => {
-    expect(
-      shouldEnableHoverBridge("group-a", "group-a", false, true, false, 0),
-    ).toBe(true);
-    expect(
-      shouldEnableHoverBridge("group-a", "group-a", false, false, true, 0),
-    ).toBe(true);
-    expect(
-      shouldEnableHoverBridge("group-a", "group-a", false, false, false, 0.1),
-    ).toBe(true);
-    expect(
-      shouldEnableHoverBridge("group-a", "group-b", false, true, false, 1),
-    ).toBe(false);
+    expect(shouldEnableHoverBridge("group-a", "group-a", false, true, false, 0)).toBe(true);
+    expect(shouldEnableHoverBridge("group-a", "group-a", false, false, true, 0)).toBe(true);
+    expect(shouldEnableHoverBridge("group-a", "group-a", false, false, false, 0.1)).toBe(true);
+    expect(shouldEnableHoverBridge("group-a", "group-b", false, true, false, 1)).toBe(false);
   });
 });
 

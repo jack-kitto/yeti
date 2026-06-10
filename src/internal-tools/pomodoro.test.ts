@@ -137,7 +137,11 @@ describe("displayPomodoroSeconds", () => {
     };
 
     expect(
-      displayPomodoroSeconds(idleCountdown, getFocusSplit("classic"), new Date("2026-06-09T12:00:00.000Z")),
+      displayPomodoroSeconds(
+        idleCountdown,
+        getFocusSplit("classic"),
+        new Date("2026-06-09T12:00:00.000Z"),
+      ),
     ).toBe(45 * 60);
   });
 
@@ -145,9 +149,7 @@ describe("displayPomodoroSeconds", () => {
     const split = getFocusSplit("classic");
     const idle = createDefaultPomodoroState();
 
-    expect(displayPomodoroSeconds(idle, split, new Date("2026-06-09T12:00:00.000Z"))).toBe(
-      25 * 60,
-    );
+    expect(displayPomodoroSeconds(idle, split, new Date("2026-06-09T12:00:00.000Z"))).toBe(25 * 60);
   });
 
   it("previews break duration when idle on a break phase", () => {
@@ -161,11 +163,12 @@ describe("displayPomodoroSeconds", () => {
 
   it("counts down remaining time while the timer is running", () => {
     const split = getFocusSplit("classic");
-    const running = startPomodoro(createDefaultPomodoroState(), new Date("2026-06-09T12:00:00.000Z"));
+    const running = startPomodoro(
+      createDefaultPomodoroState(),
+      new Date("2026-06-09T12:00:00.000Z"),
+    );
 
-    expect(
-      displayPomodoroSeconds(running, split, new Date("2026-06-09T12:10:00.000Z")),
-    ).toBe(900);
+    expect(displayPomodoroSeconds(running, split, new Date("2026-06-09T12:10:00.000Z"))).toBe(900);
   });
 });
 
@@ -287,7 +290,11 @@ describe("resolveFocusSplit", () => {
 
 describe("completeCountdown", () => {
   it("stops a finished countdown without advancing pomodoro phases", () => {
-    const running = startCountdown(createDefaultPomodoroState(), 15, new Date("2026-06-09T12:00:00.000Z"));
+    const running = startCountdown(
+      createDefaultPomodoroState(),
+      15,
+      new Date("2026-06-09T12:00:00.000Z"),
+    );
     const completed = completeCountdown(running);
 
     expect(completed).toMatchObject({

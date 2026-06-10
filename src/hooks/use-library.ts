@@ -82,13 +82,8 @@ export function useUpdateCatalogLink() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      linkId,
-      patch,
-    }: {
-      linkId: string;
-      patch: CatalogLinkPatch;
-    }) => updateCatalogLink(store, linkId, patch),
+    mutationFn: ({ linkId, patch }: { linkId: string; patch: CatalogLinkPatch }) =>
+      updateCatalogLink(store, linkId, patch),
     onSuccess: (library) => {
       queryClient.setQueryData(["library"], library);
     },
@@ -155,13 +150,8 @@ export function useUpdateWorkspaceTheme() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      workspaceId,
-      patch,
-    }: {
-      workspaceId: string;
-      patch: ThemePatch;
-    }) => updateWorkspaceThemeInLibrary(store, workspaceId, patch),
+    mutationFn: ({ workspaceId, patch }: { workspaceId: string; patch: ThemePatch }) =>
+      updateWorkspaceThemeInLibrary(store, workspaceId, patch),
     onSuccess: (library) => {
       queryClient.setQueryData(["library"], library);
     },

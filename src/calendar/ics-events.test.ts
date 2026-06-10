@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  countRemainingNextUpEvents,
-  parseIcsEvents,
-  selectNextUpEvents,
-} from "./ics-events";
+import { countRemainingNextUpEvents, parseIcsEvents, selectNextUpEvents } from "./ics-events";
 
 const SAMPLE_ICS = `BEGIN:VCALENDAR
 VERSION:2.0

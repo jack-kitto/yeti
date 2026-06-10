@@ -12,11 +12,7 @@ describe("moveEdgeGroupToSlot", () => {
     const first = initialKey();
     const second = insertBetween(first, null);
     const third = insertBetween(second, null);
-    const groups = [
-      group("alpha", first),
-      group("beta", second),
-      group("gamma", third),
-    ];
+    const groups = [group("alpha", first), group("beta", second), group("gamma", third)];
 
     const result = moveEdgeGroupToSlot(groups, "gamma", 0);
     const ordered = [...result].sort((a, b) => (a.orderKey < b.orderKey ? -1 : 1));

@@ -6,9 +6,7 @@ export function themeToCssVars(theme: Theme): Record<string, string> {
     "--qs-color-surface": theme.palette.surface,
     "--qs-color-text": theme.palette.text,
     "--qs-color-accent": theme.palette.accent,
-    "--qs-background-image": theme.backgroundUrl
-      ? `url(${theme.backgroundUrl})`
-      : "none",
+    "--qs-background-image": theme.backgroundUrl ? `url(${theme.backgroundUrl})` : "none",
     "--qs-glass-opacity": String(theme.glassOpacity),
     "--qs-border-radius": `${theme.borderRadius}px`,
   };

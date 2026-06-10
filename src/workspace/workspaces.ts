@@ -45,11 +45,7 @@ export function createWorkspace(library: Library, name: string): Library {
   };
 }
 
-export function renameWorkspace(
-  library: Library,
-  workspaceId: string,
-  name: string,
-): Library {
+export function renameWorkspace(library: Library, workspaceId: string, name: string): Library {
   const trimmed = name.trim();
   if (!trimmed) {
     throw new Error("Workspace name is required");

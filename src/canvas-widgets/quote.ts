@@ -1,9 +1,4 @@
-export type QuoteTheme =
-  | "design"
-  | "innovation"
-  | "engineering"
-  | "coding"
-  | "productivity";
+export type QuoteTheme = "design" | "innovation" | "engineering" | "coding" | "productivity";
 
 export type Quote = {
   text: string;

@@ -72,11 +72,15 @@ describe("addFocusRadioStation", () => {
 
 describe("updateFocusRadioStation", () => {
   it("updates station fields without changing order", async () => {
-    let library = addFocusRadioStation(createStarterLibrary(), {
-      label: "Lofi",
-      url: "https://stream.example.com/lofi.mp3",
-      kind: "stream",
-    }, "station-1");
+    let library = addFocusRadioStation(
+      createStarterLibrary(),
+      {
+        label: "Lofi",
+        url: "https://stream.example.com/lofi.mp3",
+        kind: "stream",
+      },
+      "station-1",
+    );
 
     library = updateFocusRadioStation(library, "station-1", {
       label: "Night Lofi",
@@ -99,11 +103,15 @@ describe("updateFocusRadioStation", () => {
 
 describe("removeFocusRadioStation", () => {
   it("drops the station and clears playback when it was active", async () => {
-    let library = addFocusRadioStation(createStarterLibrary(), {
-      label: "Lofi",
-      url: "https://stream.example.com/lofi.mp3",
-      kind: "stream",
-    }, "station-1");
+    let library = addFocusRadioStation(
+      createStarterLibrary(),
+      {
+        label: "Lofi",
+        url: "https://stream.example.com/lofi.mp3",
+        kind: "stream",
+      },
+      "station-1",
+    );
     library = updateFocusRadioPlayback(library, {
       stationId: "station-1",
       playing: true,
@@ -122,16 +130,24 @@ describe("removeFocusRadioStation", () => {
 describe("moveFocusRadioStation", () => {
   it("reorders stations by slot index", async () => {
     let library = createStarterLibrary();
-    library = addFocusRadioStation(library, {
-      label: "First",
-      url: "https://stream.example.com/1.mp3",
-      kind: "stream",
-    }, "first");
-    library = addFocusRadioStation(library, {
-      label: "Second",
-      url: "https://stream.example.com/2.mp3",
-      kind: "stream",
-    }, "second");
+    library = addFocusRadioStation(
+      library,
+      {
+        label: "First",
+        url: "https://stream.example.com/1.mp3",
+        kind: "stream",
+      },
+      "first",
+    );
+    library = addFocusRadioStation(
+      library,
+      {
+        label: "Second",
+        url: "https://stream.example.com/2.mp3",
+        kind: "stream",
+      },
+      "second",
+    );
 
     library = moveFocusRadioStation(library, "second", 0);
 
@@ -144,11 +160,15 @@ describe("moveFocusRadioStation", () => {
 
 describe("updateFocusRadioPlayback", () => {
   it("persists global volume, mute, and playing state", async () => {
-    let library = addFocusRadioStation(createStarterLibrary(), {
-      label: "Lofi",
-      url: "https://stream.example.com/lofi.mp3",
-      kind: "stream",
-    }, "station-1");
+    let library = addFocusRadioStation(
+      createStarterLibrary(),
+      {
+        label: "Lofi",
+        url: "https://stream.example.com/lofi.mp3",
+        kind: "stream",
+      },
+      "station-1",
+    );
 
     library = updateFocusRadioPlayback(library, {
       stationId: "station-1",
@@ -176,12 +196,16 @@ describe("resolveFocusRadioOutputVolume", () => {
 
 describe("resolveFocusRadioNowPlaying", () => {
   it("returns the active station when playback has a station id", async () => {
-    let library = addFocusRadioStation(createStarterLibrary(), {
-      label: "Lofi Girl",
-      url: "https://stream.example.com/lofi.mp3",
-      kind: "stream",
-      imageUrl: "https://img.example.com/lofi.png",
-    }, "lofi");
+    let library = addFocusRadioStation(
+      createStarterLibrary(),
+      {
+        label: "Lofi Girl",
+        url: "https://stream.example.com/lofi.mp3",
+        kind: "stream",
+        imageUrl: "https://img.example.com/lofi.png",
+      },
+      "lofi",
+    );
     library = updateFocusRadioPlayback(library, {
       stationId: "lofi",
       playing: true,
@@ -236,20 +260,14 @@ describe("resolveExternalMediaGlance", () => {
 
 describe("focus radio external media session rules", () => {
   it("auto-pauses focus radio when external media is active", () => {
-    expect(
-      shouldAutoPauseFocusRadioForExternalGlance(true, { title: "Other tab" }),
-    ).toBe(true);
-    expect(shouldAutoPauseFocusRadioForExternalGlance(false, { title: "Other tab" })).toBe(
-      false,
-    );
+    expect(shouldAutoPauseFocusRadioForExternalGlance(true, { title: "Other tab" })).toBe(true);
+    expect(shouldAutoPauseFocusRadioForExternalGlance(false, { title: "Other tab" })).toBe(false);
   });
 
   it("resumes focus radio after external media stops if it was playing before", () => {
     expect(shouldResumeFocusRadioAfterExternalGlance(true, null)).toBe(true);
     expect(shouldResumeFocusRadioAfterExternalGlance(false, null)).toBe(false);
-    expect(
-      shouldResumeFocusRadioAfterExternalGlance(true, { title: "Still playing" }),
-    ).toBe(false);
+    expect(shouldResumeFocusRadioAfterExternalGlance(true, { title: "Still playing" })).toBe(false);
   });
 });
 
@@ -264,11 +282,15 @@ describe("parseYoutubeVideoId", () => {
 
 describe("focus radio background playback", () => {
   it("derives playback intent from library state only", async () => {
-    let library = addFocusRadioStation(createStarterLibrary(), {
-      label: "Lofi",
-      url: "https://stream.example.com/lofi.mp3",
-      kind: "stream",
-    }, "lofi");
+    let library = addFocusRadioStation(
+      createStarterLibrary(),
+      {
+        label: "Lofi",
+        url: "https://stream.example.com/lofi.mp3",
+        kind: "stream",
+      },
+      "lofi",
+    );
     library = updateFocusRadioPlayback(library, { stationId: "lofi", playing: true });
 
     expect(shouldPlayFocusRadioStream(library)).toBe(true);
@@ -278,11 +300,15 @@ describe("focus radio background playback", () => {
 
 describe("shouldPlayFocusRadioYoutube", () => {
   it("is true only when the active youtube station is playing", async () => {
-    let library = addFocusRadioStation(createStarterLibrary(), {
-      label: "Live",
-      url: "https://youtube.com/live/example",
-      kind: "youtube",
-    }, "live");
+    let library = addFocusRadioStation(
+      createStarterLibrary(),
+      {
+        label: "Live",
+        url: "https://youtube.com/live/example",
+        kind: "youtube",
+      },
+      "live",
+    );
     library = updateFocusRadioPlayback(library, { stationId: "live", playing: true });
 
     expect(shouldPlayFocusRadioYoutube(library)).toBe(true);
@@ -316,11 +342,15 @@ describe("resolveFocusRadioStreamFailureAction", () => {
   });
 
   it("reports exhaustion when no other station can be tried", async () => {
-    let library = addFocusRadioStation(createStarterLibrary(), {
-      label: "Only",
-      url: "https://stream.example.com/only.mp3",
-      kind: "stream",
-    }, "only");
+    const library = addFocusRadioStation(
+      createStarterLibrary(),
+      {
+        label: "Only",
+        url: "https://stream.example.com/only.mp3",
+        kind: "stream",
+      },
+      "only",
+    );
 
     expect(resolveFocusRadioStreamFailureAction(library, "only", true)).toEqual({
       type: "exhausted",
@@ -354,7 +384,12 @@ describe("buildFocusRadioStationPickerRows", () => {
     );
     library = addFocusRadioStation(
       library,
-      { label: "Lofi Girl", url: "https://stream.example.com/lofi.mp3", kind: "stream", favorite: true },
+      {
+        label: "Lofi Girl",
+        url: "https://stream.example.com/lofi.mp3",
+        kind: "stream",
+        favorite: true,
+      },
       "lofi",
     );
     library = addFocusRadioStation(
@@ -402,17 +437,23 @@ describe("buildFocusRadioStationPickerRows", () => {
       "techno",
     );
 
-    expect(buildFocusRadioStationPickerRows(library, "lofi").map((row) => row.id)).toEqual(["lofi"]);
+    expect(buildFocusRadioStationPickerRows(library, "lofi").map((row) => row.id)).toEqual([
+      "lofi",
+    ]);
   });
 });
 
 describe("focus radio snapshot", () => {
   it("round-trips stations and playback preferences", async () => {
-    let library = addFocusRadioStation(createStarterLibrary(), {
-      label: "Lofi",
-      url: "https://stream.example.com/lofi.mp3",
-      kind: "stream",
-    }, "station-1");
+    let library = addFocusRadioStation(
+      createStarterLibrary(),
+      {
+        label: "Lofi",
+        url: "https://stream.example.com/lofi.mp3",
+        kind: "stream",
+      },
+      "station-1",
+    );
     library = updateFocusRadioPlayback(library, {
       stationId: "station-1",
       volume: 0.6,

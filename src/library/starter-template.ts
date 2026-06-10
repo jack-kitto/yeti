@@ -69,8 +69,7 @@ const workTheme: Theme = {
     text: "#2c2419",
     accent: "#c17f59",
   },
-  backgroundUrl:
-    "https://images.unsplash.com/photo-1497215728101-856f1ea4214f?w=1920",
+  backgroundUrl: "https://images.unsplash.com/photo-1497215728101-856f1ea4214f?w=1920",
   glassOpacity: 0.72,
   borderRadius: 20,
 };
@@ -82,8 +81,7 @@ const personalTheme: Theme = {
     text: "#e8e6e3",
     accent: "#7eb8da",
   },
-  backgroundUrl:
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920",
+  backgroundUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920",
   glassOpacity: 0.65,
   borderRadius: 20,
 };

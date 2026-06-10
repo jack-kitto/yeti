@@ -21,7 +21,9 @@ export function createMemoryLibrarySync(): LibrarySyncAdapter {
   };
 }
 
-export function createBroadcastLibrarySync(channelName = "yeti-library-change"): LibrarySyncAdapter {
+export function createBroadcastLibrarySync(
+  channelName = "yeti-library-change",
+): LibrarySyncAdapter {
   const channel = new BroadcastChannel(channelName);
 
   return {

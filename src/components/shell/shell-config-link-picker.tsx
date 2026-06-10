@@ -56,9 +56,7 @@ export function ShellConfigLinkPicker({
                 type="button"
                 role="option"
                 aria-selected={value === link.id}
-                className={`shell-config-link-picker-item${
-                  value === link.id ? " active" : ""
-                }`}
+                className={`shell-config-link-picker-item${value === link.id ? " active" : ""}`}
                 onClick={() => onChange(link.id)}
               >
                 <span className="shell-config-catalog-title">{resolveLinkTitle(link)}</span>

@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
-import { normalizeWorkspacePlacements, normalizeWorkspacePlacementsInLibrary } from "./migrate-placements";
+import {
+  normalizeWorkspacePlacements,
+  normalizeWorkspacePlacementsInLibrary,
+} from "./migrate-placements";
 
 describe("normalizeWorkspacePlacements", () => {
   it("drops legacy pin placements while keeping edge groups", () => {

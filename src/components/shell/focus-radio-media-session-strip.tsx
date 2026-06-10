@@ -29,13 +29,28 @@ export function FocusRadioMediaSessionStrip({
       )}
       <p className="shell-dashboard-media-session-title">{glance.title}</p>
       <div className="shell-dashboard-media-session-transport">
-        <button type="button" className="shell-dashboard-media-session-btn" onClick={onPrevious} aria-label="Previous track">
+        <button
+          type="button"
+          className="shell-dashboard-media-session-btn"
+          onClick={onPrevious}
+          aria-label="Previous track"
+        >
           Prev
         </button>
-        <button type="button" className="shell-dashboard-media-session-btn" onClick={onPlayPause} aria-label="Play or pause">
+        <button
+          type="button"
+          className="shell-dashboard-media-session-btn"
+          onClick={onPlayPause}
+          aria-label="Play or pause"
+        >
           Play
         </button>
-        <button type="button" className="shell-dashboard-media-session-btn" onClick={onNext} aria-label="Next track">
+        <button
+          type="button"
+          className="shell-dashboard-media-session-btn"
+          onClick={onNext}
+          aria-label="Next track"
+        >
           Next
         </button>
       </div>

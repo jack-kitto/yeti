@@ -59,7 +59,7 @@ function loadYoutubeApi(): Promise<YoutubeApi> {
       const script = document.createElement("script");
       script.src = "https://www.youtube.com/iframe_api";
       script.async = true;
-      document.body.appendChild(script);
+      document.body.append(script);
     });
   }
 

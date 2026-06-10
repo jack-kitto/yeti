@@ -10,7 +10,9 @@ export type FocusRadioNowPlaying = {
   imageUrl?: string;
 };
 
-export function resolveFocusRadioOutputVolume(playback: Pick<FocusRadioPlayback, "volume" | "muted">): number {
+export function resolveFocusRadioOutputVolume(
+  playback: Pick<FocusRadioPlayback, "volume" | "muted">,
+): number {
   if (playback.muted) {
     return 0;
   }
@@ -40,18 +42,12 @@ export function resolveFocusRadioNowPlaying(library: Library): FocusRadioNowPlay
 
 export function shouldPlayFocusRadioStream(library: Library): boolean {
   const nowPlaying = resolveFocusRadioNowPlaying(library);
-  return (
-    library.focusRadio.playback.playing &&
-    nowPlaying !== null &&
-    nowPlaying.kind === "stream"
-  );
+  return library.focusRadio.playback.playing && nowPlaying !== null && nowPlaying.kind === "stream";
 }
 
 export function shouldPlayFocusRadioYoutube(library: Library): boolean {
   const nowPlaying = resolveFocusRadioNowPlaying(library);
   return (
-    library.focusRadio.playback.playing &&
-    nowPlaying !== null &&
-    nowPlaying.kind === "youtube"
+    library.focusRadio.playback.playing && nowPlaying !== null && nowPlaying.kind === "youtube"
   );
 }

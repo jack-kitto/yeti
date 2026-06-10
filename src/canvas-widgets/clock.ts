@@ -3,11 +3,7 @@ export type ClockDisplay = {
   date: string;
 };
 
-export function formatClockDisplay(
-  now: Date,
-  locale = "en-US",
-  timeZone?: string,
-): ClockDisplay {
+export function formatClockDisplay(now: Date, locale = "en-US", timeZone?: string): ClockDisplay {
   const time = new Intl.DateTimeFormat(locale, {
     hour: "numeric",
     minute: "2-digit",

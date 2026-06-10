@@ -121,11 +121,7 @@ function isAllDayEventVisibleToday(event: CalendarEvent, now: Date): boolean {
   return localDateKey(event.startsAt) === localDateKey(now);
 }
 
-export function selectNextUpEvents(
-  events: CalendarEvent[],
-  now: Date,
-  limit = 5,
-): CalendarEvent[] {
+export function selectNextUpEvents(events: CalendarEvent[], now: Date, limit = 5): CalendarEvent[] {
   const upcoming = events
     .filter((event) => {
       if (event.allDay) {
@@ -140,11 +136,7 @@ export function selectNextUpEvents(
   return upcoming.slice(0, limit);
 }
 
-export function countRemainingNextUpEvents(
-  events: CalendarEvent[],
-  now: Date,
-  limit = 5,
-): number {
+export function countRemainingNextUpEvents(events: CalendarEvent[], now: Date, limit = 5): number {
   const upcomingCount = events.filter((event) => {
     if (event.allDay) {
       return isAllDayEventVisibleToday(event, now);

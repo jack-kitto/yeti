@@ -40,16 +40,10 @@ describe("reorderEdgeGroupOnRim", () => {
   it("persists a new edge order after dragging a handle to another slot", () => {
     const first = initialKey();
     const second = insertBetween(first, null);
-    const library = makeLibrary([
-      edgeGroup("alpha", first),
-      edgeGroup("beta", second),
-    ]);
+    const library = makeLibrary([edgeGroup("alpha", first), edgeGroup("beta", second)]);
 
     const updated = reorderEdgeGroupOnRim(library, "left", "beta", 0);
 
-    expect(resolveEdgeGroups(updated, "left").map((group) => group.id)).toEqual([
-      "beta",
-      "alpha",
-    ]);
+    expect(resolveEdgeGroups(updated, "left").map((group) => group.id)).toEqual(["beta", "alpha"]);
   });
 });

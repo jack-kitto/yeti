@@ -11,6 +11,7 @@ Replace the flat edge-zone layout with a **canvas deformation shell** — a roun
 **Shell frame module** (`src/shell-frame/`): canvas renderer, layout math, rim animation loop, pocket depth/span/anchor targets, zone positioning. Left **edge groups** keep handle + flyout behavior but open inside the deformation model.
 
 **Builtin rim surfaces** (placeholders OK for v1 stubs):
+
 - **Top** — control-center dashboard (`ShellDashboard`, tab placeholders)
 - **Bottom** — command bar in a search pocket (`CommandBar` variant `pocket`)
 - **Right** — config panel stub (`ShellConfigPanel`, links forward to issue 06)
@@ -35,6 +36,7 @@ Measure menu content with `offsetWidth`/`offsetHeight` (not `getBoundingClientRe
 **Closed:** Core rim shell is landed (`72f4dea` + search pocket polish + config dialog refactor `a874ba4`). This issue tracked the **Yeti port**, not ongoing top/right product design.
 
 **Superseded scope:**
+
 - Right-rim settings entry — product direction is command bar / left-edge entry (issue 26), not a config pocket on the right.
 - Right rim — becomes internal-tools edge (issue 28), not config.
 - Top rim — control-center scope in issue 27.

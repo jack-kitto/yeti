@@ -1,9 +1,5 @@
 import { internalToolZoneId } from "@/internal-tools/types";
-import {
-  getShellLayout,
-  getTargetPocketForZone,
-  type ShellZoneLayout,
-} from "./layout";
+import { getShellLayout, getTargetPocketForZone, type ShellZoneLayout } from "./layout";
 import {
   getLatestShellZones,
   getShellState,
@@ -42,10 +38,7 @@ export function cancelOpenIntent() {
   }
 }
 
-export function requestActivateZone(
-  zoneId: string,
-  zones: ShellZoneLayout[],
-): void {
+export function requestActivateZone(zoneId: string, zones: ShellZoneLayout[]): void {
   const zone = zones.find((entry) => entry.id === zoneId);
   if (!zone) {
     return;
@@ -61,10 +54,7 @@ export function requestActivateZone(
   cancelOpenIntent();
 
   const switchWhileOpen =
-    state.activeZoneId &&
-    !state.closing &&
-    state.t > 0.45 &&
-    state.lastRim === zone.rim;
+    state.activeZoneId && !state.closing && state.t > 0.45 && state.lastRim === zone.rim;
 
   if (switchWhileOpen) {
     activateZone(zoneId, zones);
@@ -77,10 +67,7 @@ export function requestActivateZone(
   }, OPEN_DELAY_MS);
 }
 
-export function activateZone(
-  zoneId: string,
-  zones: ShellZoneLayout[],
-): void {
+export function activateZone(zoneId: string, zones: ShellZoneLayout[]): void {
   cancelOpenIntent();
 
   const zone = zones.find((entry) => entry.id === zoneId);
@@ -97,8 +84,7 @@ export function activateZone(
   const menuSize = state.menuSizes.get(zoneId) ?? { width: 170, height: 130 };
   const target = getTargetPocketForZone(zone, menuSize, layout);
 
-  const openingFromClosed =
-    !state.activeZoneId && !state.closing && state.t < 0.08;
+  const openingFromClosed = !state.activeZoneId && !state.closing && state.t < 0.08;
 
   patchShellState({
     previousZoneId: state.activeZoneId,
@@ -203,10 +189,7 @@ export function toggleZonePin(zoneId: string, zones: ShellZoneLayout[]) {
   cancelScheduledClose();
 }
 
-export function pinInternalToolZone(
-  toolId: "pomodoro" | "tasks",
-  zones: ShellZoneLayout[],
-): void {
+export function pinInternalToolZone(toolId: "pomodoro" | "tasks", zones: ShellZoneLayout[]): void {
   const zoneId = internalToolZoneId(toolId);
   const zone = zones.find((entry) => entry.id === zoneId);
   if (!zone || zone.kind !== "internal-tool") {

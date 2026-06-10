@@ -21,12 +21,7 @@ export function ShellConfigStartPage() {
 
       <div className="shell-config-form">
         <p className="shell-config-form-label">{content.bookmarkLabel}</p>
-        <input
-          type="text"
-          readOnly
-          value={content.bookmarkPath}
-          className="shell-config-input"
-        />
+        <input type="text" readOnly value={content.bookmarkPath} className="shell-config-input" />
         <div className="shell-config-form-actions shell-config-form-actions-start">
           <button type="button" className="shell-config-submit" onClick={() => void handleCopy()}>
             {copied ? "Copied" : content.copyButtonLabel}

@@ -11,6 +11,7 @@ Move **settings** entry off the right rim. The settings **dialog** (issues 06–
 **Remove:** right-rim hover pocket with `ShellConfigMenu` (`BUILTIN_SURFACE.RIGHT_CONFIG` as settings).
 
 **Add (both):**
+
 1. **Command bar action** — e.g. `:settings` opens the existing settings dialog (default section or last-used).
 2. **Left-edge affordance** — a settings control at the bottom of the left rim (below edge group handles), opening the same dialog.
 

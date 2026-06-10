@@ -21,7 +21,6 @@ type ShellDashboardProps = {
   onSwitchWorkspace: (workspaceId: string) => void;
 };
 
-
 function ControlCenterWorkspacesTab({
   library,
   onSwitchWorkspace,
@@ -60,9 +59,7 @@ function ControlCenterWorkspacesTab({
                 aria-hidden
               />
               <span className="shell-dashboard-workspace-name">{row.name}</span>
-              {row.active ? (
-                <span className="shell-dashboard-workspace-badge">Active</span>
-              ) : null}
+              {row.active ? <span className="shell-dashboard-workspace-badge">Active</span> : null}
             </button>
           </li>
         ))}
@@ -99,10 +96,7 @@ export function ShellDashboard({ library, onSwitchWorkspace }: ShellDashboardPro
       </nav>
       <div className="shell-dashboard-body">
         {activeTab === "workspaces" ? (
-          <ControlCenterWorkspacesTab
-            library={library}
-            onSwitchWorkspace={onSwitchWorkspace}
-          />
+          <ControlCenterWorkspacesTab library={library} onSwitchWorkspace={onSwitchWorkspace} />
         ) : activeTab === "calendar" ? (
           <ControlCenterCalendarTab library={library} active />
         ) : (

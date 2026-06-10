@@ -145,7 +145,11 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
               placeholder="Workspace name"
               className="shell-config-input"
             />
-            <button type="submit" className="shell-config-submit" disabled={!newWorkspaceName.trim()}>
+            <button
+              type="submit"
+              className="shell-config-submit"
+              disabled={!newWorkspaceName.trim()}
+            >
               Create workspace
             </button>
           </form>
@@ -220,9 +224,7 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
               <input
                 type="url"
                 value={selectedWorkspace.theme.backgroundUrl ?? ""}
-                onChange={(event) =>
-                  patchTheme({ backgroundUrl: event.target.value || null })
-                }
+                onChange={(event) => patchTheme({ backgroundUrl: event.target.value || null })}
                 placeholder="https://…"
                 className="shell-config-input"
               />
@@ -241,9 +243,7 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
                 max={1}
                 step={0.01}
                 value={selectedWorkspace.theme.glassOpacity}
-                onChange={(event) =>
-                  patchTheme({ glassOpacity: Number(event.target.value) })
-                }
+                onChange={(event) => patchTheme({ glassOpacity: Number(event.target.value) })}
                 className="shell-config-range"
               />
             </label>
@@ -259,9 +259,7 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
                 max={40}
                 step={1}
                 value={selectedWorkspace.theme.borderRadius}
-                onChange={(event) =>
-                  patchTheme({ borderRadius: Number(event.target.value) })
-                }
+                onChange={(event) => patchTheme({ borderRadius: Number(event.target.value) })}
                 className="shell-config-range"
               />
             </label>

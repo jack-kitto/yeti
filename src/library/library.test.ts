@@ -53,9 +53,7 @@ describe("loadOrSeedLibrary", () => {
 
     expect(library.catalog.length).toBe(STARTER_CATALOG.length);
     expect(library.catalog.length).toBeGreaterThanOrEqual(30);
-    const devTools = work.placements.edges.left.find(
-      (group) => group.name === "Dev tools",
-    )!;
+    const devTools = work.placements.edges.left.find((group) => group.name === "Dev tools")!;
     expect(devTools.links.length).toBeGreaterThan(EDGE_PREVIEW_LIMIT);
     expect(work.placements.edges.left.length).toBeGreaterThan(1);
     expect(devTools.name).toBe("Dev tools");
@@ -99,10 +97,7 @@ describe("resetLibrary", () => {
     const reset = await resetLibrary(store);
 
     expect(reset.catalog.length).toBe(STARTER_CATALOG.length);
-    expect(reset.workspaces.map((workspace) => workspace.name)).toEqual([
-      "Work",
-      "Personal",
-    ]);
+    expect(reset.workspaces.map((workspace) => workspace.name)).toEqual(["Work", "Personal"]);
     expect((await getLibrary(store))?.catalog.length).toBe(STARTER_CATALOG.length);
   });
 });
@@ -146,8 +141,8 @@ describe("mutateLibrary", () => {
     );
 
     const loaded = await getLibrary(store);
-    const leftCount = loaded!.workspaces.find((w) => w.id === loaded!.activeWorkspaceId)!
-      .placements.edges.left.length;
+    const leftCount = loaded!.workspaces.find((w) => w.id === loaded!.activeWorkspaceId)!.placements
+      .edges.left.length;
     expect(leftCount).toBe(beforeCount + 1);
   });
 });

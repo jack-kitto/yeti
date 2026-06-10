@@ -235,7 +235,11 @@ export function ShellConfigFocusRadio({ library }: ShellConfigFocusRadioProps) {
             <span className="shell-config-catalog-title">Favorite</span>
           </label>
           <div className="shell-config-form-actions">
-            <button type="submit" className="shell-config-submit" disabled={!form.label.trim() || !form.url.trim()}>
+            <button
+              type="submit"
+              className="shell-config-submit"
+              disabled={!form.label.trim() || !form.url.trim()}
+            >
               {editingStationId ? "Save station" : "Add station"}
             </button>
             <button type="button" className="shell-config-action" onClick={cancelForm}>

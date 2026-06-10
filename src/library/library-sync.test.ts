@@ -38,11 +38,13 @@ describe("library sync", () => {
     const initial = await resolveStartPageLibrary(store);
     expect(initial.source).toBe("starter");
 
-    const refreshed = new Promise<Awaited<ReturnType<typeof resolveStartPageLibrary>>>((resolve) => {
-      sync.subscribe(() => {
-        void resolveStartPageLibrary(store).then(resolve);
-      });
-    });
+    const refreshed = new Promise<Awaited<ReturnType<typeof resolveStartPageLibrary>>>(
+      (resolve) => {
+        sync.subscribe(() => {
+          void resolveStartPageLibrary(store).then(resolve);
+        });
+      },
+    );
 
     await loadOrSeedLibrary(store);
     const next = await refreshed;

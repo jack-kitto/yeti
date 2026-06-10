@@ -22,27 +22,20 @@ import type {
   ThemePatch,
 } from "./types";
 
-export function validateLibrary(_library: Library): void {
-}
+export function validateLibrary(_library: Library): void {}
 
 export async function getLibrary(store: LibraryStore): Promise<Library | null> {
   return store.read();
 }
 
-async function persistLibrary(
-  store: LibraryStore,
-  library: Library,
-): Promise<Library> {
+async function persistLibrary(store: LibraryStore, library: Library): Promise<Library> {
   validateLibrary(library);
   await store.write(library);
   notifyLibraryChanged();
   return library;
 }
 
-export async function saveLibrary(
-  store: LibraryStore,
-  library: Library,
-): Promise<Library> {
+export async function saveLibrary(store: LibraryStore, library: Library): Promise<Library> {
   return persistLibrary(store, library);
 }
 
@@ -61,10 +54,7 @@ export async function resetLibrary(store: LibraryStore): Promise<Library> {
   return persistLibrary(store, starter);
 }
 
-export async function applyPatch(
-  store: LibraryStore,
-  patch: LibraryPatch,
-): Promise<Library> {
+export async function applyPatch(store: LibraryStore, patch: LibraryPatch): Promise<Library> {
   const library = await store.read();
   if (!library) {
     throw new Error("Library not initialized");
@@ -105,10 +95,7 @@ export async function updateCatalogLink(
   return saveLibrary(store, next);
 }
 
-export async function deleteCatalogLink(
-  store: LibraryStore,
-  linkId: string,
-): Promise<Library> {
+export async function deleteCatalogLink(store: LibraryStore, linkId: string): Promise<Library> {
   const library = await store.read();
   if (!library) {
     throw new Error("Library not initialized");
@@ -130,10 +117,7 @@ export async function mutateLibrary(
   return saveLibrary(store, mutate(library));
 }
 
-export async function createWorkspace(
-  store: LibraryStore,
-  name: string,
-): Promise<Library> {
+export async function createWorkspace(store: LibraryStore, name: string): Promise<Library> {
   const library = await store.read();
   if (!library) {
     throw new Error("Library not initialized");
@@ -155,10 +139,7 @@ export async function renameWorkspace(
   return saveLibrary(store, renameWorkspaceInLibrary(library, workspaceId, name));
 }
 
-export async function deleteWorkspace(
-  store: LibraryStore,
-  workspaceId: string,
-): Promise<Library> {
+export async function deleteWorkspace(store: LibraryStore, workspaceId: string): Promise<Library> {
   const library = await store.read();
   if (!library) {
     throw new Error("Library not initialized");
@@ -180,10 +161,7 @@ export async function updateWorkspaceThemeInLibrary(
   return saveLibrary(store, updateWorkspaceTheme(library, workspaceId, patch));
 }
 
-export async function importLibrarySnapshot(
-  store: LibraryStore,
-  yaml: string,
-): Promise<Library> {
+export async function importLibrarySnapshot(store: LibraryStore, yaml: string): Promise<Library> {
   const library = deserializeSnapshot(yaml);
   return saveLibrary(store, library);
 }

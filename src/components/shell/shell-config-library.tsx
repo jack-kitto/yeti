@@ -4,10 +4,7 @@ import { useState } from "react";
 import { useImportLibrarySnapshot, useResetLibrary } from "@/hooks/use-library";
 import type { Library } from "@/library/types";
 import { serializeSnapshot } from "@/snapshot/snapshot";
-import {
-  SNAPSHOT_DOWNLOAD_FILENAME,
-  SNAPSHOT_URL_PLACEHOLDER,
-} from "@/branding/branding";
+import { SNAPSHOT_DOWNLOAD_FILENAME, SNAPSHOT_URL_PLACEHOLDER } from "@/branding/branding";
 import { ShellConfigStartPage } from "./shell-config-start-page";
 
 type ShellConfigLibraryProps = {
@@ -74,8 +71,8 @@ export function ShellConfigLibrary({ library }: ShellConfigLibraryProps) {
       <section className="shell-config-section">
         <p className="shell-config-form-label">Library snapshot</p>
         <p className="shell-config-dialog-copy">
-          Export your full library as versioned YAML for git-backed backups. Importing from a
-          URL fully replaces the current library on success.
+          Export your full library as versioned YAML for git-backed backups. Importing from a URL
+          fully replaces the current library on success.
         </p>
         <div className="shell-config-form-actions shell-config-form-actions-start">
           <button type="button" className="shell-config-submit" onClick={handleExport}>
@@ -109,8 +106,8 @@ export function ShellConfigLibrary({ library }: ShellConfigLibraryProps) {
       <section className="shell-config-section">
         <p className="shell-config-form-label">Starter template</p>
         <p className="shell-config-dialog-copy">
-          Restore the opinionated starter template. Your current library is replaced with fresh
-          Work and Personal workspaces, sample links, and default placements.
+          Restore the opinionated starter template. Your current library is replaced with fresh Work
+          and Personal workspaces, sample links, and default placements.
         </p>
         <button type="button" className="shell-config-reset" onClick={handleReset}>
           Reset to starter template

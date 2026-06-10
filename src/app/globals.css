@@ -11,12 +11,8 @@
   --qs-glass-opacity: 0.72;
   --qs-border-radius: 20px;
   --qs-image-outline: rgba(0, 0, 0, 0.1);
-  --qs-shadow-sm:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 4px 12px rgba(0, 0, 0, 0.06);
-  --qs-shadow-md:
-    0 2px 4px rgba(0, 0, 0, 0.04),
-    0 8px 20px rgba(0, 0, 0, 0.08);
+  --qs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
+  --qs-shadow-md: 0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 20px rgba(0, 0, 0, 0.08);
   --qs-press-ease: cubic-bezier(0.2, 0, 0, 1);
 }
 

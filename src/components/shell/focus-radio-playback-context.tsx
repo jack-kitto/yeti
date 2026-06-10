@@ -279,9 +279,7 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
         return;
       }
 
-      if (
-        shouldResumeFocusRadioAfterExternalGlance(wasPlayingBeforeExternalRef.current, glance)
-      ) {
+      if (shouldResumeFocusRadioAfterExternalGlance(wasPlayingBeforeExternalRef.current, glance)) {
         wasPlayingBeforeExternalRef.current = false;
         mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, { playing: true }));
       }
@@ -344,11 +342,9 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
       retryTimer = setInterval(() => {
         attempts += 1;
         ensureStreamAnalyser();
-        if (analyserRef.current || attempts >= 12) {
-          if (retryTimer) {
-            clearInterval(retryTimer);
-            retryTimer = null;
-          }
+        if ((analyserRef.current || attempts >= 12) && retryTimer) {
+          clearInterval(retryTimer);
+          retryTimer = null;
         }
       }, 250);
     };

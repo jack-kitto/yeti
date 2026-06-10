@@ -75,9 +75,7 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
           case "clock":
             return <CanvasClockWidget key={widgetId} />;
           case "welcome":
-            return (
-              <CanvasWelcomeWidget key={widgetId} workspaceName={workspace.name} />
-            );
+            return <CanvasWelcomeWidget key={widgetId} workspaceName={workspace.name} />;
           case "quote":
             return <CanvasQuoteWidget key={widgetId} />;
           case "nowPlaying":

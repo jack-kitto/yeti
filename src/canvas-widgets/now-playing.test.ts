@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { initialKey } from "@/fractional-order/fractional-order";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { updateFocusRadioPlayback } from "@/focus-radio/stations";
+import { LIBRARY_SCHEMA_VERSION } from "@/library/schema";
 import type { Library, Workspace } from "@/library/types";
 import { createTestTheme } from "@/theme/theme-defaults";
 import { loadOrSeedLibrary } from "@/library/library";
@@ -52,6 +53,7 @@ function workspace(overrides: Partial<Workspace> = {}): Workspace {
 
 function libraryWithWorkspace(entry: Workspace): Library {
   return {
+    schemaVersion: LIBRARY_SCHEMA_VERSION,
     catalog: [],
     workspaces: [entry],
     shortcuts: { focusCommandBar: "Meta+Shift+k", cycleWorkspace: "Control+Tab" },

@@ -414,6 +414,10 @@ export const THEME_PRESETS: ThemePreset[] = [
 
 const presetById = new Map(THEME_PRESETS.map((preset) => [preset.id, preset]));
 
+export function isThemePresetId(id: string): id is ThemePresetId {
+  return (THEME_PRESET_IDS as readonly string[]).includes(id);
+}
+
 export function getThemePreset(id: ThemePresetId): ThemePreset | undefined {
   return presetById.get(id);
 }

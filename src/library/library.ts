@@ -1,4 +1,5 @@
 import { ensureLibraryDefaults } from "@/internal-tools/defaults";
+import { assertCurrentLibrarySchema } from "./schema";
 import { notifyLibraryChanged } from "./library-sync";
 import { createStarterLibrary } from "./starter-template";
 import {
@@ -43,6 +44,7 @@ export async function saveLibrary(store: LibraryStore, library: Library): Promis
 export async function loadOrSeedLibrary(store: LibraryStore): Promise<Library> {
   const existing = await store.read();
   if (existing) {
+    assertCurrentLibrarySchema(existing);
     return ensureLibraryDefaults(existing);
   }
 
@@ -189,3 +191,5 @@ export async function importLibrarySnapshotFromUrl(
   const library = await importSnapshotFromUrl(url);
   return saveLibrary(store, library);
 }
+
+export { LIBRARY_SCHEMA_VERSION, StaleLibraryError } from "./schema";

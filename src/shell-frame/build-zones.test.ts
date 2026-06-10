@@ -3,12 +3,14 @@ import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey } from "@/fractional-order/fractional-order";
 import { defaultInternalToolsForTests } from "@/internal-tools/test-fixtures";
+import { LIBRARY_SCHEMA_VERSION } from "@/library/schema";
 import type { Library } from "@/library/types";
 import { createTestTheme } from "@/theme/theme-defaults";
 import { buildShellZones } from "./build-zones";
 
 function makeLibrary(): Library {
   return {
+    schemaVersion: LIBRARY_SCHEMA_VERSION,
     catalog: [],
     workspaces: [
       {

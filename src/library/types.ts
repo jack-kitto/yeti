@@ -94,6 +94,7 @@ export type ShortcutBindings = {
 };
 
 export type Library = {
+  schemaVersion: number;
   catalog: Link[];
   workspaces: Workspace[];
   shortcuts: ShortcutBindings;

@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,11 +12,11 @@ Ensure **library reset** re-seeds Work and Personal with the new starter themes.
 
 ## Acceptance criteria
 
-- [ ] Snapshot schema version incremented; old snapshots fail import with a clear unsupported-version error
-- [ ] Stale IndexedDB library on pre-preset theme shape does not partially load — user is directed to reset or import
-- [ ] **Library reset** produces Work and Personal with new theme shape from starter template
-- [ ] Round-trip snapshot export/import preserves `shellSurface`, `widgets`, and `appliedPresetId`
-- [ ] Tests cover version gate, reset seed, and snapshot round-trip
+- [x] Snapshot schema version incremented; old snapshots fail import with a clear unsupported-version error
+- [x] Stale IndexedDB library on pre-preset theme shape does not partially load — user is directed to reset or import
+- [x] **Library reset** produces Work and Personal with new theme shape from starter template
+- [x] Round-trip snapshot export/import preserves `shellSurface`, `widgets`, and `appliedPresetId`
+- [x] Tests cover version gate, reset seed, and snapshot round-trip
 
 ## Blocked by
 

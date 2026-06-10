@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey } from "@/fractional-order/fractional-order";
 import { filterLinks, searchLinks, searchWorkspaces } from "./search";
+import { LIBRARY_SCHEMA_VERSION } from "@/library/schema";
 import type { Library, Link } from "@/library/types";
 import { createTestTheme } from "@/theme/theme-defaults";
 
@@ -11,6 +12,7 @@ function link(id: string, title: string): Link {
 
 function makeLibrary(catalog: Link[], placedIds: string[], activeWorkspaceId = "work"): Library {
   return {
+    schemaVersion: LIBRARY_SCHEMA_VERSION,
     catalog,
     workspaces: [
       {

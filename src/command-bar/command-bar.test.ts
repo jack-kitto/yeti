@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey } from "@/fractional-order/fractional-order";
+import { LIBRARY_SCHEMA_VERSION } from "@/library/schema";
 import type { Library } from "@/library/types";
 import { createTestTheme } from "@/theme/theme-defaults";
 import {
@@ -14,6 +15,7 @@ import {
 
 function makeLibrary(): Library {
   return {
+    schemaVersion: LIBRARY_SCHEMA_VERSION,
     catalog: [
       { id: "github", url: "https://github.com", title: "GitHub" },
       { id: "penpot", url: "https://penpot.app", title: "Penpot" },

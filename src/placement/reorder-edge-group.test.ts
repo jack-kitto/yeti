@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { initialKey, insertBetween } from "@/fractional-order/fractional-order";
+import { LIBRARY_SCHEMA_VERSION } from "@/library/schema";
 import type { EdgeGroup, Library } from "@/library/types";
 import { createTestTheme } from "@/theme/theme-defaults";
 import { reorderEdgeGroupOnRim, resolveEdgeGroups } from "./placement";
@@ -11,6 +12,7 @@ function edgeGroup(id: string, orderKey: string): EdgeGroup {
 
 function makeLibrary(groups: EdgeGroup[]): Library {
   return {
+    schemaVersion: LIBRARY_SCHEMA_VERSION,
     catalog: [],
     workspaces: [
       {

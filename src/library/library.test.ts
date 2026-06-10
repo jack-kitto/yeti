@@ -13,11 +13,28 @@ import {
   saveLibrary,
 } from "./library";
 import { getThemePreset } from "@/theme/theme-presets";
+import { LIBRARY_SCHEMA_VERSION, StaleLibraryError } from "./schema";
 import { STARTER_CATALOG } from "./starter-template";
 import { createInMemoryLibraryStore } from "./store";
 import { EDGE_PREVIEW_LIMIT } from "@/placement/placement";
 
 describe("loadOrSeedLibrary", () => {
+  it("seeds libraries with the current schema version", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+
+    expect(library.schemaVersion).toBe(LIBRARY_SCHEMA_VERSION);
+  });
+
+  it("rejects stale libraries missing the current schema version", async () => {
+    const store = createInMemoryLibraryStore();
+    const library = await loadOrSeedLibrary(store);
+    const stale = { ...library, schemaVersion: 1 };
+
+    await store.write(stale);
+
+    await expect(loadOrSeedLibrary(store)).rejects.toBeInstanceOf(StaleLibraryError);
+  });
+
   it("returns starter template with Work and Personal workspaces when store is empty", async () => {
     const store = createInMemoryLibraryStore();
 
@@ -112,6 +129,7 @@ describe("resetLibrary", () => {
 
     const reset = await resetLibrary(store);
 
+    expect(reset.schemaVersion).toBe(LIBRARY_SCHEMA_VERSION);
     expect(reset.catalog.length).toBe(STARTER_CATALOG.length);
     expect(reset.workspaces.map((workspace) => workspace.name)).toEqual(["Work", "Personal"]);
     expect((await getLibrary(store))?.catalog.length).toBe(STARTER_CATALOG.length);

@@ -1,7 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
-import { useApplyLibraryPatch, useLibrary, useMutateLibrary, useSaveLibrary } from "@/hooks/use-library";
+import {
+  useApplyLibraryPatch,
+  useLibrary,
+  useMutateLibrary,
+  useResetLibrary,
+  useSaveLibrary,
+} from "@/hooks/use-library";
+import { StaleLibraryError } from "@/library/library";
 import { usePomodoroPhaseAdvance } from "@/hooks/use-pomodoro-phase-advance";
 import type { Library, Workspace } from "@/library/types";
 import { getShellLayout } from "@/shell-frame/layout";
@@ -39,9 +46,10 @@ function readPanelBounds(): PanelBounds {
 }
 
 export function Shell() {
-  const { data: library, isLoading } = useLibrary();
+  const { data: library, isLoading, isError, error } = useLibrary();
   const applyLibraryPatch = useApplyLibraryPatch();
   const saveLibraryMutation = useSaveLibrary();
+  const resetLibrary = useResetLibrary();
   const [panelBounds, setPanelBounds] = useState<PanelBounds>(readPanelBounds);
   const workspaceTransition = useSyncExternalStore(
     subscribeWorkspaceTransition,
@@ -92,6 +100,22 @@ export function Shell() {
 
     const updated = reorderEdgeGroupOnRim(library, "left", groupId, targetSlotIndex);
     saveLibraryMutation.mutate(updated);
+  }
+
+  if (isError && error instanceof StaleLibraryError) {
+    return (
+      <div className="library-stale-gate">
+        <p className="library-stale-gate-copy">{error.message}</p>
+        <button
+          type="button"
+          className="library-stale-gate-reset"
+          onClick={() => resetLibrary.mutate()}
+          disabled={resetLibrary.isPending}
+        >
+          Reset to starter template
+        </button>
+      </div>
+    );
   }
 
   if (isLoading || !library || !activeWorkspace) {

@@ -3,6 +3,7 @@ import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
 import { rebalanceKeys } from "@/fractional-order/fractional-order";
 import { getThemePreset } from "@/theme/theme-presets";
+import { LIBRARY_SCHEMA_VERSION } from "./schema";
 import type { EdgeGroup, Library, Link, Theme, Workspace } from "./types";
 
 function themeFromPreset(presetId: "work" | "personal"): Theme {
@@ -205,6 +206,7 @@ export function createStarterLibrary(): Library {
   });
 
   return {
+    schemaVersion: LIBRARY_SCHEMA_VERSION,
     catalog,
     workspaces: [work, personal],
     shortcuts: {

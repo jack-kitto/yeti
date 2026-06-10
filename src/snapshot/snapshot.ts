@@ -16,10 +16,11 @@ import type {
   Theme,
   Workspace,
 } from "@/library/types";
+import { LIBRARY_SCHEMA_VERSION } from "@/library/schema";
 import { resolveTheme } from "@/theme/theme-defaults";
 import type { CanvasWidgetConfig } from "@/canvas-widgets/types";
 
-export const SNAPSHOT_VERSION = 1;
+export const SNAPSHOT_VERSION = 2;
 
 type SnapshotLinkPlacement = {
   id: string;
@@ -138,6 +139,7 @@ export function libraryToSnapshot(library: Library): LibrarySnapshot {
 
 export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
   const library: Library = {
+    schemaVersion: LIBRARY_SCHEMA_VERSION,
     catalog: snapshot.catalog.map((link) => ({
       id: link.id,
       url: link.url,

@@ -119,6 +119,46 @@ describe("serializeSnapshot", () => {
     });
   });
 
+  it("round-trips appliedPresetId with shell surface and widget styling", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const workspaceId = library.activeWorkspaceId;
+    const baseTheme = resolveTheme(
+      library.workspaces.find((workspace) => workspace.id === workspaceId)!.theme,
+    );
+    const withTheme = {
+      ...library,
+      workspaces: library.workspaces.map((workspace) =>
+        workspace.id === workspaceId
+          ? {
+              ...workspace,
+              theme: {
+                ...baseTheme,
+                appliedPresetId: "editorial",
+                shellSurface: "solid" as const,
+                widgets: {
+                  ...baseTheme.widgets,
+                  clock: {
+                    ...baseTheme.widgets.clock,
+                    zone: "lower-left",
+                    text: "#000000",
+                  },
+                },
+              },
+            }
+          : workspace,
+      ),
+    };
+
+    const restored = deserializeSnapshot(serializeSnapshot(withTheme));
+    const workspace = restored.workspaces.find((entry) => entry.id === workspaceId);
+
+    expect(workspace?.theme.appliedPresetId).toBe("editorial");
+    expect(workspace?.theme.shellSurface).toBe("solid");
+    expect(workspace?.theme.widgets.clock?.text).toBe("#000000");
+    expect(workspace?.theme.widgets.clock?.zone).toBe("lower-left");
+    expect(restored.schemaVersion).toBe(2);
+  });
+
   it("round-trips shell surface and canvas widget styling on workspace themes", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
     const workspaceId = library.activeWorkspaceId;
@@ -172,9 +212,16 @@ describe("deserializeSnapshot", () => {
     expect(() => deserializeSnapshot("{\n  not: [yaml")).toThrow(/not valid yaml/i);
   });
 
+  it("rejects pre-bump snapshot versions", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const yaml = serializeSnapshot(library).replace("version: 2", "version: 1");
+
+    expect(() => deserializeSnapshot(yaml)).toThrow(/unsupported snapshot version/i);
+  });
+
   it("rejects unsupported snapshot versions", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
-    const yaml = serializeSnapshot(library).replace("version: 1", "version: 99");
+    const yaml = serializeSnapshot(library).replace("version: 2", "version: 99");
 
     expect(() => deserializeSnapshot(yaml)).toThrow(/unsupported snapshot version/i);
   });

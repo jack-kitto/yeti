@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,11 +14,11 @@ Configure plugins: `@semantic-release/commit-analyzer`, `@semantic-release/relea
 
 ## Acceptance criteria
 
-- [ ] `semantic-release` and required plugins are dev dependencies
-- [ ] GitHub Actions release workflow runs on `main` after CI succeeds
-- [ ] Commits like `feat:`, `fix:`, `BREAKING CHANGE:` drive semver bumps
-- [ ] GitHub Releases are created with generated notes and matching tags
-- [ ] `GITHUB_TOKEN` or dedicated bot token documented in README/setup notes
+- [x] `semantic-release` and required plugins are dev dependencies
+- [x] GitHub Actions release workflow runs on `main` after CI succeeds
+- [x] Commits like `feat:`, `fix:`, `BREAKING CHANGE:` drive semver bumps
+- [x] GitHub Releases are created with generated notes and matching tags
+- [x] `GITHUB_TOKEN` or dedicated bot token documented in README/setup notes
 
 ## Blocked by
 

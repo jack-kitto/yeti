@@ -94,6 +94,20 @@ src/
 
 Domain terminology and design decisions: [`CONTEXT.md`](./CONTEXT.md) and [`docs/adr/`](./docs/adr/).
 
+## Releases
+
+Version bumps and GitHub Releases are automated from [Conventional Commits](https://www.conventionalcommits.org/) on `main` via [semantic-release](https://semantic-release.gitbook.io/).
+
+After the **CI** workflow passes on `main`, the **Release** workflow runs `npx semantic-release`, which:
+
+- Analyzes commits since the last tag (`feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` → major)
+- Updates `package.json` and `CHANGELOG.md`
+- Creates a Git tag and GitHub Release with generated notes
+
+No npm publish — the package is `private`. Deploy is separate (see below).
+
+**GitHub token:** The release workflow uses the built-in `GITHUB_TOKEN` with `contents: write` so semantic-release can push the version-bump commit, tag, and release. No extra secrets are required for GitHub Releases. If branch protection blocks `GITHUB_TOKEN` pushes to `main`, allow the token to bypass protection or use a dedicated bot PAT stored as a repository secret.
+
 ## Deployment
 
 Yeti is a standard Next.js app. Build with `npm run build` and deploy the output to any Node-compatible host or static/SSR platform (e.g. Cloudflare Pages).

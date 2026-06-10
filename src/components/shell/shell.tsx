@@ -1,11 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { useApplyLibraryPatch, useLibrary, useSaveLibrary } from "@/hooks/use-library";
 import { usePaletteExtraction } from "@/hooks/use-palette-extraction";
+import { getShellLayout } from "@/shell-frame/layout";
+import {
+  getWorkspaceTransitionSnapshot,
+  isWorkspaceTransitionRunning,
+  resolveWorkspaceTransitionDirection,
+  startWorkspaceTransition,
+  subscribeWorkspaceTransition,
+} from "@/shell-frame/workspace-transition";
 import { applyTheme } from "@/theme/theme";
 import { reorderEdgeGroupOnRim } from "@/placement/placement";
-import { getShellLayout } from "@/shell-frame/layout";
 import { CanvasWidgetStack } from "./canvas-widget-stack";
 import { Launcher } from "./launcher";
 import { ShellConfigDialog } from "./shell-config-dialog";
@@ -36,8 +43,31 @@ export function Shell() {
   const saveLibraryMutation = useSaveLibrary();
   const { paletteExtractionErrors, retryPaletteExtraction } = usePaletteExtraction(library);
   const [panelBounds, setPanelBounds] = useState<PanelBounds>(readPanelBounds);
+  const workspaceTransition = useSyncExternalStore(
+    subscribeWorkspaceTransition,
+    getWorkspaceTransitionSnapshot,
+    getWorkspaceTransitionSnapshot,
+  );
 
   const activeWorkspace = library?.workspaces.find((w) => w.id === library.activeWorkspaceId);
+
+  const switchWorkspace = useCallback(
+    (workspaceId: string) => {
+      if (!library || workspaceId === library.activeWorkspaceId) {
+        return;
+      }
+      if (isWorkspaceTransitionRunning()) {
+        return;
+      }
+
+      startWorkspaceTransition({
+        direction: resolveWorkspaceTransitionDirection(library, workspaceId),
+        panelWidth: getShellLayout().panelW,
+        onSwap: () => applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId }),
+      });
+    },
+    [applyLibraryPatch, library],
+  );
 
   useEffect(() => {
     if (!activeWorkspace) {
@@ -82,6 +112,9 @@ export function Shell() {
             top: panelBounds.top,
             width: panelBounds.width,
             height: panelBounds.height,
+            transform: workspaceTransition.canvasOffsetX
+              ? `translateX(${workspaceTransition.canvasOffsetX}px)`
+              : undefined,
           }}
         >
           <div
@@ -97,9 +130,7 @@ export function Shell() {
         <ShellEdgeLayer
           library={library}
           onReorderGroup={handleReorderGroup}
-          onSwitchWorkspace={(workspaceId) =>
-            applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId })
-          }
+          onSwitchWorkspace={switchWorkspace}
           onUpdateInternalTools={(internalTools) =>
             saveLibraryMutation.mutate({
               ...library,

@@ -11,4 +11,8 @@ describe("drawShell", () => {
     expect(source).not.toContain("shellSurface");
     expect(source).toContain("drawSolidShell(ctx, layout, pocket, theme)");
   });
+
+  it("does not stroke the notch fill path separately to avoid double pocket borders", () => {
+    expect(source).not.toContain("ctx.stroke(notchPath)");
+  });
 });

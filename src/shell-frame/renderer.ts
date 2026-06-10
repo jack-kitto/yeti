@@ -271,10 +271,6 @@ function drawSolidShell(
     ctx.strokeStyle = theme.strokeOuter;
     ctx.lineWidth = theme.borderWidth;
     ctx.stroke(path);
-
-    if (notchPath) {
-      ctx.stroke(notchPath);
-    }
   }
 }
 

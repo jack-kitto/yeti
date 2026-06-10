@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import { formatClockDisplay, formatEditorialClockDisplay } from "@/canvas-widgets/clock";
 import { pickQuote } from "@/canvas-widgets/quote";
 import { formatWelcomeMessage } from "@/canvas-widgets/welcome";
+import { usePomodoroTimerNow } from "@/hooks/use-pomodoro-timer-now";
+import type { Workspace } from "@/library/types";
+import {
+  displayPomodoroSeconds,
+  formatPomodoroTimerLabel,
+  formatTimerSeconds,
+  resolveFocusSplit,
+} from "@/internal-tools/pomodoro";
 
 export function CanvasClockTimeWidget() {
   const [now, setNow] = useState(() => new Date());
@@ -57,4 +65,37 @@ export function CanvasQuoteWidget() {
   const [quote] = useState(() => pickQuote(Math.floor(Date.now() / 86_400_000)));
 
   return <p className="canvas-widget canvas-widget-quote">{quote.text}</p>;
+}
+
+export function CanvasEditorialTimerTimeWidget({ workspace }: { workspace: Workspace }) {
+  const pomodoro = workspace.internalTools.pomodoro;
+  const split = resolveFocusSplit(pomodoro.splitId, workspace.internalTools);
+  const now = usePomodoroTimerNow(pomodoro);
+  const seconds = displayPomodoroSeconds(pomodoro, split, now);
+
+  if (!pomodoro.running) {
+    return null;
+  }
+
+  return (
+    <div className="canvas-widget canvas-widget-clock canvas-widget-clock--hero-time canvas-widget-timer">
+      <p className="canvas-widget-clock-time" aria-live="polite">
+        {formatTimerSeconds(seconds)}
+      </p>
+    </div>
+  );
+}
+
+export function CanvasEditorialTimerPhaseWidget({ workspace }: { workspace: Workspace }) {
+  const pomodoro = workspace.internalTools.pomodoro;
+
+  if (!pomodoro.running) {
+    return null;
+  }
+
+  return (
+    <div className="canvas-widget canvas-widget-clock canvas-widget-clock--hero-date canvas-widget-timer">
+      <p className="canvas-widget-clock-date-hero">{formatPomodoroTimerLabel(pomodoro)}</p>
+    </div>
+  );
 }

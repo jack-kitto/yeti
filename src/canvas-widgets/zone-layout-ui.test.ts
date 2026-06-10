@@ -17,6 +17,12 @@ describe("canvas zone layout UI", () => {
     expect(stackSource).toContain('data-applied-preset={workspace.theme.appliedPresetId ?? undefined}');
   });
 
+  it("renders editorial timer corners when pomodoro replaces the clock", () => {
+    expect(editorialStackSource).toContain("CanvasEditorialTimerTimeWidget");
+    expect(editorialStackSource).toContain("CanvasEditorialTimerPhaseWidget");
+    expect(editorialStackSource).toContain('isWidgetInLayout(layout, "pomodoro")');
+  });
+
   it("uses a dedicated four-corner editorial canvas layout", () => {
     expect(stackSource).toContain("EditorialCanvasStack");
     expect(stackSource).toContain('appliedPresetId === "editorial"');

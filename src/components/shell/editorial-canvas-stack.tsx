@@ -10,6 +10,8 @@ import { CanvasNowPlayingWidget } from "./canvas-now-playing-widget";
 import {
   CanvasClockDateHeroWidget,
   CanvasClockTimeWidget,
+  CanvasEditorialTimerPhaseWidget,
+  CanvasEditorialTimerTimeWidget,
   CanvasQuoteWidget,
   CanvasWelcomeWidget,
 } from "./canvas-widget-parts";
@@ -29,6 +31,7 @@ export function EditorialCanvasStack({ workspace, layout }: EditorialCanvasStack
   const showTasks = isWidgetInLayout(layout, "focusTasks");
   const showWelcome = isWidgetInLayout(layout, "welcome");
   const showClock = isWidgetInLayout(layout, "clock");
+  const showPomodoro = isWidgetInLayout(layout, "pomodoro");
 
   return (
     <div
@@ -46,11 +49,19 @@ export function EditorialCanvasStack({ workspace, layout }: EditorialCanvasStack
 
       <div className="canvas-editorial-corner canvas-editorial-bl">
         {showWelcome ? <CanvasWelcomeWidget workspaceName={workspace.name} /> : null}
-        {showClock ? <CanvasClockTimeWidget /> : null}
+        {showPomodoro ? (
+          <CanvasEditorialTimerTimeWidget workspace={workspace} />
+        ) : showClock ? (
+          <CanvasClockTimeWidget />
+        ) : null}
       </div>
 
       <div className="canvas-editorial-corner canvas-editorial-br">
-        {showClock ? <CanvasClockDateHeroWidget /> : null}
+        {showPomodoro ? (
+          <CanvasEditorialTimerPhaseWidget workspace={workspace} />
+        ) : showClock ? (
+          <CanvasClockDateHeroWidget />
+        ) : null}
       </div>
     </div>
   );

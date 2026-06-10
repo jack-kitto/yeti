@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,13 +12,13 @@ Add **Start countdown** on tasks flyout and canvas widget (from task estimate). 
 
 ## Acceptance criteria
 
-- [ ] `PomodoroState.mode`: `"pomodoro" | "countdown"`
-- [ ] **Start countdown** on task with estimate starts countdown for that many minutes
-- [ ] **Start countdown** disabled when task has no estimate
-- [ ] Countdown does not advance work/break phases; pomodoro mode unchanged
-- [ ] Flyout and canvas widget show mode-appropriate UI
-- [ ] Snapshot export/import round-trips countdown fields
-- [ ] TDD on domain logic in `pomodoro.ts` / `tasks.ts`
+- [x] `PomodoroState.mode`: `"pomodoro" | "countdown"`
+- [x] **Start countdown** on task with estimate starts countdown for that many minutes
+- [x] **Start countdown** disabled when task has no estimate
+- [x] Countdown does not advance work/break phases; pomodoro mode unchanged
+- [x] Flyout and canvas widget show mode-appropriate UI
+- [x] Snapshot export/import round-trips countdown fields
+- [x] TDD on domain logic in `pomodoro.ts` / `tasks.ts`
 
 ## Blocked by
 

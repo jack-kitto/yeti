@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -20,7 +20,7 @@ Close the gap between issue 28's minimal ship and **CONTEXT.md** for **internal 
 - [x] Start focus couples task + pomodoro; timer flyout shows active task name
 - [x] Tasks flyout supports today flag, reorder, and estimates per CONTEXT
 - [x] Snapshot export/import round-trips extended pomodoro/task fields
-- [ ] UX refinement complete (child issues **53–60**)
+- [x] UX refinement complete (child issues **53–60**)
 
 ## Child issues (UX refinement — grill 2026-06)
 

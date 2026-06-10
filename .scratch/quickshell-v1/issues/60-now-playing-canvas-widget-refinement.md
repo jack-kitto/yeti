@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,12 +12,12 @@ Dismiss sets a per-workspace flag in the **library** (separate from settings on/
 
 ## Acceptance criteria
 
-- [ ] Widget visible when enabled and station selected, including while paused (unless dismissed)
-- [ ] Play/pause controls on canvas widget
-- [ ] Dismiss control hides widget until next play
-- [ ] Dismiss flag persists in library and snapshot round-trip
-- [ ] Settings master toggle still disables widget type
-- [ ] TDD on visibility rules
+- [x] Widget visible when enabled and station selected, including while paused (unless dismissed)
+- [x] Play/pause controls on canvas widget
+- [x] Dismiss control hides widget until next play
+- [x] Dismiss flag persists in library and snapshot round-trip
+- [x] Settings master toggle still disables widget type
+- [x] TDD on visibility rules
 
 ## Blocked by
 

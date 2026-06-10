@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,11 +12,11 @@ Per row: **Start focus** (opens pomodoro flyout per issue 55), **Start countdown
 
 ## Acceptance criteria
 
-- [ ] `CanvasWidgetId` includes `focusTasks`; settings toggle per workspace
-- [ ] Widget shows today's incomplete **focus tasks** (title + estimate when set)
-- [ ] Primary actions per row; dense editing stays on **right rim**
-- [ ] Snapshot export/import round-trips widget toggle
-- [ ] Styling matches other canvas widgets
+- [x] `CanvasWidgetId` includes `focusTasks`; settings toggle per workspace
+- [x] Widget shows today's incomplete **focus tasks** (title + estimate when set)
+- [x] Primary actions per row; dense editing stays on **right rim**
+- [x] Snapshot export/import round-trips widget toggle
+- [x] Styling matches other canvas widgets
 
 ## Blocked by
 

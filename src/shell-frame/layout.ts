@@ -52,17 +52,29 @@ const FRAME_RIGHT = 14;
 export function getShellLayout(): ShellLayout {
   const w = typeof window === "undefined" ? 1280 : window.innerWidth;
   const h = typeof window === "undefined" ? 800 : window.innerHeight;
-  const baseFrameLeft = Math.max(56, w * 0.055);
-  const expand = easeOutCubic(getWorkspaceTransitionSnapshot().expand);
-  const frameLeft = lerp(baseFrameLeft, 0, expand);
-  const frameTop = lerp(FRAME_TOP, 0, expand);
-  const frameBottom = lerp(FRAME_BOTTOM, 0, expand);
-  const frameRight = lerp(FRAME_RIGHT, 0, expand);
+  const frameLeft = Math.max(56, w * 0.055);
+  const frameTop = FRAME_TOP;
+  const frameBottom = FRAME_BOTTOM;
+  const frameRight = FRAME_RIGHT;
 
-  const panelX = frameLeft;
-  const panelY = frameTop;
-  const panelW = w - frameLeft - frameRight;
-  const panelH = h - frameTop - frameBottom;
+  let panelX = frameLeft;
+  let panelY = frameTop;
+  let panelW = w - frameLeft - frameRight;
+  let panelH = h - frameTop - frameBottom;
+  let shellRadius = 28;
+
+  const seal = easeOutCubic(getWorkspaceTransitionSnapshot().seal);
+  if (seal > 0) {
+    const centerX = w * 0.5;
+    const centerY = h * 0.5;
+    const halfW = panelW * 0.5 * (1 - seal);
+    const halfH = panelH * 0.5 * (1 - seal);
+    panelX = centerX - halfW;
+    panelY = centerY - halfH;
+    panelW = halfW * 2;
+    panelH = halfH * 2;
+    shellRadius = lerp(28, 0, seal);
+  }
 
   return {
     w,
@@ -77,7 +89,7 @@ export function getShellLayout(): ShellLayout {
     panelH,
     panelRight: panelX + panelW,
     panelBottom: panelY + panelH,
-    shellRadius: lerp(28, 0, expand),
+    shellRadius,
     pocketCorner: 18,
     pocketInset: 18,
     edgePadding: 150,

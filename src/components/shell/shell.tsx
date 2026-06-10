@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useApplyLibraryPatch, useLibrary, useMutateLibrary, useSaveLibrary } from "@/hooks/use-library";
 import { usePaletteExtraction } from "@/hooks/use-palette-extraction";
 import { usePomodoroPhaseAdvance } from "@/hooks/use-pomodoro-phase-advance";
@@ -9,11 +9,10 @@ import { getShellLayout } from "@/shell-frame/layout";
 import {
   getWorkspaceTransitionSnapshot,
   isWorkspaceTransitionRunning,
-  resolveWorkspaceTransitionDirection,
   startWorkspaceTransition,
   subscribeWorkspaceTransition,
 } from "@/shell-frame/workspace-transition";
-import { applyTheme } from "@/theme/theme";
+import { applyTheme, lerpPalette } from "@/theme/theme";
 import { reorderEdgeGroupOnRim } from "@/placement/placement";
 import { CanvasWidgetStack } from "./canvas-widget-stack";
 import { Launcher } from "./launcher";
@@ -62,21 +61,21 @@ export function Shell() {
         return;
       }
 
+      const fromWorkspace = library.workspaces.find(
+        (workspace) => workspace.id === library.activeWorkspaceId,
+      );
+      if (!fromWorkspace) {
+        return;
+      }
+
       startWorkspaceTransition({
-        direction: resolveWorkspaceTransitionDirection(library, workspaceId),
-        panelWidth: getShellLayout().panelW,
+        fromPalette: fromWorkspace.theme.palette,
+        fromBackgroundUrl: fromWorkspace.theme.backgroundUrl,
         onSwap: () => applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId }),
       });
     },
     [applyLibraryPatch, library],
   );
-
-  useEffect(() => {
-    if (!activeWorkspace) {
-      return;
-    }
-    applyTheme(document.documentElement, activeWorkspace.theme);
-  }, [activeWorkspace]);
 
   useEffect(() => {
     function handleResize() {
@@ -144,6 +143,31 @@ function ShellLoaded({
 }: ShellLoadedProps) {
   const mutateLibrary = useMutateLibrary();
 
+  const displayTheme = useMemo(() => {
+    if (workspaceTransition.running && workspaceTransition.fromPalette) {
+      const palette =
+        workspaceTransition.paletteMorph < 1
+          ? lerpPalette(
+              workspaceTransition.fromPalette,
+              activeWorkspace.theme.palette,
+              workspaceTransition.paletteMorph,
+            )
+          : activeWorkspace.theme.palette;
+
+      return {
+        ...activeWorkspace.theme,
+        palette,
+        backgroundUrl: workspaceTransition.fromBackgroundUrl ?? activeWorkspace.theme.backgroundUrl,
+      };
+    }
+
+    return activeWorkspace.theme;
+  }, [activeWorkspace.theme, workspaceTransition]);
+
+  useEffect(() => {
+    applyTheme(document.documentElement, displayTheme);
+  }, [displayTheme]);
+
   const handlePomodoroAdvance = useCallback(
     (nextPomodoro: Workspace["internalTools"]["pomodoro"]) => {
       mutateLibrary.mutate((current) => ({
@@ -176,9 +200,7 @@ function ShellLoaded({
             top: panelBounds.top,
             width: panelBounds.width,
             height: panelBounds.height,
-            transform: workspaceTransition.canvasOffsetX
-              ? `translateX(${workspaceTransition.canvasOffsetX}px)`
-              : undefined,
+            opacity: 1 - workspaceTransition.seal,
           }}
         >
           <div className="pointer-events-none absolute inset-0 px-6 sm:px-8">
@@ -186,7 +208,7 @@ function ShellLoaded({
           </div>
         </main>
 
-        <ShellCanvas theme={activeWorkspace.theme} />
+        <ShellCanvas theme={displayTheme} />
 
         <ShellEdgeLayer
           library={library}

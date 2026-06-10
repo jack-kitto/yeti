@@ -1,6 +1,33 @@
 import { describe, expect, it } from "vitest";
-import { themeToCssVars } from "./theme";
+import { lerpPalette, themeToCssVars } from "./theme";
 import type { Theme } from "@/library/types";
+
+describe("lerpPalette", () => {
+  it("interpolates each palette channel between two themes", () => {
+    expect(
+      lerpPalette(
+        {
+          background: "#000000",
+          surface: "#222222",
+          text: "#ffffff",
+          accent: "#ff0000",
+        },
+        {
+          background: "#ffffff",
+          surface: "#dddddd",
+          text: "#000000",
+          accent: "#00ff00",
+        },
+        0.5,
+      ),
+    ).toEqual({
+      background: "#808080",
+      surface: "#808080",
+      text: "#808080",
+      accent: "#808000",
+    });
+  });
+});
 
 describe("themeToCssVars", () => {
   it("maps palette and background URL to CSS custom properties", () => {

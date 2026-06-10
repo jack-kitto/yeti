@@ -1,21 +1,27 @@
-import type { Library } from "@/library/types";
+import type { ThemePalette } from "@/library/types";
 import { easeOutCubic } from "./utils";
-
-export type WorkspaceTransitionDirection = "next" | "previous";
 
 export type WorkspaceTransitionSnapshot = {
   running: boolean;
-  expand: number;
-  canvasOffsetX: number;
+  /** 0 = open canvas, 1 = shell sealed over the viewport. */
+  seal: number;
+  /** 0 = outgoing palette, 1 = incoming workspace palette. */
+  paletteMorph: number;
+  fromPalette: ThemePalette | null;
+  fromBackgroundUrl?: string;
 };
 
 const TRANSITION_DURATION_MS = 520;
+const SWAP_AT = 0.5;
+const MORPH_END = 0.62;
 
 const listeners = new Set<() => void>();
 let snapshot: WorkspaceTransitionSnapshot = {
   running: false,
-  expand: 0,
-  canvasOffsetX: 0,
+  seal: 0,
+  paletteMorph: 0,
+  fromPalette: null,
+  fromBackgroundUrl: undefined,
 };
 
 let rafId: number | null = null;
@@ -44,30 +50,8 @@ export function isWorkspaceTransitionRunning(): boolean {
   return snapshot.running;
 }
 
-export function resolveWorkspaceTransitionDirection(
-  library: Library,
-  targetWorkspaceId: string,
-): WorkspaceTransitionDirection {
-  const currentIndex = library.workspaces.findIndex(
-    (workspace) => workspace.id === library.activeWorkspaceId,
-  );
-  const targetIndex = library.workspaces.findIndex(
-    (workspace) => workspace.id === targetWorkspaceId,
-  );
-
-  if (currentIndex === -1 || targetIndex === -1 || currentIndex === targetIndex) {
-    return "next";
-  }
-
-  const forward =
-    (targetIndex - currentIndex + library.workspaces.length) % library.workspaces.length;
-  const backward =
-    (currentIndex - targetIndex + library.workspaces.length) % library.workspaces.length;
-
-  return forward <= backward ? "next" : "previous";
-}
-
-export function getWorkspaceTransitionExpand(progress: number): number {
+/** Close during the first half, open during the second — peaks at progress 0.5. */
+export function getWorkspaceTransitionSeal(progress: number): number {
   const clamped = Math.max(0, Math.min(1, progress));
 
   if (clamped <= 0.5) {
@@ -77,26 +61,19 @@ export function getWorkspaceTransitionExpand(progress: number): number {
   return easeOutCubic((1 - clamped) / 0.5);
 }
 
-export function getWorkspaceCanvasOffset(
-  progress: number,
-  direction: WorkspaceTransitionDirection,
-  panelWidth: number,
-): number {
-  const clamped = Math.max(0, Math.min(1, progress));
-  const sign = direction === "next" ? -1 : 1;
-  const travel = panelWidth * 0.22;
-
-  if (clamped <= 0.5) {
-    return sign * travel * easeOutCubic(clamped / 0.5);
+/** Palette cross-fade runs in the sealed phase right after the workspace swap. */
+export function getWorkspacePaletteMorph(progress: number): number {
+  if (progress < SWAP_AT) {
+    return 0;
   }
 
-  const enterT = (clamped - 0.5) / 0.5;
-  return -sign * travel * (1 - easeOutCubic(enterT));
+  const morphT = (progress - SWAP_AT) / (MORPH_END - SWAP_AT);
+  return easeOutCubic(Math.min(1, Math.max(0, morphT)));
 }
 
 export function startWorkspaceTransition(args: {
-  direction: WorkspaceTransitionDirection;
-  panelWidth: number;
+  fromPalette: ThemePalette;
+  fromBackgroundUrl?: string;
   onSwap: () => void;
 }): void {
   if (snapshot.running) {
@@ -109,21 +86,28 @@ export function startWorkspaceTransition(args: {
 
   let swapped = false;
   const start = performance.now();
-  patchWorkspaceTransition({ running: true, expand: 0, canvasOffsetX: 0 });
+  patchWorkspaceTransition({
+    running: true,
+    seal: 0,
+    paletteMorph: 0,
+    fromPalette: args.fromPalette,
+    fromBackgroundUrl: args.fromBackgroundUrl,
+  });
 
   const tick = (now: number) => {
     const progress = Math.min(1, (now - start) / TRANSITION_DURATION_MS);
-    const expand = getWorkspaceTransitionExpand(progress);
+    const seal = getWorkspaceTransitionSeal(progress);
+    const paletteMorph = getWorkspacePaletteMorph(progress);
 
-    if (progress >= 0.5 && !swapped) {
+    if (progress >= SWAP_AT && !swapped) {
       swapped = true;
       args.onSwap();
     }
 
     patchWorkspaceTransition({
       running: progress < 1,
-      expand,
-      canvasOffsetX: getWorkspaceCanvasOffset(progress, args.direction, args.panelWidth),
+      seal,
+      paletteMorph,
     });
 
     if (progress < 1) {
@@ -132,7 +116,13 @@ export function startWorkspaceTransition(args: {
     }
 
     rafId = null;
-    patchWorkspaceTransition({ running: false, expand: 0, canvasOffsetX: 0 });
+    patchWorkspaceTransition({
+      running: false,
+      seal: 0,
+      paletteMorph: 0,
+      fromPalette: null,
+      fromBackgroundUrl: undefined,
+    });
   };
 
   rafId = requestAnimationFrame(tick);

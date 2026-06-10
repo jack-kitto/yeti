@@ -14,10 +14,10 @@ Hide or fade rim chrome while `workspaceTransition.running` (or when `expand` > 
 
 ## Acceptance criteria
 
-- [ ] Switching workspace (Tab, Control+Tab, control center) does not show edge/tool handles over the expanding shell
-- [ ] Handles restore immediately after transition completes
-- [ ] Rapid double-switch still lands on correct workspace with no stuck chrome
-- [ ] No regression to normal hover/pin handle behavior at rest
+- [x] Switching workspace (Tab, Control+Tab, control center) does not show edge/tool handles over the expanding shell
+- [x] Handles restore immediately after transition completes
+- [x] Rapid double-switch still lands on correct workspace with no stuck chrome
+- [x] No regression to normal hover/pin handle behavior at rest
 
 ## Blocked by
 

@@ -17,9 +17,12 @@ vi.mock("extract-colors", () => ({
 /* eslint-disable import-x/first -- vi.mock must run before the module under test is imported */
 import {
   applyExtractedPaletteToTheme,
+  contrastRatio,
+  ensureCanvasTextContrast,
   extractPaletteFromImageUrl,
   mapExtractedColorsToPalette,
   mergeExtractedPalette,
+  MIN_CANVAS_TEXT_CONTRAST_RATIO,
   needsPaletteExtraction,
 } from "./palette-extraction";
 /* eslint-enable import-x/first */
@@ -158,5 +161,40 @@ describe("extractPaletteFromImageUrl", () => {
       text: "#2c2419",
       accent: "#c17f59",
     });
+  });
+});
+
+describe("canvas text contrast", () => {
+  const muddyMountainColors = [
+    { hex: "#8f9aa6", lightness: 0.62, saturation: 0.08, area: 0.44 },
+    { hex: "#7a8794", lightness: 0.54, saturation: 0.1, area: 0.28 },
+    { hex: "#6d7884", lightness: 0.48, saturation: 0.09, area: 0.14 },
+    { hex: "#9aa5b0", lightness: 0.66, saturation: 0.07, area: 0.08 },
+    { hex: "#5f6872", lightness: 0.42, saturation: 0.08, area: 0.06 },
+  ];
+
+  it("enforces the documented minimum contrast ratio for canvas text", () => {
+    const palette = mapExtractedColorsToPalette(muddyMountainColors);
+
+    expect(contrastRatio(palette.text, palette.background)).toBeGreaterThanOrEqual(
+      MIN_CANVAS_TEXT_CONTRAST_RATIO,
+    );
+  });
+
+  it("pushes low-contrast extracted text toward readable extremes", () => {
+    const adjusted = ensureCanvasTextContrast("#7a8794", "#8f9aa6");
+
+    expect(contrastRatio(adjusted, "#8f9aa6")).toBeGreaterThanOrEqual(
+      MIN_CANVAS_TEXT_CONTRAST_RATIO,
+    );
+    expect(adjusted).not.toBe("#7a8794");
+  });
+
+  it("keeps starter work palette text readable on its extracted background", () => {
+    const palette = mapExtractedColorsToPalette(warmOfficeColors);
+
+    expect(contrastRatio(palette.text, palette.background)).toBeGreaterThanOrEqual(
+      MIN_CANVAS_TEXT_CONTRAST_RATIO,
+    );
   });
 });

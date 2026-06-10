@@ -488,27 +488,55 @@ body {
 
 .canvas-widget-stage {
   position: relative;
+  display: grid;
   width: 100%;
   height: 100%;
   min-height: 0;
+  grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 28rem) minmax(0, 1fr);
+  grid-template-areas:
+    ". upper-center ."
+    "lower-left center lower-right"
+    ". bottom-center .";
+  gap: 0.65rem;
+  padding: 8vh 0 10vh;
+  pointer-events: none;
 }
 
-.canvas-widget-foreground {
-  position: relative;
-  z-index: 1;
+.canvas-zone {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.65rem;
-  width: 100%;
-  max-width: 28rem;
-  height: 100%;
-  max-height: 100%;
-  margin: 0 auto;
-  padding: 10vh 0 14vh;
-  overflow: hidden;
+  min-width: 0;
   pointer-events: auto;
+}
+
+.canvas-zone-upper-center {
+  grid-area: upper-center;
+  justify-content: flex-end;
+}
+
+.canvas-zone-center {
+  grid-area: center;
+}
+
+.canvas-zone-lower-left {
+  grid-area: lower-left;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.canvas-zone-lower-right {
+  grid-area: lower-right;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.canvas-zone-bottom-center {
+  grid-area: bottom-center;
+  justify-content: flex-start;
 }
 
 .canvas-widget {
@@ -701,13 +729,9 @@ body {
   text-shadow: var(--canvas-widget-pomodoro-text-shadow, none);
 }
 
-.canvas-widget-tasks-corner {
-  position: absolute;
-  top: 8%;
-  right: 0;
-  z-index: 2;
-  max-width: min(42%, 12rem);
-  pointer-events: auto;
+.canvas-zone-lower-right .canvas-focus-tasks-list,
+.canvas-zone-lower-left .canvas-focus-tasks-list {
+  max-width: min(100%, 12rem);
 }
 
 .canvas-focus-tasks-list {

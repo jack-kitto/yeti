@@ -14,12 +14,26 @@ Close the gap between issue 28's minimal ship and **CONTEXT.md** for **internal 
 
 ## Acceptance criteria
 
-- [ ] User can select from multiple built-in splits (range includes up to 50/10) and define a custom split
-- [ ] Split choice persists per workspace in the **library**
-- [ ] Timer advances work → break → work on session end; chime plays when enabled
-- [ ] Start focus couples task + pomodoro; timer flyout shows active task name
-- [ ] Tasks flyout supports today flag, reorder, and estimates per CONTEXT
-- [ ] Snapshot export/import round-trips extended pomodoro/task fields
+- [x] User can select from multiple built-in splits (range includes up to 50/10) and define a custom split
+- [x] Split choice persists per workspace in the **library**
+- [x] Timer advances work → break → work on session end; chime plays when enabled
+- [x] Start focus couples task + pomodoro; timer flyout shows active task name
+- [x] Tasks flyout supports today flag, reorder, and estimates per CONTEXT
+- [x] Snapshot export/import round-trips extended pomodoro/task fields
+- [ ] UX refinement complete (child issues **53–60**)
+
+## Child issues (UX refinement — grill 2026-06)
+
+| Issue | Scope |
+|-------|--------|
+| 53 | Tasks flyout layout polish |
+| 54 | Pomodoro flyout clarity (phase + split) |
+| 55 | Start focus opens pomodoro flyout (no auto-start) |
+| 56 | Custom split uncapped positive minutes |
+| 57 | Canvas pomodoro widget (+ hourglass animation) |
+| 58 | Canvas focus tasks widget |
+| 59 | Focus countdown mode |
+| 60 | Now playing canvas widget refinement |
 
 ## Blocked by
 
@@ -28,3 +42,5 @@ None — issue 28 baseline is done
 ## Comments
 
 Issue 28 shipped start/pause/add/complete only. Domain language: `CONTEXT.md` → **Focus split**, **Focus task**, **Internal tool**.
+
+**Functional baseline shipped 2026-06** (`2625c9d`–`5034ee0`, 187 tests). UX not done — umbrella stays open until child issues 53–60 close. Grill decisions captured in `CONTEXT.md` and `docs/adr/0006-focus-countdown-timer-mode.md`.

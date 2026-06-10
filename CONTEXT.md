@@ -57,7 +57,7 @@ The large central area and primary focus surface. In v1: **canvas widgets** only
 _Avoid_: Dashboard, homepage, main content, pin strip
 
 **Canvas widget**:
-A small configurable block on the **canvas** — always visible when enabled. v1 types: clock/date, welcome message, and **quote**. On/off toggles are **per-workspace** (stored on the workspace record); configured from **settings**. Ambient and minimal; not duplicated in the **control center**.
+A small configurable block on the **canvas** — visible when enabled (some types have extra visibility rules — e.g. **now playing** stays on canvas while paused until the user **dismisses** it; dismiss is a per-workspace flag in the **library**, separate from the settings on/off toggle, and clears on the next **play** from anywhere). v1 types: clock/date, welcome message, **quote**, **now playing**, **focus tasks**, and **pomodoro**. On/off toggles are **per-workspace** (stored on the workspace record); configured from **settings**. Ambient and minimal; not duplicated in the **control center**. **Focus tasks** and **pomodoro** canvas widgets read the same per-workspace **internal tool** state as the **right rim** — no duplicate task or timer store. Canvas offers glance + primary actions (start/pause timer, start focus/countdown, complete task); dense editing (reorder, estimates, split config, backlog toggle) stays on the **right rim**.
 _Avoid_: Widget, tile, card
 
 **Quote**:
@@ -85,11 +85,15 @@ A built-in shell app on the **right rim** — not a catalog **link** and not an 
 _Avoid_: Widget, extension, plugin, edge group
 
 **Focus split**:
-A pomodoro timing preset — work interval, short break, and long break. v1 ships multiple built-in splits plus a **custom split** the user defines. Selected per workspace; stored in the **library**. An active timer persists across reload via a saved end timestamp; optional chime on session end (off by default).
+A pomodoro timing preset — work interval, short break, and long break. v1 ships multiple built-in splits plus a **custom split** the user defines (any positive whole-minute values — no preset maximum). Selected per workspace; stored in the **library**. Used only in **pomodoro** timer mode (not **focus countdown**). An active timer persists across reload via a saved end timestamp; optional chime on session end (off by default).
 _Avoid_: Timer preset, interval set
 
+**Focus countdown**:
+A single-interval timer on the pomodoro **internal tool** — no work/break phases. One timer slot per workspace; starting a **focus countdown** or a pomodoro session replaces whichever was active. Duration comes from a **focus task**'s estimate (minutes) or a manual entry; ties to an active task when started from the task list. Persists across reload via a saved end timestamp like pomodoro mode. Distinct from **focus split** cycling.
+_Avoid_: Pomodoro, stopwatch, countdown widget
+
 **Focus task**:
-A lightweight item on the dev focus list — title plus optional time estimate (minutes). Per-workspace, **local-only**, ordered via **fractional order**. Tasks persist in a workspace backlog; each can be marked **today** — the tasks flyout defaults to today's subset. **Start focus** on a task sets it as active and starts a work-interval pomodoro; the timer flyout shows the active task name. Complete from either flyout. Not a full project-management backlog.
+A lightweight item on the dev focus list — title plus optional time estimate (minutes). Per-workspace, **local-only**, ordered via **fractional order**. Tasks persist in a workspace backlog; each can be marked **today** — the tasks flyout defaults to today's subset. **Start focus** sets the task active and opens the pomodoro tool flyout — user picks a **focus split** and presses Start there; the timer does not run until that explicit Start. **Start countdown** sets the task active and starts a **focus countdown** from its estimate (disabled when no estimate). The timer flyout shows the active task name. Complete from either flyout. Not a full project-management backlog.
 _Avoid_: Todo, ticket, issue tracker
 
 **Edge group**:

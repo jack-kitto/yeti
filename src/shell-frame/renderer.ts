@@ -1,5 +1,7 @@
 import type { RenderPocket, ShellLayout } from "./layout";
 
+import type { ShellSurface } from "@/library/types";
+
 export type ShellThemeColors = {
   ambient: string;
   glassStops: [string, string, string];
@@ -7,6 +9,8 @@ export type ShellThemeColors = {
   strokeOuter: string;
   strokeInner: string;
   shadow: string;
+  backdropBlur: number;
+  shellSurface: ShellSurface;
 };
 
 function addTopPocket(path: Path2D, x1: number, x2: number, y: number, depth: number, r: number) {

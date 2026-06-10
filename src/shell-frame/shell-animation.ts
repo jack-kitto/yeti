@@ -1,6 +1,7 @@
 import { getRenderPocket, getShellLayout } from "./layout";
 import { drawShell, resizeShellCanvas } from "./renderer";
-import { rgbaFromHex, shellFillAlphas } from "./shell-colors";
+import type { ShellSurface } from "@/library/types";
+import { rgbaFromHex, shellBackdropBlur, shellFillAlphas } from "./shell-colors";
 import { getShellState, patchAnimationState } from "./shell-state";
 import type { ShellThemeColors } from "./renderer";
 const SPEED_T = 0.16;
@@ -69,10 +70,13 @@ export function stopShellAnimation() {
 
 export function themeToShellColors(theme: {
   palette: { surface: string; text: string; accent: string; background: string };
+  shellSurface?: ShellSurface;
   glassOpacity?: number;
 }): ShellThemeColors {
-  const { rim, notch } = shellFillAlphas(theme.glassOpacity ?? 0.72);
+  const shellSurface = theme.shellSurface ?? "glass";
+  const { rim, notch } = shellFillAlphas(shellSurface, theme.glassOpacity ?? 0.72);
   const surface = theme.palette.surface;
+  const backdropBlur = shellBackdropBlur(shellSurface);
 
   return {
     ambient: theme.palette.background,
@@ -85,5 +89,7 @@ export function themeToShellColors(theme: {
     strokeOuter: rgbaFromHex(surface, Math.min(rim + 0.08, 1)),
     strokeInner: "rgba(255, 255, 255, 0.45)",
     shadow: "rgba(0, 0, 0, 0.22)",
+    backdropBlur,
+    shellSurface,
   };
 }

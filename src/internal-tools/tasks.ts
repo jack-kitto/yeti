@@ -1,5 +1,4 @@
 import { initialKey, insertBetween, sortByKey } from "@/fractional-order/fractional-order";
-import { resolveFocusSplit, startPomodoro } from "./pomodoro";
 import type { FocusTask, WorkspaceInternalTools } from "./types";
 
 export function listTodayTasks(tools: WorkspaceInternalTools): FocusTask[] {
@@ -64,28 +63,21 @@ export function getActiveFocusTask(tools: WorkspaceInternalTools): FocusTask | n
 export function startFocusOnTask(
   tools: WorkspaceInternalTools,
   taskId: string,
-  now: Date,
 ): WorkspaceInternalTools {
   const task = tools.tasks.find((item) => item.id === taskId && !item.completed);
   if (!task) {
     return tools;
   }
 
-  const split = resolveFocusSplit(tools.pomodoro.splitId, tools);
-
   return {
     ...tools,
-    pomodoro: startPomodoro(
-      {
-        ...tools.pomodoro,
-        activeTaskId: taskId,
-        phase: "work",
-        running: false,
-        endsAt: null,
-      },
-      now,
-      split,
-    ),
+    pomodoro: {
+      ...tools.pomodoro,
+      activeTaskId: taskId,
+      phase: "work",
+      running: false,
+      endsAt: null,
+    },
   };
 }
 

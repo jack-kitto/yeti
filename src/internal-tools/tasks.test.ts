@@ -56,17 +56,16 @@ describe("focus tasks", () => {
     expect(listTodayTasks(tools)[0]?.estimateMinutes).toBe(45);
   });
 
-  it("sets the active task and starts a work pomodoro", () => {
+  it("arms the active task without starting the pomodoro timer", () => {
     const tools = addFocusTask(createDefaultWorkspaceInternalTools(), "Ship tasks", "task-1");
-    const now = new Date("2026-06-09T12:00:00.000Z");
 
-    const updated = startFocusOnTask(tools, "task-1", now);
+    const updated = startFocusOnTask(tools, "task-1");
 
     expect(updated.pomodoro).toMatchObject({
       activeTaskId: "task-1",
       phase: "work",
-      running: true,
-      endsAt: "2026-06-09T12:25:00.000Z",
+      running: false,
+      endsAt: null,
     });
   });
 });

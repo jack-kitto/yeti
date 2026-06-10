@@ -1,3 +1,4 @@
+import { internalToolZoneId } from "@/internal-tools/types";
 import {
   getShellLayout,
   getTargetPocketForZone,
@@ -194,6 +195,21 @@ export function toggleZonePin(zoneId: string, zones: ShellZoneLayout[]) {
   if (state.pinned && state.activeZoneId === zoneId) {
     patchShellState({ pinned: false });
     scheduleClose();
+    return;
+  }
+
+  activateZone(zoneId, zones);
+  patchShellState({ pinned: true });
+  cancelScheduledClose();
+}
+
+export function pinInternalToolZone(
+  toolId: "pomodoro" | "tasks",
+  zones: ShellZoneLayout[],
+): void {
+  const zoneId = internalToolZoneId(toolId);
+  const zone = zones.find((entry) => entry.id === zoneId);
+  if (!zone || zone.kind !== "internal-tool") {
     return;
   }
 

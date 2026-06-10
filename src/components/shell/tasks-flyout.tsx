@@ -19,6 +19,8 @@ import {
   startFocusOnTask,
 } from "@/internal-tools/tasks";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
+import { getLatestShellZones } from "@/shell-frame/shell-state";
+import { pinInternalToolZone } from "@/shell-frame/shell-zones";
 
 type TasksFlyoutProps = {
   internalTools: WorkspaceInternalTools;
@@ -130,7 +132,10 @@ export function TasksFlyout({ internalTools, onChange }: TasksFlyoutProps) {
                   type="button"
                   className="shell-flyout-more shell-tool-task-action-btn"
                   title="Start focus"
-                  onClick={() => onChange(startFocusOnTask(internalTools, task.id, new Date()))}
+                  onClick={() => {
+                    onChange(startFocusOnTask(internalTools, task.id));
+                    pinInternalToolZone("pomodoro", getLatestShellZones());
+                  }}
                 >
                   Focus
                 </button>

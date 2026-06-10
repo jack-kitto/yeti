@@ -72,7 +72,7 @@ const DRAG_THRESHOLD_PX = 6;
 type ShellEdgeLayerProps = {
   library: Library;
   onReorderGroup: (groupId: string, targetSlotIndex: number) => void;
-  onSwitchWorkspace: (workspaceId: string) => void;
+  onSwitchWorkspace: (workspaceId: string, origin?: { x: number; y: number }) => void;
   onUpdateInternalTools: (internalTools: WorkspaceInternalTools) => void;
 };
 
@@ -129,7 +129,7 @@ export function ShellEdgeLayer({
     getWorkspaceTransitionSnapshot,
     getWorkspaceTransitionSnapshot,
   );
-  const chromeHidden = workspaceTransition.running && workspaceTransition.seal > 0.02;
+  const chromeHidden = workspaceTransition.running && workspaceTransition.reveal > 0.02;
   const dashboardMenuSize =
     shellState.menuSizes.get(BUILTIN_SURFACE.TOP_DASHBOARD) ??
     defaultMenuSize(BUILTIN_SURFACE.TOP_DASHBOARD);

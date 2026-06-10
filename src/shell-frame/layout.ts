@@ -1,8 +1,6 @@
 import { clamp, easeOutCubic, lerp } from "./utils";
 import type { ShellAnimationSnapshot } from "./shell-state";
 import { isBuiltinSurface, type ShellRim, type ShellZoneKind } from "./rim";
-import { getWorkspaceTransitionSnapshot } from "./workspace-transition";
-
 export type ShellLayout = {
   w: number;
   h: number;
@@ -61,20 +59,7 @@ export function getShellLayout(): ShellLayout {
   let panelY = frameTop;
   let panelW = w - frameLeft - frameRight;
   let panelH = h - frameTop - frameBottom;
-  let shellRadius = 28;
-
-  const seal = easeOutCubic(getWorkspaceTransitionSnapshot().seal);
-  if (seal > 0) {
-    const centerX = w * 0.5;
-    const centerY = h * 0.5;
-    const halfW = panelW * 0.5 * (1 - seal);
-    const halfH = panelH * 0.5 * (1 - seal);
-    panelX = centerX - halfW;
-    panelY = centerY - halfH;
-    panelW = halfW * 2;
-    panelH = halfH * 2;
-    shellRadius = lerp(28, 0, seal);
-  }
+  const shellRadius = 28;
 
   return {
     w,

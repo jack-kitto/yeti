@@ -1,26 +1,25 @@
 import { describe, expect, it } from "vitest";
 import {
-  getWorkspacePaletteMorph,
-  getWorkspaceTransitionSeal,
+  getWorkspaceRippleClipPath,
+  getWorkspaceTransitionReveal,
 } from "./workspace-transition";
 
-describe("getWorkspaceTransitionSeal", () => {
-  it("closes during the first half and opens during the second", () => {
-    expect(getWorkspaceTransitionSeal(0)).toBe(0);
-    expect(getWorkspaceTransitionSeal(0.5)).toBe(1);
-    expect(getWorkspaceTransitionSeal(1)).toBe(0);
-    expect(getWorkspaceTransitionSeal(0.25)).toBeGreaterThan(0);
-    expect(getWorkspaceTransitionSeal(0.75)).toBeGreaterThan(0);
+describe("getWorkspaceTransitionReveal", () => {
+  it("eases from zero to one across the transition", () => {
+    expect(getWorkspaceTransitionReveal(0)).toBe(0);
+    expect(getWorkspaceTransitionReveal(1)).toBe(1);
+    expect(getWorkspaceTransitionReveal(0.5)).toBeGreaterThan(0);
+    expect(getWorkspaceTransitionReveal(0.5)).toBeLessThan(1);
   });
 });
 
-describe("getWorkspacePaletteMorph", () => {
-  it("stays at zero until the swap point then eases to one", () => {
-    expect(getWorkspacePaletteMorph(0)).toBe(0);
-    expect(getWorkspacePaletteMorph(0.49)).toBe(0);
-    expect(getWorkspacePaletteMorph(0.5)).toBe(0);
-    expect(getWorkspacePaletteMorph(0.62)).toBe(1);
-    expect(getWorkspacePaletteMorph(0.56)).toBeGreaterThan(0);
-    expect(getWorkspacePaletteMorph(0.56)).toBeLessThan(1);
+describe("getWorkspaceRippleClipPath", () => {
+  it("expands a circular reveal from the switch origin", () => {
+    expect(getWorkspaceRippleClipPath(0, 120, 80, 1440, 900)).toBe(
+      "circle(0px at 120px 80px)",
+    );
+    expect(getWorkspaceRippleClipPath(1, 120, 80, 1440, 900)).toMatch(
+      /^circle\(\d+(\.\d+)?px at 120px 80px\)$/,
+    );
   });
 });

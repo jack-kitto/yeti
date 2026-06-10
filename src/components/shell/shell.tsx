@@ -13,17 +13,18 @@ import { usePomodoroPhaseAdvance } from "@/hooks/use-pomodoro-phase-advance";
 import type { Library, Workspace } from "@/library/types";
 import { getShellLayout } from "@/shell-frame/layout";
 import {
+  getViewportCenterOrigin,
+  getWorkspaceRippleClipPath,
   getWorkspaceTransitionSnapshot,
   isWorkspaceTransitionRunning,
   startWorkspaceTransition,
   subscribeWorkspaceTransition,
 } from "@/shell-frame/workspace-transition";
-import { applyTheme, lerpPalette } from "@/theme/theme";
+import { applyTheme } from "@/theme/theme";
 import { reorderEdgeGroupOnRim } from "@/placement/placement";
-import { CanvasWidgetStack } from "./canvas-widget-stack";
 import { Launcher } from "./launcher";
 import { ShellConfigDialog } from "./shell-config-dialog";
-import { ShellCanvas } from "./shell-canvas";
+import { ShellWorkspaceSurface } from "./shell-workspace-surface";
 import { FocusRadioPlaybackProvider } from "./focus-radio-playback-context";
 import { ShellEdgeLayer } from "./shell-edge-layer";
 
@@ -59,7 +60,7 @@ export function Shell() {
   const activeWorkspace = library?.workspaces.find((w) => w.id === library.activeWorkspaceId);
 
   const switchWorkspace = useCallback(
-    (workspaceId: string) => {
+    (workspaceId: string, origin?: { x: number; y: number }) => {
       if (!library || workspaceId === library.activeWorkspaceId) {
         return;
       }
@@ -74,9 +75,12 @@ export function Shell() {
         return;
       }
 
+      const switchOrigin = origin ?? getViewportCenterOrigin();
+
       startWorkspaceTransition({
-        fromPalette: fromWorkspace.theme.palette,
-        fromBackgroundUrl: fromWorkspace.theme.backgroundUrl,
+        outgoingWorkspace: fromWorkspace,
+        originX: switchOrigin.x,
+        originY: switchOrigin.y,
         onSwap: () => applyLibraryPatch.mutate({ activeWorkspaceId: workspaceId }),
       });
     },
@@ -144,7 +148,7 @@ type ShellLoadedProps = {
   panelBounds: PanelBounds;
   workspaceTransition: ReturnType<typeof getWorkspaceTransitionSnapshot>;
   onReorderGroup: (groupId: string, targetSlotIndex: number) => void;
-  onSwitchWorkspace: (workspaceId: string) => void;
+  onSwitchWorkspace: (workspaceId: string, origin?: { x: number; y: number }) => void;
   saveLibraryMutation: ReturnType<typeof useSaveLibrary>;
 };
 
@@ -159,30 +163,23 @@ function ShellLoaded({
 }: ShellLoadedProps) {
   const mutateLibrary = useMutateLibrary();
 
-  const displayTheme = useMemo(() => {
-    if (workspaceTransition.running && workspaceTransition.fromPalette) {
-      const palette =
-        workspaceTransition.paletteMorph < 1
-          ? lerpPalette(
-              workspaceTransition.fromPalette,
-              activeWorkspace.theme.palette,
-              workspaceTransition.paletteMorph,
-            )
-          : activeWorkspace.theme.palette;
+  useEffect(() => {
+    applyTheme(document.documentElement, activeWorkspace.theme);
+  }, [activeWorkspace.theme]);
 
-      return {
-        ...activeWorkspace.theme,
-        palette,
-        backgroundUrl: workspaceTransition.fromBackgroundUrl ?? activeWorkspace.theme.backgroundUrl,
-      };
+  const rippleClipPath = useMemo(() => {
+    if (!workspaceTransition.running) {
+      return undefined;
     }
 
-    return activeWorkspace.theme;
-  }, [activeWorkspace.theme, workspaceTransition]);
-
-  useEffect(() => {
-    applyTheme(document.documentElement, displayTheme);
-  }, [displayTheme]);
+    return getWorkspaceRippleClipPath(
+      workspaceTransition.reveal,
+      workspaceTransition.originX,
+      workspaceTransition.originY,
+      typeof window === "undefined" ? 0 : window.innerWidth,
+      typeof window === "undefined" ? 0 : window.innerHeight,
+    );
+  }, [workspaceTransition]);
 
   const handlePomodoroAdvance = useCallback(
     (nextPomodoro: Workspace["internalTools"]["pomodoro"]) => {
@@ -209,22 +206,20 @@ function ShellLoaded({
   return (
     <FocusRadioPlaybackProvider library={library}>
       <div className="relative isolate h-screen w-screen overflow-hidden">
-        <ShellCanvas theme={displayTheme} />
+        {workspaceTransition.outgoingWorkspace ? (
+          <ShellWorkspaceSurface
+            workspace={workspaceTransition.outgoingWorkspace}
+            panelBounds={panelBounds}
+            className="absolute inset-0"
+          />
+        ) : null}
 
-        <main
-          className="shell-canvas-layer pointer-events-none absolute flex flex-col items-center px-8"
-          style={{
-            left: panelBounds.left,
-            top: panelBounds.top,
-            width: panelBounds.width,
-            height: panelBounds.height,
-            opacity: 1 - workspaceTransition.seal,
-          }}
-        >
-          <div className="pointer-events-none absolute inset-0 px-6 sm:px-8">
-            <CanvasWidgetStack workspace={activeWorkspace} />
-          </div>
-        </main>
+        <ShellWorkspaceSurface
+          workspace={activeWorkspace}
+          panelBounds={panelBounds}
+          className="absolute inset-0"
+          style={rippleClipPath ? { clipPath: rippleClipPath } : undefined}
+        />
 
         <ShellEdgeLayer
           library={library}

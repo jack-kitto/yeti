@@ -21,7 +21,7 @@ import { useConfigStore } from "@/store/config-store";
 
 type CommandBarProps = {
   library: Library;
-  onSwitchWorkspace: (workspaceId: string) => void;
+  onSwitchWorkspace: (workspaceId: string, origin?: { x: number; y: number }) => void;
   variant?: "canvas" | "pocket";
   onFocusChange?: (focused: boolean) => void;
   onContentChange?: () => void;
@@ -134,9 +134,9 @@ export function CommandBar({
     return () => window.removeEventListener("keydown", handleTypeToFocus);
   }, []);
 
-  function executeResult(result: CommandBarResult) {
+  function executeResult(result: CommandBarResult, origin?: { x: number; y: number }) {
     if (result.kind === "workspace") {
-      onSwitchWorkspace(result.workspaceId);
+      onSwitchWorkspace(result.workspaceId, origin);
       setQuery("");
       return;
     }
@@ -199,7 +199,7 @@ export function CommandBar({
       event.preventDefault();
       const result = results[highlightedIndex];
       if (result) {
-        executeResult(result);
+        executeResult(result, { x: event.clientX, y: event.clientY });
       }
     }
   }
@@ -232,7 +232,9 @@ export function CommandBar({
           className={rowClass}
           onMouseDown={preventBlur}
           onMouseEnter={() => setSelectedIndex(index)}
-          onClick={() => executeResult(result)}
+          onClick={(event) =>
+            executeResult(result, { x: event.clientX, y: event.clientY })
+          }
         >
           <span>Switch to {result.name}</span>
           <span className="shell-search-result-meta">workspace</span>

@@ -1,27 +1,24 @@
-import type { ThemePalette } from "@/library/types";
+import type { Workspace } from "@/library/types";
 import { easeOutCubic } from "./utils";
 
 export type WorkspaceTransitionSnapshot = {
   running: boolean;
-  /** 0 = open canvas, 1 = shell sealed over the viewport. */
-  seal: number;
-  /** 0 = outgoing palette, 1 = incoming workspace palette. */
-  paletteMorph: number;
-  fromPalette: ThemePalette | null;
-  fromBackgroundUrl?: string;
+  /** 0 = ripple origin only, 1 = full viewport revealed. */
+  reveal: number;
+  originX: number;
+  originY: number;
+  outgoingWorkspace: Workspace | null;
 };
 
 const TRANSITION_DURATION_MS = 520;
-const SWAP_AT = 0.5;
-const MORPH_END = 0.62;
 
 const listeners = new Set<() => void>();
 let snapshot: WorkspaceTransitionSnapshot = {
   running: false,
-  seal: 0,
-  paletteMorph: 0,
-  fromPalette: null,
-  fromBackgroundUrl: undefined,
+  reveal: 0,
+  originX: 0,
+  originY: 0,
+  outgoingWorkspace: null,
 };
 
 let rafId: number | null = null;
@@ -50,30 +47,37 @@ export function isWorkspaceTransitionRunning(): boolean {
   return snapshot.running;
 }
 
-/** Close during the first half, open during the second — peaks at progress 0.5. */
-export function getWorkspaceTransitionSeal(progress: number): number {
-  const clamped = Math.max(0, Math.min(1, progress));
-
-  if (clamped <= 0.5) {
-    return easeOutCubic(clamped / 0.5);
-  }
-
-  return easeOutCubic((1 - clamped) / 0.5);
+export function getWorkspaceTransitionReveal(progress: number): number {
+  return easeOutCubic(Math.max(0, Math.min(1, progress)));
 }
 
-/** Palette cross-fade runs in the sealed phase right after the workspace swap. */
-export function getWorkspacePaletteMorph(progress: number): number {
-  if (progress < SWAP_AT) {
-    return 0;
+export function getWorkspaceRippleClipPath(
+  reveal: number,
+  originX: number,
+  originY: number,
+  width: number,
+  height: number,
+): string {
+  const maxRadius = Math.hypot(width, height);
+  const radius = getWorkspaceTransitionReveal(reveal) * maxRadius;
+  return `circle(${radius}px at ${originX}px ${originY}px)`;
+}
+
+export function getViewportCenterOrigin(): { x: number; y: number } {
+  if (typeof window === "undefined") {
+    return { x: 0, y: 0 };
   }
 
-  const morphT = (progress - SWAP_AT) / (MORPH_END - SWAP_AT);
-  return easeOutCubic(Math.min(1, Math.max(0, morphT)));
+  return {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+  };
 }
 
 export function startWorkspaceTransition(args: {
-  fromPalette: ThemePalette;
-  fromBackgroundUrl?: string;
+  outgoingWorkspace: Workspace;
+  originX: number;
+  originY: number;
   onSwap: () => void;
 }): void {
   if (snapshot.running) {
@@ -84,30 +88,25 @@ export function startWorkspaceTransition(args: {
     cancelAnimationFrame(rafId);
   }
 
-  let swapped = false;
+  args.onSwap();
+
   const start = performance.now();
   patchWorkspaceTransition({
     running: true,
-    seal: 0,
-    paletteMorph: 0,
-    fromPalette: args.fromPalette,
-    fromBackgroundUrl: args.fromBackgroundUrl,
+    reveal: 0,
+    originX: args.originX,
+    originY: args.originY,
+    outgoingWorkspace: args.outgoingWorkspace,
   });
 
   const tick = (now: number) => {
     const progress = Math.min(1, (now - start) / TRANSITION_DURATION_MS);
-    const seal = getWorkspaceTransitionSeal(progress);
-    const paletteMorph = getWorkspacePaletteMorph(progress);
-
-    if (progress >= SWAP_AT && !swapped) {
-      swapped = true;
-      args.onSwap();
-    }
+    const reveal = getWorkspaceTransitionReveal(progress);
 
     patchWorkspaceTransition({
       running: progress < 1,
-      seal,
-      paletteMorph,
+      reveal,
+      ...(progress >= 1 ? { outgoingWorkspace: null } : {}),
     });
 
     if (progress < 1) {
@@ -118,10 +117,8 @@ export function startWorkspaceTransition(args: {
     rafId = null;
     patchWorkspaceTransition({
       running: false,
-      seal: 0,
-      paletteMorph: 0,
-      fromPalette: null,
-      fromBackgroundUrl: undefined,
+      reveal: 0,
+      outgoingWorkspace: null,
     });
   };
 

@@ -58,9 +58,8 @@ export function CanvasNowPlayingVisualizer({
 
       const analyser = getAnalyserRef.current?.() ?? null;
       if (analyser) {
-        const audioContext = analyser.context;
-        if (audioContext.state === "suspended") {
-          void audioContext.resume();
+        if (analyser.context instanceof AudioContext && analyser.context.state === "suspended") {
+          void analyser.context.resume();
         }
 
         if (!frequencyData || frequencyData.length !== analyser.frequencyBinCount) {

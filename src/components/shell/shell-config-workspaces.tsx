@@ -3,12 +3,18 @@
 import { useEffect, useState } from "react";
 import {
   useApplyLibraryPatch,
+  useApplyThemePreset,
   useCreateWorkspace,
   useDeleteWorkspace,
   useMutateLibrary,
   useRenameWorkspace,
   useUpdateWorkspaceTheme,
 } from "@/hooks/use-library";
+import { THEME_PRESETS } from "@/theme/theme-presets";
+import {
+  THEME_PRESET_CARD_CLASS,
+  THEME_PRESET_GRID_CLASS,
+} from "@/theme/theme-preset-picker-layout";
 import { updateWorkspaceIcsFeedUrl } from "@/calendar/workspace-ics";
 import type { Library, ThemePalette } from "@/library/types";
 
@@ -29,6 +35,7 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
   const renameWorkspace = useRenameWorkspace();
   const deleteWorkspace = useDeleteWorkspace();
   const updateWorkspaceTheme = useUpdateWorkspaceTheme();
+  const applyThemePreset = useApplyThemePreset();
   const mutateLibrary = useMutateLibrary();
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState(library.activeWorkspaceId);
   const [workspaceName, setWorkspaceName] = useState("");
@@ -229,6 +236,42 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
             <p className="shell-config-form-label">
               Theme {isActive ? "(live on shell)" : "(saved for this workspace)"}
             </p>
+
+            <div className={THEME_PRESET_GRID_CLASS}>
+              {THEME_PRESETS.map((preset) => {
+                const isSelected = selectedWorkspace.theme.appliedPresetId === preset.id;
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    className={`${THEME_PRESET_CARD_CLASS}${isSelected ? " active" : ""}`}
+                    aria-pressed={isSelected}
+                    onClick={() =>
+                      applyThemePreset.mutate({
+                        workspaceId: selectedWorkspace.id,
+                        presetId: preset.id,
+                      })
+                    }
+                  >
+                    <span
+                      className="shell-config-preset-preview"
+                      style={{
+                        backgroundImage: preset.theme.backgroundUrl
+                          ? `url(${preset.theme.backgroundUrl})`
+                          : undefined,
+                        backgroundColor: preset.theme.palette.background,
+                      }}
+                    />
+                    <span className="shell-config-preset-name">{preset.name}</span>
+                    <span
+                      className="shell-config-preset-accent"
+                      style={{ backgroundColor: preset.theme.palette.accent }}
+                      aria-hidden
+                    />
+                  </button>
+                );
+              })}
+            </div>
 
             <div className="shell-config-theme-grid">
               {PALETTE_FIELDS.map((field) => (

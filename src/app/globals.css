@@ -481,8 +481,8 @@ body {
 }
 
 .canvas-widget {
-  color: color-mix(in srgb, var(--qs-color-text) 88%, transparent);
-  text-shadow: 0 1px 16px color-mix(in srgb, var(--qs-color-background) 65%, transparent);
+  color: var(--qs-color-text);
+  text-shadow: none;
 }
 
 .canvas-widget-clock {
@@ -500,19 +500,23 @@ body {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   line-height: 1;
+  color: var(--canvas-widget-clock-text, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-clock-text-shadow, none);
 }
 
 .canvas-widget-clock-date {
   margin: 0;
   font-size: 0.8125rem;
-  color: color-mix(in srgb, var(--qs-color-text) 58%, transparent);
+  color: var(--canvas-widget-clock-text-muted, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-clock-text-shadow, none);
 }
 
 .canvas-widget-welcome {
   margin: 0;
   font-size: 1rem;
   font-weight: 400;
-  color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
+  color: var(--canvas-widget-welcome-text, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-welcome-text-shadow, none);
 }
 
 .canvas-widget-quote {
@@ -523,7 +527,8 @@ body {
   line-height: 1.45;
   text-align: center;
   text-wrap: pretty;
-  color: color-mix(in srgb, var(--qs-color-text) 52%, transparent);
+  color: var(--canvas-widget-quote-text, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-quote-text-shadow, none);
 }
 
 .canvas-now-playing {
@@ -616,7 +621,8 @@ body {
   overflow: hidden;
   font-size: 13px;
   font-weight: 500;
-  color: color-mix(in srgb, var(--qs-color-text) 84%, transparent);
+  color: var(--canvas-widget-nowPlaying-text, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-nowPlaying-text-shadow, none);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -626,7 +632,8 @@ body {
   font-size: 10px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--qs-color-text) 56%, transparent);
+  color: var(--canvas-widget-nowPlaying-text-muted, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-nowPlaying-text-shadow, none);
 }
 
 .canvas-now-playing-visualizer {
@@ -642,6 +649,16 @@ body {
   font-weight: 600;
 }
 
+.canvas-widget-timer .canvas-widget-clock-time {
+  color: var(--canvas-widget-pomodoro-text, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-pomodoro-text-shadow, none);
+}
+
+.canvas-widget-timer .canvas-widget-clock-date {
+  color: var(--canvas-widget-pomodoro-text-muted, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-pomodoro-text-shadow, none);
+}
+
 .canvas-widget-timer-task {
   margin: 0.15rem 0 0;
   max-width: 18rem;
@@ -649,7 +666,8 @@ body {
   font-size: 0.8125rem;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: color-mix(in srgb, var(--qs-color-text) 52%, transparent);
+  color: var(--canvas-widget-pomodoro-text-muted, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-pomodoro-text-shadow, none);
 }
 
 .canvas-widget-tasks-corner {
@@ -701,7 +719,8 @@ body {
   font-size: 0.8125rem;
   font-weight: 400;
   line-height: 1.35;
-  color: color-mix(in srgb, var(--qs-color-text) 76%, transparent);
+  color: var(--canvas-widget-focusTasks-text, var(--qs-color-text));
+  text-shadow: var(--canvas-widget-focusTasks-text-shadow, none);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -710,7 +729,7 @@ body {
 .canvas-focus-tasks-item--done .canvas-focus-tasks-title {
   text-decoration: line-through;
   text-decoration-thickness: 1px;
-  color: color-mix(in srgb, var(--qs-color-text) 38%, transparent);
+  color: var(--canvas-widget-focusTasks-text-muted, var(--qs-color-text));
 }
 
 .shell-dashboard-media-empty,

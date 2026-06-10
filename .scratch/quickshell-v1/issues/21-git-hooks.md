@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -10,10 +10,10 @@ Add **git hooks** (Husky + lint-staged) so commits are gated locally: format and
 
 ## Acceptance criteria
 
-- [ ] Husky installs on `npm install` (`prepare` script)
-- [ ] Pre-commit runs lint-staged: Prettier on staged files, XO on staged TypeScript
-- [ ] A commit with lint/format violations is blocked locally
-- [ ] Hooks do not run full test suite (CI owns that)
+- [x] Husky installs on `npm install` (`prepare` script)
+- [x] Pre-commit runs lint-staged: Prettier on staged files, XO on staged TypeScript
+- [x] A commit with lint/format violations is blocked locally
+- [x] Hooks do not run full test suite (CI owns that)
 
 ## Blocked by
 

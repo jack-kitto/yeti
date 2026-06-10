@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -12,10 +12,10 @@ Prettier owns formatting only — lint rules come in issue 20 (XO).
 
 ## Acceptance criteria
 
-- [ ] `prettier` and config file are dev dependencies
-- [ ] `npm run format` writes formatted files; `npm run format:check` exits non-zero on drift
-- [ ] Sensible ignore patterns (e.g. `.next/`, `node_modules/`, lockfiles)
-- [ ] Existing source is formatted so the repo starts clean
+- [x] `prettier` and config file are dev dependencies
+- [x] `npm run format` writes formatted files; `npm run format:check` exits non-zero on drift
+- [x] Sensible ignore patterns (e.g. `.next/`, `node_modules/`, lockfiles)
+- [x] Existing source is formatted so the repo starts clean
 
 ## Blocked by
 

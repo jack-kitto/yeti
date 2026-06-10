@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -10,10 +10,10 @@ Add **XO** as the linter for TypeScript, React, and Next.js. Configure XO to def
 
 ## Acceptance criteria
 
-- [ ] `xo` is a dev dependency with project config (`.xo-config.json` or `package.json` field)
-- [ ] XO integrates with Prettier (no conflicting formatting rules)
-- [ ] `npm run lint` passes on the current tree
-- [ ] TypeScript/React/Next paths are included; build output dirs ignored
+- [x] `xo` is a dev dependency with project config (`.xo-config.json` or `package.json` field)
+- [x] XO integrates with Prettier (no conflicting formatting rules)
+- [x] `npm run lint` passes on the current tree
+- [x] TypeScript/React/Next paths are included; build output dirs ignored
 
 ## Blocked by
 

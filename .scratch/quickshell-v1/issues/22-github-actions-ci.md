@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -10,10 +10,10 @@ Add a **GitHub Actions** workflow that runs on pull requests and pushes to `main
 
 ## Acceptance criteria
 
-- [ ] Workflow file under `.github/workflows/` triggers on `pull_request` and `push` to `main`
-- [ ] CI runs lint, format check, tests, and production build
-- [ ] Node version is pinned (e.g. via `.nvmrc` or workflow `node-version`)
-- [ ] Failed checks block merge when branch protection is enabled
+- [x] Workflow file under `.github/workflows/` triggers on `pull_request` and `push` to `main`
+- [x] CI runs lint, format check, tests, and production build
+- [x] Node version is pinned (e.g. via `.nvmrc` or workflow `node-version`)
+- [x] Failed checks block merge when branch protection is enabled
 
 ## Blocked by
 

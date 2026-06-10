@@ -16,6 +16,13 @@ function applyThemePatch(theme: Theme, patch: ThemePatch): Theme {
     ...(patch.borderRadius !== undefined ? { borderRadius: patch.borderRadius } : {}),
   };
 
+  if (patch.shellBorderColor === null) {
+    const { shellBorderColor: _removed, ...withoutBorder } = next;
+    next = withoutBorder;
+  } else if (patch.shellBorderColor !== undefined) {
+    next = { ...next, shellBorderColor: patch.shellBorderColor };
+  }
+
   if (patch.widgets) {
     const widgets = { ...base.widgets };
     for (const [id, partial] of Object.entries(patch.widgets)) {

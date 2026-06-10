@@ -16,6 +16,9 @@ export function resetShellThemeToPreset(workspace: Workspace): ThemePatch | null
   return {
     palette: { ...preset.theme.palette },
     shellSurface: preset.theme.shellSurface,
+    ...(preset.theme.shellBorderColor
+      ? { shellBorderColor: preset.theme.shellBorderColor }
+      : { shellBorderColor: null }),
     glassOpacity: preset.theme.glassOpacity,
     borderRadius: preset.theme.borderRadius,
     backgroundUrl: preset.theme.backgroundUrl,

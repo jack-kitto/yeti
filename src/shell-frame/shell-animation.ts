@@ -84,12 +84,29 @@ export function stopShellAnimation() {
 export function themeToShellColors(theme: {
   palette: { surface: string; text: string; accent: string; background: string };
   shellSurface?: ShellSurface;
+  shellBorderColor?: string;
   glassOpacity?: number;
 }): ShellThemeColors {
   const shellSurface = theme.shellSurface ?? "glass";
   const { rim, notch } = shellFillAlphas(shellSurface, theme.glassOpacity ?? 0.72);
   const surface = theme.palette.surface;
   const backdropBlur = shellBackdropBlur(shellSurface);
+  const borderColor = theme.shellBorderColor ?? theme.palette.text;
+
+  if (shellSurface === "solid") {
+    const opaqueSurface = rgbaFromHex(surface, 1);
+    return {
+      ambient: theme.palette.background,
+      glassStops: [opaqueSurface, opaqueSurface, opaqueSurface],
+      notchFill: opaqueSurface,
+      strokeOuter: rgbaFromHex(borderColor, 1),
+      strokeInner: "transparent",
+      shadow: "transparent",
+      backdropBlur: 0,
+      shellSurface,
+      borderWidth: 2,
+    };
+  }
 
   return {
     ambient: theme.palette.background,
@@ -104,5 +121,6 @@ export function themeToShellColors(theme: {
     shadow: "rgba(0, 0, 0, 0.22)",
     backdropBlur,
     shellSurface,
+    borderWidth: 3.5,
   };
 }

@@ -38,6 +38,7 @@ describe("resetShellThemeToPreset", () => {
     expect(patch).toEqual({
       palette: preset.theme.palette,
       shellSurface: preset.theme.shellSurface,
+      shellBorderColor: null,
       glassOpacity: preset.theme.glassOpacity,
       borderRadius: preset.theme.borderRadius,
       backgroundUrl: preset.theme.backgroundUrl,

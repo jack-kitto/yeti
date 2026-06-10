@@ -8,29 +8,34 @@ describe("canvas zone layout UI", () => {
     resolve(__dirname, "../components/shell/canvas-widget-stack.tsx"),
     "utf8",
   );
+  const editorialStackSource = readFileSync(
+    resolve(__dirname, "../components/shell/editorial-canvas-stack.tsx"),
+    "utf8",
+  );
 
   it("scopes editorial typography via appliedPresetId on the canvas stage", () => {
     expect(stackSource).toContain('data-applied-preset={workspace.theme.appliedPresetId ?? undefined}');
   });
 
-  it("applies editorial preset font and widget polish via scoped CSS", () => {
-    expect(stackSource).toContain("editorialFont");
-    expect(css).toContain('[data-applied-preset="editorial"] .canvas-widget-quote');
-    expect(css).toContain('[data-applied-preset="editorial"] .canvas-focus-tasks-header');
+  it("uses a dedicated four-corner editorial canvas layout", () => {
+    expect(stackSource).toContain("EditorialCanvasStack");
+    expect(stackSource).toContain('appliedPresetId === "editorial"');
+    expect(editorialStackSource).toContain("editorialFont");
+    expect(css).toContain(".canvas-widget-stage--editorial");
+    expect(css).toContain(".canvas-editorial-tl");
+    expect(css).toContain(".canvas-editorial-tr");
+    expect(css).toContain(".canvas-editorial-bl");
+    expect(css).toContain(".canvas-editorial-br");
   });
 
-  it("anchors editorial zones to corners with viewport insets", () => {
+  it("applies editorial preset font and widget polish via scoped CSS", () => {
+    expect(css).toContain(".canvas-widget-stage--editorial .canvas-widget-quote");
+    expect(css).toContain(".canvas-widget-stage--editorial .canvas-focus-tasks-header");
     expect(css).toMatch(
-      /\.canvas-widget-stage\[data-applied-preset="editorial"\][\s\S]*padding:\s*10vh\s+10vw/,
+      /\.canvas-widget-stage--editorial \.canvas-now-playing-visualizer[\s\S]*height:\s*36px/,
     );
-    expect(css).toContain(
-      '[data-applied-preset="editorial"] .canvas-zone-upper-center',
-    );
-    expect(css).toContain(
-      '[data-applied-preset="editorial"] .canvas-zone-lower-right',
-    );
-    expect(css).toContain(
-      '[data-applied-preset="editorial"] .canvas-zone-lower-left',
+    expect(css).toMatch(
+      /\.canvas-widget-stage--editorial[\s\S]*padding:\s*10vh\s+10vw/,
     );
   });
 

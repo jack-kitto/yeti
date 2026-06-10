@@ -37,6 +37,7 @@ export type CanvasWidgetStyle = {
 export type Theme = {
   palette: ThemePalette;
   shellSurface?: ShellSurface;
+  shellBorderColor?: string;
   backgroundUrl?: string;
   glassOpacity: number;
   borderRadius: number;
@@ -47,6 +48,7 @@ export type Theme = {
 export type ThemePatch = {
   palette?: Partial<ThemePalette>;
   shellSurface?: ShellSurface;
+  shellBorderColor?: string | null;
   backgroundUrl?: string | null;
   glassOpacity?: number;
   borderRadius?: number;

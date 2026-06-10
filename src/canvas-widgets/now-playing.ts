@@ -28,17 +28,11 @@ export function dismissCanvasNowPlaying(library: Library, workspaceId: string): 
 }
 
 export function clearCanvasNowPlayingDismiss(library: Library): Library {
-  const workspaceId = library.activeWorkspaceId;
-
   return {
     ...library,
-    workspaces: library.workspaces.map((workspace) =>
-      workspace.id === workspaceId
-        ? {
-            ...workspace,
-            canvasNowPlayingDismissed: false,
-          }
-        : workspace,
-    ),
+    workspaces: library.workspaces.map((workspace) => ({
+      ...workspace,
+      canvasNowPlayingDismissed: false,
+    })),
   };
 }

@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: wontfix
 
 ## Parent
 
@@ -26,3 +26,5 @@ Widget zone placement should switch at workspace swap (not mid-lerp) — colours
 ## Comments
 
 Tracer bullet 7 of preset-themes rework. Builds on issue 65 transition work.
+
+**2026-06-10:** Cancelled — issue 84 ripple reveal replaces seal morph; per-widget colour lerp during seal is no longer applicable.

@@ -13,7 +13,7 @@ describe("settings theme editor", () => {
   );
 
   it("exposes shell surface control and shell reset to preset", () => {
-    expect(workspacesSource).toContain("shellSurface");
+    expect(workspacesSource).toContain("ShellConfigShellSurface");
     expect(workspacesSource).toContain("resetShellThemeToPreset");
     expect(workspacesSource).toContain("ShellConfigThemeWidgets");
   });

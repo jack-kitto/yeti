@@ -156,6 +156,9 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
             ...(workspace.theme.shellSurface
               ? { shellSurface: workspace.theme.shellSurface }
               : {}),
+            ...(workspace.theme.shellBorderColor
+              ? { shellBorderColor: workspace.theme.shellBorderColor }
+              : {}),
             ...(workspace.theme.backgroundUrl
               ? { backgroundUrl: workspace.theme.backgroundUrl }
               : {}),

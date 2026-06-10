@@ -38,11 +38,15 @@ describe("theme preset catalog", () => {
       accent: "#000000",
     });
     expect(editorial.theme.shellSurface).toBe("solid");
+    expect(editorial.theme.shellBorderColor).toBe("#000000");
     expect(editorial.theme.backgroundUrl).toBe("");
-    expect(editorial.theme.widgets.quote?.zone).toBe("upper-center");
+    expect(editorial.theme.widgets.quote?.zone).toBe("lower-left");
+    expect(editorial.theme.widgets.nowPlaying?.zone).toBe("lower-left");
     expect(editorial.theme.widgets.focusTasks?.zone).toBe("lower-right");
-    expect(editorial.theme.widgets.welcome?.zone).toBe("lower-left");
-    expect(editorial.theme.widgets.clock?.zone).toBe("lower-left");
+    expect(editorial.theme.widgets.welcome?.zone).toBe("bottom-center");
+    expect(editorial.theme.widgets.clock?.zone).toBe("bottom-center");
+    expect(editorial.theme.widgets.quote?.order).toBe(0);
+    expect(editorial.theme.widgets.nowPlaying?.order).toBe(1);
     expect(editorial.theme.widgets.welcome?.order).toBe(0);
     expect(editorial.theme.widgets.clock?.order).toBe(1);
   });

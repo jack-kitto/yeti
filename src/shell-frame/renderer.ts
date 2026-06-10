@@ -11,6 +11,7 @@ export type ShellThemeColors = {
   shadow: string;
   backdropBlur: number;
   shellSurface: ShellSurface;
+  borderWidth: number;
 };
 
 function addTopPocket(path: Path2D, x1: number, x2: number, y: number, depth: number, r: number) {
@@ -255,19 +256,38 @@ export function resizeShellCanvas(canvas: HTMLCanvasElement) {
   ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-export function drawShell(
-  canvas: HTMLCanvasElement,
+function drawFlatSolidShell(
+  ctx: CanvasRenderingContext2D,
   layout: ShellLayout,
   pocket: RenderPocket,
   theme: ShellThemeColors,
 ) {
-  const ctx = canvas.getContext("2d");
-  if (!ctx) {
-    return;
+  const path = generateFrameShellPath(layout, pocket);
+
+  ctx.fillStyle = theme.glassStops[0];
+  ctx.fill(path, "evenodd");
+
+  const notchPath = generateNotchFillPath(layout, pocket);
+  if (notchPath) {
+    ctx.fillStyle = theme.notchFill;
+    ctx.fill(notchPath);
   }
 
-  ctx.clearRect(0, 0, layout.w, layout.h);
+  ctx.strokeStyle = theme.strokeOuter;
+  ctx.lineWidth = theme.borderWidth;
+  ctx.stroke(path);
 
+  if (notchPath) {
+    ctx.stroke(notchPath);
+  }
+}
+
+function drawGlassShell(
+  ctx: CanvasRenderingContext2D,
+  layout: ShellLayout,
+  pocket: RenderPocket,
+  theme: ShellThemeColors,
+) {
   const path = generateFrameShellPath(layout, pocket);
 
   ctx.save();
@@ -313,4 +333,25 @@ export function drawShell(
   ctx.strokeStyle = theme.strokeInner;
   ctx.lineWidth = 1.25;
   ctx.stroke(path);
+}
+
+export function drawShell(
+  canvas: HTMLCanvasElement,
+  layout: ShellLayout,
+  pocket: RenderPocket,
+  theme: ShellThemeColors,
+) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    return;
+  }
+
+  ctx.clearRect(0, 0, layout.w, layout.h);
+
+  if (theme.shellSurface === "solid") {
+    drawFlatSolidShell(ctx, layout, pocket, theme);
+    return;
+  }
+
+  drawGlassShell(ctx, layout, pocket, theme);
 }

@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import type { Workspace } from "@/library/types";
 import { formatClockDisplay } from "@/canvas-widgets/clock";
-import { pickQuote } from "@/canvas-widgets/quote";
-import { formatWelcomeMessage } from "@/canvas-widgets/welcome";
 import {
   buildCanvasZoneLayout,
   CANVAS_ZONES,
@@ -12,10 +10,14 @@ import {
 } from "@/canvas-widgets/zone-layout";
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { CanvasZone } from "@/library/types";
-import { editorialFont } from "@/theme/editorial-font";
 import { CanvasFocusTasksWidget } from "./canvas-focus-tasks-widget";
 import { CanvasNowPlayingWidget } from "./canvas-now-playing-widget";
 import { CanvasPomodoroWidget } from "./canvas-pomodoro-widget";
+import { EditorialCanvasStack } from "./editorial-canvas-stack";
+import {
+  CanvasQuoteWidget,
+  CanvasWelcomeWidget,
+} from "./canvas-widget-parts";
 
 type CanvasWidgetStackProps = {
   workspace: Workspace;
@@ -47,25 +49,6 @@ function CanvasClockWidget() {
   );
 }
 
-function CanvasWelcomeWidget({ workspaceName }: { workspaceName: string }) {
-  const [now, setNow] = useState(() => new Date());
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 60_000);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  return (
-    <p className="canvas-widget canvas-widget-welcome">{formatWelcomeMessage(workspaceName, now)}</p>
-  );
-}
-
-function CanvasQuoteWidget() {
-  const [quote] = useState(() => pickQuote(Math.floor(Date.now() / 86_400_000)));
-
-  return <p className="canvas-widget canvas-widget-quote">{quote.text}</p>;
-}
-
 function renderCanvasWidget(widgetId: CanvasWidgetId, workspace: Workspace) {
   switch (widgetId) {
     case "clock":
@@ -94,11 +77,13 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
     return null;
   }
 
-  const isEditorial = workspace.theme.appliedPresetId === "editorial";
+  if (workspace.theme.appliedPresetId === "editorial") {
+    return <EditorialCanvasStack workspace={workspace} layout={layout} />;
+  }
 
   return (
     <div
-      className={`canvas-widget-stage${isEditorial ? ` ${editorialFont.className}` : ""}`}
+      className="canvas-widget-stage"
       data-applied-preset={workspace.theme.appliedPresetId ?? undefined}
     >
       {CANVAS_ZONES.map((zone) => {

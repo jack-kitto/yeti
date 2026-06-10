@@ -16,9 +16,9 @@ import {
   THEME_PRESET_GRID_CLASS,
 } from "@/theme/theme-preset-picker-layout";
 import { updateWorkspaceIcsFeedUrl } from "@/calendar/workspace-ics";
-import type { Library, ShellSurface, ThemePalette } from "@/library/types";
+import type { Library, ThemePalette } from "@/library/types";
 import { resetShellThemeToPreset } from "@/theme/theme-preset-reset";
-import { DEFAULT_SHELL_SURFACE } from "@/theme/theme-defaults";
+import { ShellConfigShellSurface } from "./shell-config-shell-surface";
 import { ShellConfigThemeWidgets } from "./shell-config-theme-widgets";
 
 type ShellConfigWorkspacesProps = {
@@ -298,20 +298,7 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
               ))}
             </div>
 
-            <label className="shell-config-color-field">
-              <span className="shell-config-form-label">Shell surface</span>
-              <select
-                className="shell-config-input"
-                value={selectedWorkspace.theme.shellSurface ?? DEFAULT_SHELL_SURFACE}
-                onChange={(event) =>
-                  patchTheme({ shellSurface: event.target.value as ShellSurface })
-                }
-              >
-                <option value="solid">Solid</option>
-                <option value="glass">Glass</option>
-                <option value="transparent">Transparent</option>
-              </select>
-            </label>
+            <ShellConfigShellSurface theme={selectedWorkspace.theme} onPatch={patchTheme} />
 
             <label className="shell-config-color-field">
               <span className="shell-config-form-label">Background image URL</span>
@@ -321,24 +308,6 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
                 onChange={(event) => setBackgroundUrlDraft(event.target.value)}
                 placeholder="https://…"
                 className="shell-config-input"
-              />
-            </label>
-
-            <label className="shell-config-color-field">
-              <span className="shell-config-form-label">
-                Glass opacity{" "}
-                <span className="tabular-nums">
-                  {Math.round(selectedWorkspace.theme.glassOpacity * 100)}%
-                </span>
-              </span>
-              <input
-                type="range"
-                min={0.2}
-                max={1}
-                step={0.01}
-                value={selectedWorkspace.theme.glassOpacity}
-                onChange={(event) => patchTheme({ glassOpacity: Number(event.target.value) })}
-                className="shell-config-range"
               />
             </label>
 

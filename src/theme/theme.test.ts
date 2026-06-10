@@ -74,6 +74,25 @@ describe("themeToCssVars", () => {
 
     expect(vars["--qs-shell-backdrop-blur"]).toBe("0px");
     expect(vars["--qs-shell-fill-strength"]).toBe("1");
+    expect(vars["--qs-shell-border-color"]).toBe("#2c2419");
+  });
+
+  it("maps shell border color to a CSS custom property", () => {
+    const vars = themeToCssVars({
+      palette: {
+        background: "#ffffff",
+        surface: "#ffffff",
+        text: "#000000",
+        accent: "#000000",
+      },
+      shellSurface: "solid",
+      shellBorderColor: "#333333",
+      glassOpacity: 1,
+      borderRadius: 0,
+      widgets: {},
+    });
+
+    expect(vars["--qs-shell-border-color"]).toBe("#333333");
   });
 
   it("sets hero clock typography vars for the editorial preset", () => {

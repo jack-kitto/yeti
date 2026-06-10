@@ -21,16 +21,24 @@ describe("shell-colors", () => {
     expect(alphas.notch).toBeGreaterThan(alphas.rim);
   });
 
-  it("renders solid shell fills opaque without blur", () => {
+  it("renders solid shell as a flat opaque fill with a customizable border", () => {
     const colors = themeToShellColors({
       palette,
       shellSurface: "solid",
+      shellBorderColor: "#112233",
       glassOpacity: 0.72,
     });
 
-    expect(colors.glassStops[0]).toBe("rgba(255, 253, 249, 1)");
+    expect(colors.glassStops).toEqual([
+      "rgba(255, 253, 249, 1)",
+      "rgba(255, 253, 249, 1)",
+      "rgba(255, 253, 249, 1)",
+    ]);
     expect(colors.notchFill).toBe("rgba(255, 253, 249, 1)");
+    expect(colors.strokeOuter).toBe("rgba(17, 34, 51, 1)");
+    expect(colors.shadow).toBe("transparent");
     expect(colors.backdropBlur).toBe(0);
+    expect(colors.borderWidth).toBe(2);
   });
 
   it("renders glass shell with frosted backdrop blur", () => {

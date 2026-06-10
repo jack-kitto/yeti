@@ -31,6 +31,7 @@ function createPresetTheme(
     backgroundUrl: string;
     glassOpacity: number;
     borderRadius?: number;
+    shellBorderColor?: string;
     widgets: PresetWidgetStyles;
   },
 ): Omit<Theme, "appliedPresetId"> {
@@ -40,6 +41,7 @@ function createPresetTheme(
     backgroundUrl: options.backgroundUrl,
     glassOpacity: options.glassOpacity,
     borderRadius: options.borderRadius ?? 20,
+    ...(options.shellBorderColor ? { shellBorderColor: options.shellBorderColor } : {}),
     widgets: options.widgets,
   };
 }
@@ -180,10 +182,18 @@ export const THEME_PRESETS: ThemePreset[] = [
         backgroundUrl: "",
         glassOpacity: 1,
         borderRadius: 0,
+        shellBorderColor: "#000000",
         widgets: widgets({
           quote: {
-            zone: "upper-center",
+            zone: "lower-left",
             order: 0,
+            text: "#000000",
+            textMuted: "#666666",
+            textShadow: "none",
+          },
+          nowPlaying: {
+            zone: "lower-left",
+            order: 1,
             text: "#000000",
             textMuted: "#666666",
             textShadow: "none",
@@ -196,22 +206,15 @@ export const THEME_PRESETS: ThemePreset[] = [
             textShadow: "none",
           },
           welcome: {
-            zone: "lower-left",
+            zone: "bottom-center",
             order: 0,
             text: "#000000",
             textMuted: "#666666",
             textShadow: "none",
           },
           clock: {
-            zone: "lower-left",
-            order: 1,
-            text: "#000000",
-            textMuted: "#666666",
-            textShadow: "none",
-          },
-          nowPlaying: {
             zone: "bottom-center",
-            order: 0,
+            order: 1,
             text: "#000000",
             textMuted: "#666666",
             textShadow: "none",

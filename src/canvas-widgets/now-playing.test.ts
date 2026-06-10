@@ -130,13 +130,24 @@ describe("dismissCanvasNowPlaying", () => {
 });
 
 describe("clearCanvasNowPlayingDismiss", () => {
-  it("clears dismiss on the active workspace", () => {
-    const entry = workspace({ canvasNowPlayingDismissed: true });
-    const library = dismissCanvasNowPlaying(libraryWithWorkspace(entry), entry.id);
-    const cleared = clearCanvasNowPlayingDismiss(library);
-    const active = cleared.workspaces.find((item) => item.id === entry.id)!;
+  it("clears dismiss on every workspace when playback resumes", () => {
+    const work = workspace({ id: "work", canvasNowPlayingDismissed: true });
+    const personal = workspace({
+      id: "personal",
+      name: "Personal",
+      canvasNowPlayingDismissed: true,
+    });
+    const library: Library = {
+      ...libraryWithWorkspace(work),
+      workspaces: [work, personal],
+      activeWorkspaceId: "work",
+    };
 
-    expect(active.canvasNowPlayingDismissed).toBe(false);
+    const cleared = clearCanvasNowPlayingDismiss(library);
+
+    expect(cleared.workspaces.every((entry) => entry.canvasNowPlayingDismissed === false)).toBe(
+      true,
+    );
   });
 
   it("clears dismiss when playback starts via updateFocusRadioPlayback", () => {

@@ -32,3 +32,11 @@ Checklist-driven — no code unless QA finds blocking defects (file follow-up is
 ## Comments
 
 Tracer bullet 8 — HITL sign-off slice. Issue 12 motion/visual umbrella may close related items after this passes.
+
+**QA findings (2026-06-10):** Sign-off blocked — file follow-ups:
+
+- Issue 81 — left/right notch bottom-corner double border (editorial)
+- Issue 82 — editorial preset pomodoro canvas gap when timer running
+- Issue 80 — product wants solid-only shell (revisit glass QA criteria)
+- Issue 83 — layout/theme preset split + control center surfacing
+- Issue 84 — workspace transition motion revision

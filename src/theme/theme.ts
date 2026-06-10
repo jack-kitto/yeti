@@ -41,6 +41,7 @@ export function themeToCssVars(theme: Theme): Record<string, string> {
     "--qs-color-surface": resolved.palette.surface,
     "--qs-color-text": resolved.palette.text,
     "--qs-color-accent": resolved.palette.accent,
+    "--qs-shell-border-color": resolved.shellBorderColor ?? resolved.palette.text,
     "--qs-shell-surface": resolved.shellSurface,
     "--qs-shell-backdrop-blur": `${shellBackdropBlur(resolved.shellSurface)}px`,
     "--qs-shell-fill-strength": String(rim),

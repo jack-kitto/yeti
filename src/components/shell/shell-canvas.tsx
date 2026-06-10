@@ -32,7 +32,7 @@ export function ShellCanvas({ theme }: ShellCanvasProps) {
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none absolute inset-0 z-[10] block h-full w-full"
+      className="shell-rim-canvas pointer-events-none absolute inset-0 block h-full w-full"
       aria-hidden
     />
   );

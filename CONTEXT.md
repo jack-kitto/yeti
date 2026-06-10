@@ -11,7 +11,7 @@ The product — a productivity shell for developers combining bookmarks, project
 _Avoid_: Dashboard, homepage, portal, Quickshell
 
 **Shell**:
-The glass frame that sits **on top of** the **canvas** — controls on screen edges, contextual menus at the rim, not traditional web chrome. At rest the shell rings the viewport; on hover it expands outward over the canvas to open a **notch**. Paint order: **canvas** (bottom) → **shell** / **notch** (middle) → **rim menu** content (top).
+The frame that sits **on top of** the **canvas** — controls on screen edges, contextual menus at the rim, not traditional web chrome. At rest the shell rings the viewport; on hover it expands outward over the canvas to open a **notch**. Paint order: **canvas** (bottom) → **shell** / **notch** (middle) → **rim menu** content (top).
 _Avoid_: Dashboard, layout, UI, pocket
 
 **Library**:
@@ -31,24 +31,28 @@ _Avoid_: Resource, bookmark, item, entry
 Yeti has **no link tree** — no projects, folders, or nested collections. Links live in a flat catalog and are organized spatially (**edge groups**) within a **workspace**.
 
 **Workspace**:
-A named shell context (e.g. Work, Personal). One workspace is active at a time. Each workspace has its own theme and its own **edge** placements; the link catalog is shared globally. Switch via the **command bar** (workspace rows + fuzzy match), the **control center** workspaces tab, or **Tab** when the command bar is empty (cycles workspaces; with a query, Tab cycles results instead). Each switch uses a **workspace transition**: the canvas plane (widgets + theme) scrolls horizontally while rims stay fixed; the shell **expands** toward the screen edges until the canvas is fully hidden, the workspace changes, then the shell **contracts** back to normal rim size. Not a canvas switcher control.
+A named shell context (e.g. Work, Personal). One workspace is active at a time. Each workspace has its own theme and its own **edge** placements; the link catalog is shared globally. Switch via the **command bar** (workspace rows + fuzzy match), the **control center** workspaces tab, or **Tab** when the command bar is empty (cycles workspaces; with a query, Tab cycles results instead). Each switch uses a **workspace transition**: a full-viewport ripple reveal from the switch origin. Not a canvas switcher control.
 _Avoid_: Profile, project, environment
 
 **Theme**:
-The visual identity of a workspace — explicit shell color palette, **shell surface** style, background (image or solid color), **canvas widget** placement, and per-widget colors. Stored inline on the workspace record; each workspace owns its own theme. All colors are defined by the theme; the background image is decorative only — Yeti does not auto-extract or sample colors from images. Changing the background does not auto-adjust styling; users fix readability manually in **settings** or re-apply a **theme preset**. Preset authors pair each background with per-widget colors so widgets stay readable. Users start from a **theme preset** (copy-on-apply) or build manually; edits are workspace-local.
+The colour identity of a workspace — shell palette, **shell border**, background (image or solid color), and per-widget text colours. **Canvas widget** zones and order are layout, not theme — set via **layout preset** or manual picks in **settings**. Stored inline on the workspace record; each workspace owns its own theme. All colours are defined by the theme; the background image is decorative only — Yeti does not auto-extract or sample colours from images. Changing the background does not auto-adjust styling; users fix readability manually in **settings** or re-apply a **theme preset**.
 _Avoid_: Skin, appearance preset, extracted palette, shared theme library
 
-**Shell surface**:
-How the **shell** rim and **notch** are rendered — `solid` (opaque fill, no blur), `glass` (frosted `backdrop-filter` with tinted surface color), or `transparent` (lighter frosted fill, minimal shell presence). Set per **theme** together with `glassOpacity`, which fine-tunes fill strength within `glass` and `transparent` modes. Distinct from the canvas background.
-_Avoid_: Texture, material, skin
+**Layout preset**:
+A bundled **canvas widget** placement in Yeti's built-in catalog — zones, in-zone stack order, and presentation mode (e.g. default zone grid vs editorial four-corner stage). v1 layouts: `default` and `editorial`. Applying a layout preset updates placement and presentation only; colours stay as-is. Fully independent of **theme preset** — any layout pairs with any theme. Quick-apply from the **control center**; zone and order overrides in **settings**.
+_Avoid_: Theme preset, skin pack, widget template
 
 **Theme preset**:
-A bundled, designer-tested theme in Yeti's built-in catalog — six in v1 (including Work and Personal). Selecting a preset copies shell palette, **shell surface**, background, and per-**canvas widget** zone/colors onto the workspace's theme — presets are not persisted library records and edits after apply stay on that workspace only. **Canvas widget** on/off toggles are not changed by preset apply; only visual styling and placement update. From **settings**, users can override any section and **reset** individual sections back to the last applied preset.
-_Avoid_: Theme template, skin pack, theme library entry
+A bundled colour palette in Yeti's built-in catalog — six in v1 (Work, Personal, Editorial, Forest, Sunset, Ocean). Applying copies shell palette, **shell border**, background, and per-widget text colours only — zones, order, and presentation mode stay as-is. Fully independent of **layout preset**. **Canvas widget** on/off toggles are not changed by preset apply. Quick-apply from the **control center**; granular colour overrides and per-section reset in **settings**. Not a persisted library record; edits after apply stay workspace-local.
+_Avoid_: Theme template, skin pack, theme library entry, layout preset
+
+**Shell border**:
+An optional outline on the **shell** rim and **notch**, set per **theme** via `shellBorderColor`. When the colour is set, the shell draws a border at that colour; when absent, no border is drawn. The shell fill is always an opaque `palette.surface` — no frosted glass, blur, or transparency modes. Distinct from the canvas background.
+_Avoid_: Shell surface, glass, texture, material, skin
 
 **Workspace transition**:
-The motion when changing active **workspace**. The canvas plane (widgets + **theme**) moves horizontally; rim frames stay anchored. The shell expands outward until it fills the screen and hides the canvas, the workspace swaps underneath, then the shell contracts back to its resting rim size.
-_Avoid_: Page transition, slide animation
+The motion when changing active **workspace**. A clip-path ripple expands from the switch **origin** (the clicked row or control, or viewport center for keyboard-only switches), revealing the full viewport — canvas background, **canvas widgets**, and **shell** rim/notch colours for the incoming workspace. One continuous reveal; no seal close/open. Background URL and shell palette swap inside the reveal, not before it. Top-plane overlays (**launcher**, **settings**) sit outside the transition. Implemented via the View Transitions API with a graceful cross-fade fallback when unsupported.
+_Avoid_: Page transition, slide animation, seal morph
 
 ## Shell layout
 
@@ -65,11 +69,11 @@ The large central area and primary focus surface. In v1: **canvas widgets** only
 _Avoid_: Dashboard, homepage, main content, pin strip
 
 **Canvas zone**:
-A named anchor region on the **canvas** where **canvas widgets** can be placed. v1 zones: `center`, `upper-center`, `lower-left`, `lower-right`, `bottom-center`. Each enabled widget is assigned a zone and a stack order within that zone. Zones are fixed in v1 — users choose zone and order in the **theme**, not free pixel positioning.
+A named anchor region on the **canvas** where **canvas widgets** can be placed. v1 zones: `center`, `upper-center`, `lower-left`, `lower-right`, `bottom-center`. Each enabled widget is assigned a zone and a stack order within that zone. Zones are fixed in v1 — users choose zone and order via **layout preset** or **settings**, not free pixel positioning.
 _Avoid_: Grid slot, pin point, widget dock
 
 **Canvas widget**:
-A small configurable block on the **canvas** — visible when enabled (some types have extra visibility rules — e.g. **now playing** stays on canvas while paused until the user **dismisses** it; dismiss is a per-workspace flag in the **library**, separate from the settings on/off toggle, and clears on the next **play** from anywhere). v1 types: clock/date, welcome message, **quote**, **now playing**, **focus tasks**, and **pomodoro**. On/off toggles are **per-workspace**; each widget's **canvas zone**, in-zone stack order, and colors (`text`, `textMuted`, `textShadow`) are **per-widget** settings within the workspace **theme**. Ambient and minimal; not duplicated in the **control center**. **Focus tasks** and **pomodoro** canvas widgets read the same per-workspace **internal tool** state as the **right rim** — no duplicate task or timer store. Canvas offers glance + primary actions (start/pause timer, start focus/countdown, complete task); dense editing (reorder, estimates, split config, backlog toggle) stays on the **right rim**.
+A small configurable block on the **canvas** — visible when enabled (some types have extra visibility rules — e.g. **now playing** stays on canvas while paused until the user **dismisses** it; dismiss is a per-workspace flag in the **library**, separate from the settings on/off toggle, and clears on the next **play** from anywhere; **clock** hides while a **pomodoro** or **focus countdown** timer is running and **pomodoro** takes its place). v1 types: clock/date, welcome message, **quote**, **now playing**, **focus tasks**, and **pomodoro**. On the **editorial** **layout preset**, an active timer replaces the split clock in the same corners — countdown bottom-left, phase label bottom-right. On/off toggles are **per-workspace**; each widget's **canvas zone** and in-zone stack order come from the active **layout preset** or manual layout in **settings**; text colours (`text`, `textMuted`, `textShadow`) are **per-widget** settings within the workspace **theme**. Ambient and minimal; not duplicated in the **control center**. **Focus tasks** and **pomodoro** canvas widgets read the same per-workspace **internal tool** state as the **right rim** — no duplicate task or timer store. Canvas offers glance + primary actions (start/pause timer, start focus/countdown, complete task); dense editing (reorder, estimates, split config, backlog toggle) stays on the **right rim**.
 _Avoid_: Widget, tile, card
 
 **Quote**:
@@ -77,7 +81,7 @@ A **canvas widget** that rotates short lines curated for design, innovation, eng
 _Avoid_: Affirmation, fortune cookie, API feed
 
 **Control center**:
-The **top rim** **rim menu** — on-demand glance and utility content opened by hovering the top edge (shell expands into a top **notch**). Tabbed inside the notch; configured from **settings**. v1 tabs: **workspaces** (switch and glance at active context), **calendar** (per-workspace **ICS feed URL** in settings — read-only, no OAuth in v1). Shows **next up**: timed events from now forward; all-day events for today until midnight. Click title opens event URL when present; expand shows details inline. List capped at **5** events with **+N more** when overflow. No ICS URL → setup prompt linking to **settings**, and **media**. The **media** tab always exposes the **focus radio** player (BYO stream/YouTube stations from the user's library — no bundled catalog); when the browser's media session reports now-playing elsewhere, that overlays as a glance/control strip — radio remains reachable without dismissing it. Does not host **canvas widgets**, **tasks**, or other **internal tools** — tasks live on the **right rim**, not here. Weather is out of v1 scope.
+The **top rim** **rim menu** — on-demand glance and utility content opened by hovering the top edge (shell expands into a top **notch**). Tabbed inside the notch; configured from **settings**. v1 tabs: **look** (quick-apply **layout preset** and **theme preset**), **workspaces** (switch and glance at active context), **calendar** (per-workspace **ICS feed URL** in settings — read-only, no OAuth in v1). Shows **next up**: timed events from now forward; all-day events for today until midnight. Click title opens event URL when present; expand shows details inline. List capped at **5** events with **+N more** when overflow. No ICS URL → setup prompt linking to **settings**, and **media**. The **media** tab always exposes the **focus radio** player (BYO stream/YouTube stations from the user's library — no bundled catalog); when the browser's media session reports now-playing elsewhere, that overlays as a glance/control strip — radio remains reachable without dismissing it. Does not host **canvas widgets**, **tasks**, or other **internal tools** — tasks live on the **right rim**, not here. Weather is out of v1 scope.
 _Avoid_: Dashboard, top panel, notification center
 
 **Focus radio**:

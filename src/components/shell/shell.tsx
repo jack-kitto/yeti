@@ -210,8 +210,11 @@ function ShellLoaded({
   return (
     <FocusRadioPlaybackProvider library={library}>
       <div className="relative isolate h-screen w-screen overflow-hidden">
+        <ShellRimBackdrop theme={displayTheme} />
+        <ShellCanvas theme={displayTheme} />
+
         <main
-          className="pointer-events-none absolute z-[1] flex flex-col items-center px-8"
+          className="shell-canvas-layer pointer-events-none absolute flex flex-col items-center px-8"
           style={{
             left: panelBounds.left,
             top: panelBounds.top,
@@ -224,9 +227,6 @@ function ShellLoaded({
             <CanvasWidgetStack workspace={activeWorkspace} />
           </div>
         </main>
-
-        <ShellRimBackdrop theme={displayTheme} />
-        <ShellCanvas theme={displayTheme} />
 
         <ShellEdgeLayer
           library={library}

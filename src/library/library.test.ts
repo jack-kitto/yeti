@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addEdgeGroup } from "@/placement/placement-mutations";
+import { addEdgeGroup, addLinkToEdgeGroup } from "@/placement/placement-mutations";
 import { serializeSnapshot } from "@/snapshot/snapshot";
 import { addCatalogLink as addCatalogLinkToLibrary } from "./catalog";
 import {
@@ -199,10 +199,20 @@ describe("importLibrarySnapshot", () => {
   it("replaces the stored library with a deserialized snapshot", async () => {
     const store = createInMemoryLibraryStore();
     const seeded = await loadOrSeedLibrary(store);
-    const snapshotLibrary = addCatalogLinkToLibrary(seeded, {
+    const withLink = addCatalogLinkToLibrary(seeded, {
       url: "https://example.com/from-snapshot",
       title: "From snapshot",
     });
+    const newLinkId = withLink.catalog.find((link) => link.title === "From snapshot")!.id;
+    const groupId = withLink.workspaces.find((workspace) => workspace.id === withLink.activeWorkspaceId)!
+      .placements.edges.left[0]!.id;
+    const snapshotLibrary = addLinkToEdgeGroup(
+      withLink,
+      withLink.activeWorkspaceId,
+      "left",
+      groupId,
+      newLinkId,
+    );
     const yaml = serializeSnapshot(snapshotLibrary);
     await saveLibrary(store, { ...seeded, catalog: [] });
 

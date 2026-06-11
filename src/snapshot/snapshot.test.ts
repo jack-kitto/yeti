@@ -1,15 +1,55 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { stringify } from "yaml";
+import { parse, stringify } from "yaml";
 import { initialKey, sortByKey } from "@/fractional-order/fractional-order";
 import { loadOrSeedLibrary } from "@/library/library";
+import type { Library } from "@/library/types";
 import { createInMemoryLibraryStore } from "@/library/store";
 import {
   deserializeSnapshot,
   importSnapshotFromUrl,
+  libraryToMachineSnapshot,
   libraryToSnapshot,
   serializeSnapshot,
 } from "./snapshot";
 import { resolveTheme } from "@/theme/theme-defaults";
+
+function bookmarkLinksForWorkspace(library: Library, workspaceName: string) {
+  const workspace = library.workspaces.find((entry) => entry.name === workspaceName)!;
+  const groups = sortByKey(workspace.placements.edges.left, (group) => group.orderKey);
+
+  return groups.map((group) => ({
+    name: group.name,
+    icon: group.handleIcon,
+    links: sortByKey(group.links, (placement) => placement.orderKey).map((placement) => {
+      const link = library.catalog.find((entry) => entry.id === placement.linkId)!;
+      return {
+        url: link.url,
+        ...(link.title !== undefined ? { title: link.title } : {}),
+        ...(link.image !== undefined ? { image: link.image } : {}),
+      };
+    }),
+  }));
+}
+
+function expectSnapshotRoundTrip(library: Library, restored: Library) {
+  expect(restored.shortcuts).toEqual(library.shortcuts);
+  expect(restored.focusRadio).toEqual(library.focusRadio);
+  expect(restored.activeWorkspaceId).toEqual(library.activeWorkspaceId);
+  expect(restored.workspaces.map((workspace) => workspace.name)).toEqual(
+    library.workspaces.map((workspace) => workspace.name),
+  );
+
+  for (const workspace of library.workspaces) {
+    const restoredWorkspace = restored.workspaces.find((entry) => entry.id === workspace.id);
+    expect(restoredWorkspace).toBeDefined();
+    expect(restoredWorkspace!.theme).toEqual(workspace.theme);
+    expect(restoredWorkspace!.internalTools).toEqual(workspace.internalTools);
+    expect(restoredWorkspace!.canvasWidgets).toEqual(workspace.canvasWidgets);
+    expect(bookmarkLinksForWorkspace(restored, workspace.name)).toEqual(
+      bookmarkLinksForWorkspace(library, workspace.name),
+    );
+  }
+}
 
 describe("serializeSnapshot", () => {
   it("round-trips the starter library without losing data", async () => {
@@ -18,7 +58,30 @@ describe("serializeSnapshot", () => {
     const yaml = serializeSnapshot(library);
     const restored = deserializeSnapshot(yaml);
 
-    expect(restored).toEqual(library);
+    expectSnapshotRoundTrip(library, restored);
+  });
+
+  it("exports human-readable v2 YAML without catalog or placement IDs", async () => {
+    const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const document = parse(serializeSnapshot(library)) as Record<string, unknown>;
+
+    expect(document.version).toBe(2);
+    expect(document).not.toHaveProperty("catalog");
+    expect(Array.isArray(document.workspaces)).toBe(true);
+
+    const workspace = (document.workspaces as Record<string, unknown>[])[0]!;
+    expect(workspace).toHaveProperty("bookmarks");
+    expect(workspace).not.toHaveProperty("placements");
+
+    const bookmark = (workspace.bookmarks as Record<string, unknown>[])[0]!;
+    expect(bookmark).toHaveProperty("name");
+    expect(bookmark).not.toHaveProperty("order");
+    expect(bookmark).not.toHaveProperty("id");
+
+    const link = (bookmark.links as Record<string, unknown>[])[0]!;
+    expect(link).toHaveProperty("url");
+    expect(link).not.toHaveProperty("id");
+    expect(link).not.toHaveProperty("order");
   });
 
   it("round-trips extended internal tools fields on a workspace", async () => {
@@ -95,7 +158,7 @@ describe("serializeSnapshot", () => {
 
   it("backfills missing internal tools fields when importing older snapshots", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
-    const snapshot = libraryToSnapshot(library);
+    const snapshot = libraryToMachineSnapshot(library);
 
     snapshot.workspaces[0]!.internalTools = {
       pomodoro: {
@@ -215,7 +278,7 @@ describe("deserializeSnapshot", () => {
 
   it("imports v1 machine-format snapshots without regression", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
-    const yaml = serializeSnapshot(library).replace("version: 2", "version: 1");
+    const yaml = stringify(libraryToMachineSnapshot(library)).replace("version: 2", "version: 1");
 
     const restored = deserializeSnapshot(yaml);
 
@@ -231,7 +294,7 @@ describe("deserializeSnapshot", () => {
 
   it("drops legacy pin placements when importing a snapshot", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
-    const snapshot = libraryToSnapshot(library);
+    const snapshot = libraryToMachineSnapshot(library);
     snapshot.workspaces[0]!.placements.pins = [
       { linkId: "github", position: "strip", order: "a0" },
     ];
@@ -244,13 +307,14 @@ describe("deserializeSnapshot", () => {
     expect("pins" in restored.workspaces[0]!.placements).toBe(false);
   });
 
-  it("does not write pin placements to exported snapshots", async () => {
+  it("does not write pin placements or machine placements to exported snapshots", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
+    const document = parse(serializeSnapshot(library)) as Record<string, unknown>;
 
-    const snapshot = libraryToSnapshot(library);
-
-    for (const workspace of snapshot.workspaces) {
-      expect(workspace.placements).not.toHaveProperty("pins");
+    expect(document).not.toHaveProperty("catalog");
+    for (const workspace of document.workspaces as Record<string, unknown>[]) {
+      expect(workspace).not.toHaveProperty("placements");
+      expect(workspace).toHaveProperty("bookmarks");
     }
   });
 });
@@ -421,7 +485,7 @@ describe("importSnapshotFromUrl", () => {
 
     const imported = await importSnapshotFromUrl("https://example.com/yeti.yaml");
 
-    expect(imported).toEqual(library);
+    expectSnapshotRoundTrip(library, imported);
   });
 
   it("surfaces fetch failures without changing the library", async () => {

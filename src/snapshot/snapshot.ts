@@ -5,7 +5,7 @@ import type { FocusRadio } from "@/focus-radio/types";
 import { ensureWorkspaceInternalTools } from "@/internal-tools/defaults";
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
-import { rebalanceKeys } from "@/fractional-order/fractional-order";
+import { rebalanceKeys, sortByKey } from "@/fractional-order/fractional-order";
 import { validateLibrary } from "@/library/library";
 import { normalizeWorkspacePlacements } from "@/library/migrate-placements";
 import type {
@@ -147,7 +147,68 @@ function snapshotEdgeGroupToLibrary(group: SnapshotEdgeGroup): EdgeGroup {
   };
 }
 
-export function libraryToSnapshot(library: Library): LibrarySnapshot {
+function linkToBookmarkRow(link: Link): SnapshotV2BookmarkLink {
+  return {
+    url: link.url,
+    ...(link.title !== undefined ? { title: link.title } : {}),
+    ...(link.image !== undefined ? { image: link.image } : {}),
+  };
+}
+
+function edgeGroupToBookmark(group: EdgeGroup, catalog: readonly Link[]): SnapshotV2Bookmark {
+  const catalogById = new Map(catalog.map((link) => [link.id, link]));
+  const links = sortByKey(group.links, (placement) => placement.orderKey).map((placement) => {
+    const link = catalogById.get(placement.linkId);
+    if (!link) {
+      throw new Error(`Catalog link "${placement.linkId}" not found`);
+    }
+
+    return linkToBookmarkRow(link);
+  });
+
+  return {
+    name: group.name,
+    ...(group.handleIcon ? { icon: group.handleIcon } : {}),
+    links,
+  };
+}
+
+function workspaceToHumanSnapshot(workspace: Workspace, catalog: readonly Link[]): SnapshotV2HumanWorkspace {
+  const bookmarks = sortByKey(workspace.placements.edges.left, (group) => group.orderKey).map(
+    (group) => edgeGroupToBookmark(group, catalog),
+  );
+
+  return {
+    id: workspace.id,
+    name: workspace.name,
+    theme: resolveTheme(workspace.theme),
+    bookmarks,
+    internalTools: workspace.internalTools,
+    canvasWidgets: workspace.canvasWidgets,
+    ...(workspace.canvasNowPlayingDismissed
+      ? { canvasNowPlayingDismissed: workspace.canvasNowPlayingDismissed }
+      : {}),
+    ...(workspace.icsFeedUrl ? { icsFeedUrl: workspace.icsFeedUrl } : {}),
+  };
+}
+
+export function libraryToSnapshot(library: Library): HumanLibrarySnapshot {
+  return {
+    version: SNAPSHOT_VERSION,
+    workspaces: library.workspaces.map((workspace) =>
+      workspaceToHumanSnapshot(workspace, library.catalog),
+    ),
+    shortcuts: { ...library.shortcuts },
+    focusRadio: {
+      stations: library.focusRadio.stations.map((station) => ({ ...station })),
+      playback: { ...library.focusRadio.playback },
+    },
+    activeWorkspaceId: library.activeWorkspaceId,
+  };
+}
+
+/** Machine-format snapshot (catalog + placements) for v1 compatibility and tests. */
+export function libraryToMachineSnapshot(library: Library): LibrarySnapshot {
   return {
     version: SNAPSHOT_VERSION,
     catalog: library.catalog.map((link) => ({

@@ -7,7 +7,7 @@ import {
   isTextEntryElement,
   moveCommandBarSelection,
   resolveCommandBarListNavigation,
-  shouldCaptureTypeToFocusKey,
+  shouldHandleTypeToFocus,
   shortcutMatchesEvent,
   type CommandBarResult,
 } from "@/command-bar/command-bar";
@@ -18,6 +18,7 @@ import { BUILTIN_SURFACE } from "@/shell-frame/rim";
 import { getLatestShellZones } from "@/shell-frame/shell-state";
 import { activateZone } from "@/shell-frame/shell-zones";
 import { useConfigStore } from "@/store/config-store";
+import { useLauncherStore } from "@/store/launcher-store";
 
 type CommandBarProps = {
   library: Library;
@@ -117,10 +118,13 @@ export function CommandBar({
 
   useEffect(() => {
     function handleTypeToFocus(event: KeyboardEvent) {
-      if (!shouldCaptureTypeToFocusKey(event)) {
-        return;
-      }
-      if (isTextEntryElement(document.activeElement)) {
+      if (
+        !shouldHandleTypeToFocus({
+          event,
+          activeElement: document.activeElement,
+          overlaysOpen: useConfigStore.getState().open || useLauncherStore.getState().open,
+        })
+      ) {
         return;
       }
 

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { shouldCaptureTypeToFocusKey } from "./command-bar";
+import {
+  shouldCaptureTypeToFocusKey,
+  shouldHandleTypeToFocus,
+} from "./command-bar";
 
 describe("shouldCaptureTypeToFocusKey", () => {
   it("captures printable keys without modifiers", () => {
@@ -28,6 +31,18 @@ describe("shouldCaptureTypeToFocusKey", () => {
         ctrlKey: false,
         metaKey: false,
         altKey: false,
+      }),
+    ).toBe(false);
+  });
+});
+
+describe("shouldHandleTypeToFocus", () => {
+  it("does not capture keys while settings or launcher overlays are open", () => {
+    expect(
+      shouldHandleTypeToFocus({
+        event: { key: "h", ctrlKey: false, metaKey: false, altKey: false },
+        activeElement: null,
+        overlaysOpen: true,
       }),
     ).toBe(false);
   });

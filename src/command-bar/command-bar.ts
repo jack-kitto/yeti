@@ -147,6 +147,35 @@ export function isTextEntryElement(element: Element | null): boolean {
   return element instanceof HTMLElement && element.isContentEditable;
 }
 
+const TYPE_TO_FOCUS_OVERLAY_SELECTOR = ".shell-config-dialog, .shell-launcher-dialog";
+
+export function isInsideTypeToFocusOverlay(element: Element | null): boolean {
+  if (!element) {
+    return false;
+  }
+  return element.closest(TYPE_TO_FOCUS_OVERLAY_SELECTOR) !== null;
+}
+
+export function shouldHandleTypeToFocus(options: {
+  event: Pick<KeyboardEvent, "key" | "ctrlKey" | "metaKey" | "altKey">;
+  activeElement: Element | null;
+  overlaysOpen?: boolean;
+}): boolean {
+  if (options.overlaysOpen) {
+    return false;
+  }
+  if (!shouldCaptureTypeToFocusKey(options.event)) {
+    return false;
+  }
+  if (isTextEntryElement(options.activeElement)) {
+    return false;
+  }
+  if (isInsideTypeToFocusOverlay(options.activeElement)) {
+    return false;
+  }
+  return true;
+}
+
 const SHORTCUT_ALIASES: Record<string, string> = {
   Ctrl: "Control",
   Command: "Meta",

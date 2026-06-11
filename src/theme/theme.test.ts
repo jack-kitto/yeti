@@ -70,7 +70,7 @@ describe("themeToCssVars", () => {
     expect(vars["--qs-shell-border-color"]).toBe("#333333");
   });
 
-  it("sets hero clock typography vars for the editorial preset", () => {
+  it("sets hero clock typography vars for the editorial layout preset", () => {
     const vars = themeToCssVars({
       palette: {
         background: "#ffffff",

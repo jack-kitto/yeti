@@ -1,6 +1,7 @@
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { ThemePatch, Workspace } from "@/library/types";
-import { getLayoutPreset, isLayoutPresetId } from "./layout-presets";
+import { getLayoutPreset } from "./layout-presets";
+import { resolveLayoutPresetId } from "./resolve-layout-preset";
 import { getThemePreset, isThemePresetId } from "./theme-presets";
 
 export function resetShellThemeToPreset(workspace: Workspace): ThemePatch | null {
@@ -54,12 +55,7 @@ export function resetWidgetLayoutToPreset(
   workspace: Workspace,
   widgetId: CanvasWidgetId,
 ): ThemePatch | null {
-  const presetId = workspace.theme.appliedLayoutPresetId ?? "default";
-  if (!isLayoutPresetId(presetId)) {
-    return null;
-  }
-
-  const preset = getLayoutPreset(presetId);
+  const preset = getLayoutPreset(resolveLayoutPresetId(workspace.theme));
   const widgetLayout = preset?.widgets[widgetId];
   if (!widgetLayout) {
     return null;

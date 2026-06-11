@@ -13,6 +13,31 @@ import {
   resolveFocusSplit,
 } from "@/internal-tools/pomodoro";
 
+export function CanvasClockWidget({ variant = "default" }: { variant?: "default" | "hero" | "rail" }) {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const { time, date } = formatClockDisplay(now);
+  const className =
+    variant === "hero"
+      ? "canvas-widget canvas-widget-clock canvas-widget-clock--hero-center"
+      : variant === "rail"
+        ? "canvas-widget canvas-widget-clock canvas-widget-clock--rail"
+        : "canvas-widget canvas-widget-clock";
+
+  return (
+    <div className={className}>
+      <p className="canvas-widget-clock-time">{time}</p>
+      {variant === "default" ? <p className="canvas-widget-clock-date">{date}</p> : null}
+      {variant === "rail" ? <p className="canvas-widget-clock-date">{date}</p> : null}
+    </div>
+  );
+}
+
 export function CanvasClockTimeWidget() {
   const [now, setNow] = useState(() => new Date());
 

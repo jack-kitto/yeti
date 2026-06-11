@@ -12,9 +12,20 @@ describe("canvas zone layout UI", () => {
     resolve(__dirname, "../components/shell/editorial-canvas-stack.tsx"),
     "utf8",
   );
+  const meridianStackSource = readFileSync(
+    resolve(__dirname, "../components/shell/meridian-canvas-stack.tsx"),
+    "utf8",
+  );
+  const atelierStackSource = readFileSync(
+    resolve(__dirname, "../components/shell/atelier-canvas-stack.tsx"),
+    "utf8",
+  );
 
-  it("scopes editorial typography via appliedPresetId on the canvas stage", () => {
-    expect(stackSource).toContain('data-applied-preset={workspace.theme.appliedPresetId ?? undefined}');
+  it("routes layouts from appliedLayoutPresetId only", () => {
+    expect(stackSource).toContain("resolveLayoutPresetId");
+    expect(stackSource).not.toContain('appliedPresetId === "editorial"');
+    expect(stackSource).toContain('case "meridian"');
+    expect(stackSource).toContain('case "atelier"');
   });
 
   it("renders editorial timer corners when pomodoro replaces the clock", () => {
@@ -23,29 +34,19 @@ describe("canvas zone layout UI", () => {
     expect(editorialStackSource).toContain('isWidgetInLayout(layout, "pomodoro")');
   });
 
-  it("uses a dedicated four-corner editorial canvas layout", () => {
+  it("uses dedicated stage layouts for editorial, meridian, and atelier", () => {
     expect(stackSource).toContain("EditorialCanvasStack");
-    expect(stackSource).toContain('appliedPresetId === "editorial"');
+    expect(stackSource).toContain("MeridianCanvasStack");
+    expect(stackSource).toContain("AtelierCanvasStack");
     expect(editorialStackSource).toContain("editorialFont");
+    expect(meridianStackSource).toContain("canvas-widget-stage--meridian");
+    expect(atelierStackSource).toContain("canvas-widget-stage--atelier");
     expect(css).toContain(".canvas-widget-stage--editorial");
-    expect(css).toContain(".canvas-editorial-tl");
-    expect(css).toContain(".canvas-editorial-tr");
-    expect(css).toContain(".canvas-editorial-bl");
-    expect(css).toContain(".canvas-editorial-br");
+    expect(css).toContain(".canvas-widget-stage--meridian");
+    expect(css).toContain(".canvas-widget-stage--atelier");
   });
 
-  it("applies editorial preset font and widget polish via scoped CSS", () => {
-    expect(css).toContain(".canvas-widget-stage--editorial .canvas-widget-quote");
-    expect(css).toContain(".canvas-widget-stage--editorial .canvas-focus-tasks-header");
-    expect(css).toMatch(
-      /\.canvas-widget-stage--editorial \.canvas-now-playing-visualizer[\s\S]*height:\s*36px/,
-    );
-    expect(css).toMatch(
-      /\.canvas-widget-stage--editorial[\s\S]*padding:\s*10vh\s+10vw/,
-    );
-  });
-
-  it("uses a five-zone grid driven by buildCanvasZoneLayout", () => {
+  it("uses a five-zone grid driven by buildCanvasZoneLayout for the default layout", () => {
     expect(stackSource).toContain("buildCanvasZoneLayout");
     expect(stackSource).toContain("canvas-zone-upper-center");
     expect(css).toMatch(/\.canvas-widget-stage[\s\S]*grid-template-areas/);

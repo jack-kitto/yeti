@@ -146,12 +146,12 @@ body {
   outline-offset: -1px;
 }
 
-.shell-rim-canvas {
-  z-index: 5;
+.shell-canvas-layer {
+  z-index: 1;
 }
 
-.shell-canvas-layer {
-  z-index: 11;
+.shell-rim-canvas {
+  z-index: 5;
 }
 
 .shell-rim-hit {
@@ -713,6 +713,150 @@ body {
 
 .canvas-widget-stage--editorial .canvas-focus-tasks-title {
   font-size: 0.75rem;
+}
+
+.canvas-widget-stage--meridian {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 2rem;
+  padding: 8vh 8vw 10vh;
+  box-sizing: border-box;
+}
+
+.canvas-meridian-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: end;
+  min-width: 0;
+}
+
+.canvas-meridian-center {
+  place-items: center;
+  align-items: center;
+  text-align: center;
+}
+
+.canvas-meridian-bottom {
+  align-items: start;
+}
+
+.canvas-meridian-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  pointer-events: auto;
+}
+
+.canvas-meridian-start {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.canvas-meridian-end {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.canvas-widget-stage--meridian .canvas-widget-clock--hero-center .canvas-widget-clock-time {
+  font-size: clamp(3.5rem, 11vw, 6.5rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+}
+
+.canvas-widget-stage--meridian .canvas-widget-quote {
+  max-width: 18rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.canvas-widget-stage--meridian .canvas-widget-welcome {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.canvas-widget-stage--meridian .canvas-now-playing,
+.canvas-widget-stage--meridian .canvas-focus-tasks {
+  max-width: 16rem;
+}
+
+.canvas-widget-stage--atelier {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  padding: 9vh 9vw;
+  box-sizing: border-box;
+  align-content: stretch;
+}
+
+.canvas-atelier-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+  pointer-events: auto;
+}
+
+.canvas-atelier-left {
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: 2vh;
+}
+
+.canvas-atelier-right {
+  justify-content: space-between;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.canvas-atelier-anchor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  margin-top: auto;
+}
+
+.canvas-widget-stage--atelier .canvas-widget-quote {
+  max-width: 20rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.canvas-widget-stage--atelier .canvas-widget-welcome {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.canvas-widget-stage--atelier .canvas-widget-clock--rail .canvas-widget-clock-time {
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.canvas-widget-stage--atelier .canvas-widget-clock--rail .canvas-widget-clock-date {
+  font-size: 0.75rem;
+  opacity: 0.72;
+}
+
+.canvas-widget-stage--atelier .canvas-now-playing {
+  width: min(100%, 15rem);
+  align-items: flex-start;
+}
+
+.canvas-widget-stage--atelier .canvas-focus-tasks {
+  width: min(100%, 17rem);
+}
+
+.shell-dashboard-layout-preset-copy {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--qs-color-text) 58%, transparent);
 }
 
 .library-stale-gate {

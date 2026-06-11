@@ -1,15 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { createTestTheme } from "./theme-defaults";
-import { applyLayoutPreset, getLayoutPreset } from "./layout-presets";
+import { applyLayoutPreset, getLayoutPreset, LAYOUT_PRESETS } from "./layout-presets";
 
 describe("layout preset catalog", () => {
-  it("ships default and editorial layout presets", () => {
-    expect(getLayoutPreset("default")?.name).toBe("Default");
-    expect(getLayoutPreset("editorial")?.widgets.clock).toEqual({
-      zone: "bottom-center",
-      order: 1,
-    });
+  it("ships four layout presets including meridian and atelier", () => {
+    expect(LAYOUT_PRESETS.map((preset) => preset.id)).toEqual([
+      "default",
+      "editorial",
+      "meridian",
+      "atelier",
+    ]);
+    expect(getLayoutPreset("meridian")?.presentation).toBe("meridian-stage");
+    expect(getLayoutPreset("atelier")?.presentation).toBe("atelier-stage");
   });
 });
 

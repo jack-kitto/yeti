@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { Workspace } from "@/library/types";
-import { formatClockDisplay } from "@/canvas-widgets/clock";
 import {
   buildCanvasZoneLayout,
   CANVAS_ZONES,
@@ -10,11 +8,15 @@ import {
 } from "@/canvas-widgets/zone-layout";
 import type { CanvasWidgetId } from "@/canvas-widgets/types";
 import type { CanvasZone } from "@/library/types";
+import { resolveLayoutPresetId } from "@/theme/resolve-layout-preset";
+import { AtelierCanvasStack } from "./atelier-canvas-stack";
 import { CanvasFocusTasksWidget } from "./canvas-focus-tasks-widget";
 import { CanvasNowPlayingWidget } from "./canvas-now-playing-widget";
 import { CanvasPomodoroWidget } from "./canvas-pomodoro-widget";
 import { EditorialCanvasStack } from "./editorial-canvas-stack";
+import { MeridianCanvasStack } from "./meridian-canvas-stack";
 import {
+  CanvasClockWidget,
   CanvasQuoteWidget,
   CanvasWelcomeWidget,
 } from "./canvas-widget-parts";
@@ -30,24 +32,6 @@ const ZONE_CLASS: Record<CanvasZone, string> = {
   "lower-right": "canvas-zone-lower-right",
   "bottom-center": "canvas-zone-bottom-center",
 };
-
-function CanvasClockWidget() {
-  const [now, setNow] = useState(() => new Date());
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 30_000);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  const { time, date } = formatClockDisplay(now);
-
-  return (
-    <div className="canvas-widget canvas-widget-clock">
-      <p className="canvas-widget-clock-time">{time}</p>
-      <p className="canvas-widget-clock-date">{date}</p>
-    </div>
-  );
-}
 
 function renderCanvasWidget(widgetId: CanvasWidgetId, workspace: Workspace) {
   switch (widgetId) {
@@ -77,17 +61,24 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
     return null;
   }
 
-  if (
-    workspace.theme.appliedLayoutPresetId === "editorial" ||
-    workspace.theme.appliedPresetId === "editorial"
-  ) {
-    return <EditorialCanvasStack workspace={workspace} layout={layout} />;
+  const layoutPresetId = resolveLayoutPresetId(workspace.theme);
+
+  switch (layoutPresetId) {
+    case "editorial":
+      return <EditorialCanvasStack workspace={workspace} layout={layout} />;
+    case "meridian":
+      return <MeridianCanvasStack workspace={workspace} layout={layout} />;
+    case "atelier":
+      return <AtelierCanvasStack workspace={workspace} layout={layout} />;
+    default:
+      break;
   }
 
   return (
     <div
       className="canvas-widget-stage"
-      data-applied-preset={workspace.theme.appliedPresetId ?? undefined}
+      data-layout-preset={layoutPresetId}
+      data-applied-theme={workspace.theme.appliedThemePresetId ?? workspace.theme.appliedPresetId}
     >
       {CANVAS_ZONES.map((zone) => {
         const widgets = layout[zone];

@@ -86,11 +86,12 @@ describe("loadOrSeedLibrary", () => {
 
     expect(library.catalog.length).toBe(STARTER_CATALOG.length);
     expect(library.catalog.length).toBeGreaterThanOrEqual(30);
-    const devTools = work.placements.edges.left.find((group) => group.name === "Dev tools")!;
-    expect(devTools.links.length).toBeGreaterThan(EDGE_PREVIEW_LIMIT);
+    const ship = work.placements.edges.left.find((group) => group.name === "Ship")!;
+    expect(ship.links.length).toBeGreaterThan(EDGE_PREVIEW_LIMIT);
     expect(work.placements.edges.left.length).toBeGreaterThan(1);
-    expect(devTools.name).toBe("Dev tools");
-    expect(devTools.handleIcon).toBe("🛠");
+    const today = work.placements.edges.left.find((group) => group.name === "Today")!;
+    expect(today.name).toBe("Today");
+    expect(today.handleIcon).toBe("☀️");
   });
 
   it("does not re-seed when the store already has a library", async () => {

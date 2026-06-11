@@ -24,18 +24,40 @@ export function createMemoryLibrarySync(): LibrarySyncAdapter {
 export function createBroadcastLibrarySync(
   channelName = "yeti-library-change",
 ): LibrarySyncAdapter {
-  const channel = new BroadcastChannel(channelName);
+  const localListeners = new Set<() => void>();
+  let channel: BroadcastChannel | null = null;
+
+  function ensureChannel(): BroadcastChannel {
+    if (!channel) {
+      channel = new BroadcastChannel(channelName);
+      channel.onmessage = () => {
+        for (const listener of localListeners) {
+          listener();
+        }
+      };
+    }
+
+    return channel;
+  }
 
   return {
     notifyChange() {
-      channel.postMessage(null);
+      for (const listener of localListeners) {
+        listener();
+      }
+
+      try {
+        ensureChannel().postMessage(null);
+      } catch {
+        // A prior bug closed the channel on unsubscribe; recreate for other tabs.
+        channel = null;
+      }
     },
     subscribe(onChange) {
-      channel.onmessage = () => {
-        onChange();
-      };
+      ensureChannel();
+      localListeners.add(onChange);
       return () => {
-        channel.close();
+        localListeners.delete(onChange);
       };
     },
   };
@@ -63,5 +85,9 @@ export function resetLibrarySyncForTests(): void {
 }
 
 export function notifyLibraryChanged(): void {
-  getLibrarySync().notifyChange();
+  try {
+    getLibrarySync().notifyChange();
+  } catch {
+    // Persistence already succeeded; cross-tab sync is best-effort.
+  }
 }

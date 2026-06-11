@@ -1,6 +1,7 @@
 import { describe, expect, it, afterEach } from "vitest";
 import { loadOrSeedLibrary, saveLibrary } from "./library";
 import {
+  createBroadcastLibrarySync,
   createMemoryLibrarySync,
   resetLibrarySyncForTests,
   setLibrarySyncForTests,
@@ -28,6 +29,49 @@ describe("library sync", () => {
     await saveLibrary(store, library);
 
     expect(notifications).toBe(1);
+  });
+
+  it("keeps notifying remaining subscribers after one broadcast listener unsubscribes", () => {
+    class MockBroadcastChannel {
+      onmessage: ((event: MessageEvent) => void) | null = null;
+
+      postMessage(_value: unknown) {
+        // Same-tab senders do not receive their own broadcast messages.
+      }
+
+      close() {
+        throw new DOMException(
+          "An attempt was made to use an object that is not, or is no longer, usable",
+        );
+      }
+    }
+
+    const original = globalThis.BroadcastChannel;
+    globalThis.BroadcastChannel = MockBroadcastChannel as typeof BroadcastChannel;
+
+    try {
+      const sync = createBroadcastLibrarySync("test-channel");
+      let transientNotifications = 0;
+      let persistentNotifications = 0;
+
+      const unsubscribeTransient = sync.subscribe(() => {
+        transientNotifications += 1;
+      });
+      sync.subscribe(() => {
+        persistentNotifications += 1;
+      });
+
+      sync.notifyChange();
+      expect(transientNotifications).toBe(1);
+      expect(persistentNotifications).toBe(1);
+
+      unsubscribeTransient();
+      expect(() => sync.notifyChange()).not.toThrow();
+      expect(transientNotifications).toBe(1);
+      expect(persistentNotifications).toBe(2);
+    } finally {
+      globalThis.BroadcastChannel = original;
+    }
   });
 
   it("lets the start page observe a library written elsewhere", async () => {

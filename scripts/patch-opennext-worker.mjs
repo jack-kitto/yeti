@@ -2,11 +2,11 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const workerPath = new URL("../.open-next/worker.js", import.meta.url);
 
-const before = `            // @ts-expect-error: resolved by wrangler build
+const originalImport = `            // @ts-expect-error: resolved by wrangler build
             const { handler } = await import("./server-functions/default/handler.mjs");
             return handler(reqOrResp, env, ctx, request.signal);`;
 
-const after = `            // @ts-expect-error: resolved by wrangler build
+const waitLoopImport = `            // @ts-expect-error: resolved by wrangler build
             const server = await import("./server-functions/default/handler.mjs");
             let handler = server.handler;
             let attempts = 0;
@@ -20,17 +20,30 @@ const after = `            // @ts-expect-error: resolved by wrangler build
             }
             return handler(reqOrResp, env, ctx, request.signal);`;
 
+const modulePreloadImport = `const serverHandlerModule = import("./server-functions/default/handler.mjs");
+
+export default {`;
+
+const patchedFetch = `            const { handler } = await serverHandlerModule;
+            return handler(reqOrResp, env, ctx, request.signal);`;
+
 let worker = readFileSync(workerPath, "utf8");
 
-if (worker.includes(after)) {
+if (worker.includes("serverHandlerModule")) {
   console.log("patch-opennext-worker: already patched");
-} else if (!worker.includes(before)) {
-  throw new Error(
-    "patch-opennext-worker: expected import block not found — OpenNext template may have changed",
-  );
 } else {
+  if (worker.includes(waitLoopImport)) {
+    worker = worker.replace(waitLoopImport, originalImport);
+  }
 
-  worker = worker.replace(before, after);
+  if (!worker.includes(originalImport)) {
+    throw new Error(
+      "patch-opennext-worker: expected import block not found — OpenNext template may have changed",
+    );
+  }
+
+  worker = worker.replace("export default {", modulePreloadImport);
+  worker = worker.replace(originalImport, patchedFetch);
   writeFileSync(workerPath, worker);
-  console.log("patch-opennext-worker: applied cold-boot handler wait loop");
+  console.log("patch-opennext-worker: applied module-level handler preload");
 }

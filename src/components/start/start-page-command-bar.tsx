@@ -3,11 +3,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   initialCommandBarSelection,
+  isTextEntryElement,
   moveCommandBarSelection,
   resolveCommandBarListNavigation,
+  shouldCaptureTypeToFocusKey,
 } from "@/command-bar/command-bar";
 import type { Library } from "@/library/types";
 import { buildStartPageSearchResults, type StartPageSearchResult } from "@/start/start-page-search";
+import {
+  focusStartPageCommandBar,
+  scheduleStartPageCommandBarFocus,
+} from "@/start/start-page-command-bar-focus";
 
 type StartPageCommandBarProps = {
   library: Library | null;
@@ -58,7 +64,51 @@ export function StartPageCommandBar({
     if (!autoFocus) {
       return;
     }
-    inputRef.current?.focus();
+
+    focusStartPageCommandBar(inputRef.current);
+    const cancelScheduledFocus = scheduleStartPageCommandBarFocus(inputRef.current);
+
+    function handleWindowFocus() {
+      scheduleStartPageCommandBarFocus(inputRef.current);
+    }
+
+    function handlePageShow() {
+      scheduleStartPageCommandBarFocus(inputRef.current);
+    }
+
+    window.addEventListener("focus", handleWindowFocus);
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      cancelScheduledFocus();
+      window.removeEventListener("focus", handleWindowFocus);
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, [autoFocus]);
+
+  useEffect(() => {
+    if (!autoFocus) {
+      return;
+    }
+
+    function handleTypeToFocus(event: KeyboardEvent) {
+      if (!shouldCaptureTypeToFocusKey(event)) {
+        return;
+      }
+      if (
+        isTextEntryElement(document.activeElement) &&
+        document.activeElement !== inputRef.current
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      focusStartPageCommandBar(inputRef.current);
+      setQuery((current) => current + event.key);
+    }
+
+    window.addEventListener("keydown", handleTypeToFocus);
+    return () => window.removeEventListener("keydown", handleTypeToFocus);
   }, [autoFocus]);
 
   function executeResult(result: StartPageSearchResult) {
@@ -82,7 +132,7 @@ export function StartPageCommandBar({
     if (event.key === "Escape") {
       event.preventDefault();
       setQuery("");
-      inputRef.current?.focus();
+      focusStartPageCommandBar(inputRef.current);
     }
   }
 
@@ -91,11 +141,15 @@ export function StartPageCommandBar({
       <input
         ref={inputRef}
         type="search"
+        name="yeti-start-command"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         onKeyDown={handleInputKeyDown}
         placeholder={placeholder}
         aria-label="Command bar"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
         autoFocus={autoFocus}
         aria-expanded={showResults}
         aria-controls="start-page-results"

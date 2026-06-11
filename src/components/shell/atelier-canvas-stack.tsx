@@ -15,6 +15,7 @@ import {
 
 type AtelierCanvasStackProps = {
   workspace: Workspace;
+  displayName?: string;
   layout: CanvasZoneLayout;
 };
 
@@ -22,7 +23,7 @@ function isWidgetInLayout(layout: CanvasZoneLayout, widgetId: CanvasWidgetId): b
   return CANVAS_ZONES.some((zone) => layout[zone].includes(widgetId));
 }
 
-export function AtelierCanvasStack({ workspace, layout }: AtelierCanvasStackProps) {
+export function AtelierCanvasStack({ workspace, displayName, layout }: AtelierCanvasStackProps) {
   const showQuote = isWidgetInLayout(layout, "quote");
   const showWelcome = isWidgetInLayout(layout, "welcome");
   const showNowPlaying = isWidgetInLayout(layout, "nowPlaying");
@@ -34,7 +35,7 @@ export function AtelierCanvasStack({ workspace, layout }: AtelierCanvasStackProp
     <div className="canvas-widget-stage canvas-widget-stage--atelier" data-layout-preset="atelier">
       <div className="canvas-atelier-column canvas-atelier-left">
         {showQuote ? <CanvasQuoteWidget /> : null}
-        {showWelcome ? <CanvasWelcomeWidget workspaceName={workspace.name} /> : null}
+        {showWelcome ? <CanvasWelcomeWidget displayName={displayName} /> : null}
         {showNowPlaying ? <CanvasNowPlayingWidget workspace={workspace} /> : null}
       </div>
 

@@ -1,3 +1,7 @@
+export function resolveYoutubeThumbnailUrl(videoId: string): string {
+  return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+}
+
 export function parseYoutubeVideoId(url: string): string | null {
   try {
     const parsed = new URL(url.trim());

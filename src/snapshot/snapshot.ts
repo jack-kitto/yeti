@@ -78,6 +78,7 @@ export type LibrarySnapshot = {
   shortcuts: ShortcutBindings;
   focusRadio?: FocusRadio;
   activeWorkspaceId: string;
+  displayName?: string;
 };
 
 type SnapshotV2BookmarkLink = {
@@ -109,6 +110,7 @@ export type HumanLibrarySnapshot = {
   shortcuts?: ShortcutBindings;
   focusRadio?: FocusRadio;
   activeWorkspaceId?: string;
+  displayName?: string;
 };
 
 type ParsedSnapshot =
@@ -204,6 +206,7 @@ export function libraryToSnapshot(library: Library): HumanLibrarySnapshot {
       playback: { ...library.focusRadio.playback },
     },
     activeWorkspaceId: library.activeWorkspaceId,
+    ...(library.displayName ? { displayName: library.displayName } : {}),
   };
 }
 
@@ -241,6 +244,7 @@ export function libraryToMachineSnapshot(library: Library): LibrarySnapshot {
       playback: { ...library.focusRadio.playback },
     },
     activeWorkspaceId: library.activeWorkspaceId,
+    ...(library.displayName ? { displayName: library.displayName } : {}),
   };
 }
 
@@ -302,6 +306,7 @@ export function snapshotToLibrary(snapshot: LibrarySnapshot): Library {
         }
       : createDefaultFocusRadio(),
     activeWorkspaceId: snapshot.activeWorkspaceId,
+    ...(snapshot.displayName ? { displayName: snapshot.displayName } : {}),
   };
 
   validateLibrary(library);
@@ -453,6 +458,7 @@ function humanSnapshotToLibrary(snapshot: HumanLibrarySnapshot): Library {
         }
       : createDefaultFocusRadio(),
     activeWorkspaceId,
+    ...(snapshot.displayName ? { displayName: snapshot.displayName } : {}),
   };
 
   validateLibrary(library);

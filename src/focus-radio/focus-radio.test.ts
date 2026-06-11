@@ -49,8 +49,16 @@ describe("createDefaultFocusRadio", () => {
 });
 
 describe("starter library focus radio", () => {
-  it("ships without preloaded streams in the public starter template", () => {
-    expect(createStarterLibrary().focusRadio.stations).toEqual([]);
+  it("ships with youtube focus stations in the public starter template", () => {
+    const stations = createStarterLibrary().focusRadio.stations;
+    expect(stations).toHaveLength(4);
+    expect(stations.every((station) => station.kind === "youtube")).toBe(true);
+    expect(stations.map((station) => station.label)).toEqual([
+      "synthwave radio",
+      "lofi hip hop radio",
+      "Art of Minimal Techno",
+      "Deep Focus Music",
+    ]);
   });
 });
 
@@ -280,6 +288,23 @@ describe("focus radio external media session rules", () => {
 });
 
 describe("parseYoutubeVideoId", () => {
+  it("resolves youtube thumbnail artwork from the video id", async () => {
+    let library = libraryWithoutFocusRadioStations();
+    library = addFocusRadioStation(
+      library,
+      {
+        label: "Lofi",
+        url: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+        kind: "youtube",
+      },
+      "lofi",
+    );
+    library = updateFocusRadioPlayback(library, { stationId: "lofi" });
+
+    const nowPlaying = resolveFocusRadioNowPlaying(library);
+    expect(nowPlaying?.imageUrl).toBe("https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg");
+  });
+
   it("extracts ids from common youtube urls", () => {
     expect(parseYoutubeVideoId("https://www.youtube.com/watch?v=dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
     expect(parseYoutubeVideoId("https://youtu.be/dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
@@ -370,8 +395,8 @@ describe("resolveFocusRadioStreamFailureAction", () => {
 });
 
 describe("isFocusRadioStationCatalogEmpty", () => {
-  it("is true for the public starter library and when no stations exist", async () => {
-    expect(isFocusRadioStationCatalogEmpty(createStarterLibrary())).toBe(true);
+  it("is false for the public starter library and true when no stations exist", async () => {
+    expect(isFocusRadioStationCatalogEmpty(createStarterLibrary())).toBe(false);
     expect(isFocusRadioStationCatalogEmpty(libraryWithoutFocusRadioStations())).toBe(true);
   });
 });

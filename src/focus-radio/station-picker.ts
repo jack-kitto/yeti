@@ -1,4 +1,5 @@
 import type { Library } from "@/library/types";
+import { resolveFocusRadioStationImageUrl } from "./playback";
 import type { FocusRadioStationKind } from "./types";
 import { listFocusRadioStations } from "./stations";
 
@@ -32,7 +33,7 @@ export function buildFocusRadioStationPickerRows(
     id: station.id,
     label: station.label,
     kind: station.kind,
-    imageUrl: station.imageUrl,
+    imageUrl: resolveFocusRadioStationImageUrl(station),
     active: station.id === activeStationId,
     favorite: station.favorite ?? false,
   }));

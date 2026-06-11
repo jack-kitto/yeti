@@ -73,7 +73,7 @@ export function CanvasClockDateHeroWidget() {
   );
 }
 
-export function CanvasWelcomeWidget({ workspaceName }: { workspaceName: string }) {
+export function CanvasWelcomeWidget({ displayName }: { displayName?: string }) {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export function CanvasWelcomeWidget({ workspaceName }: { workspaceName: string }
   }, []);
 
   return (
-    <p className="canvas-widget canvas-widget-welcome">{formatWelcomeMessage(workspaceName, now)}</p>
+    <p className="canvas-widget canvas-widget-welcome">{formatWelcomeMessage(now, displayName)}</p>
   );
 }
 

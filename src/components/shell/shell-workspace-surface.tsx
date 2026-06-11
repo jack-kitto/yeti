@@ -13,6 +13,7 @@ type PanelBounds = {
 
 type ShellWorkspaceSurfaceProps = {
   workspace: Workspace;
+  displayName?: string;
   panelBounds: PanelBounds;
   className?: string;
   style?: React.CSSProperties;
@@ -20,6 +21,7 @@ type ShellWorkspaceSurfaceProps = {
 
 export function ShellWorkspaceSurface({
   workspace,
+  displayName,
   panelBounds,
   className,
   style,
@@ -37,7 +39,7 @@ export function ShellWorkspaceSurface({
         }}
       >
         <div className="pointer-events-none absolute inset-0 px-6 sm:px-8">
-          <CanvasWidgetStack workspace={workspace} />
+          <CanvasWidgetStack workspace={workspace} displayName={displayName} />
         </div>
       </main>
     </div>

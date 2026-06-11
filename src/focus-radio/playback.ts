@@ -2,6 +2,23 @@ import type { Library } from "@/library/types";
 import type { FocusRadioPlayback, FocusRadioStation } from "./types";
 import { listFocusRadioStations } from "./stations";
 import { resolveFocusRadioStreamProxyUrl } from "./stream-proxy";
+import { parseYoutubeVideoId, resolveYoutubeThumbnailUrl } from "./youtube";
+
+export function resolveFocusRadioStationImageUrl(
+  station: Pick<FocusRadioStation, "kind" | "url" | "imageUrl">,
+): string | undefined {
+  const imageUrl = station.imageUrl?.trim();
+  if (imageUrl) {
+    return imageUrl;
+  }
+
+  if (station.kind !== "youtube") {
+    return undefined;
+  }
+
+  const videoId = parseYoutubeVideoId(station.url);
+  return videoId ? resolveYoutubeThumbnailUrl(videoId) : undefined;
+}
 
 export type FocusRadioNowPlaying = {
   id: string;
@@ -37,7 +54,7 @@ export function resolveFocusRadioNowPlaying(library: Library): FocusRadioNowPlay
     label: station.label,
     kind: station.kind,
     url: station.url,
-    imageUrl: station.imageUrl,
+    imageUrl: resolveFocusRadioStationImageUrl(station),
   };
 }
 

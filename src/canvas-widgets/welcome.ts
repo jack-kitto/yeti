@@ -1,4 +1,4 @@
-export function formatWelcomeMessage(workspaceName: string, now: Date, timeZone?: string): string {
+export function formatWelcomeMessage(now: Date, displayName?: string | null, timeZone?: string): string {
   const hour = Number(
     new Intl.DateTimeFormat("en-US", {
       hour: "numeric",
@@ -8,6 +8,7 @@ export function formatWelcomeMessage(workspaceName: string, now: Date, timeZone?
   );
 
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const name = displayName?.trim();
 
-  return `${greeting}, ${workspaceName}`;
+  return name ? `${greeting}, ${name}` : greeting;
 }

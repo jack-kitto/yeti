@@ -23,6 +23,7 @@ import {
 
 type CanvasWidgetStackProps = {
   workspace: Workspace;
+  displayName?: string;
 };
 
 const ZONE_CLASS: Record<CanvasZone, string> = {
@@ -33,12 +34,16 @@ const ZONE_CLASS: Record<CanvasZone, string> = {
   "bottom-center": "canvas-zone-bottom-center",
 };
 
-function renderCanvasWidget(widgetId: CanvasWidgetId, workspace: Workspace) {
+function renderCanvasWidget(
+  widgetId: CanvasWidgetId,
+  workspace: Workspace,
+  displayName?: string,
+) {
   switch (widgetId) {
     case "clock":
       return <CanvasClockWidget key={widgetId} />;
     case "welcome":
-      return <CanvasWelcomeWidget key={widgetId} workspaceName={workspace.name} />;
+      return <CanvasWelcomeWidget key={widgetId} displayName={displayName} />;
     case "quote":
       return <CanvasQuoteWidget key={widgetId} />;
     case "nowPlaying":
@@ -54,7 +59,7 @@ function hasVisibleWidgets(layout: CanvasZoneLayout): boolean {
   return CANVAS_ZONES.some((zone) => layout[zone].length > 0);
 }
 
-export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
+export function CanvasWidgetStack({ workspace, displayName }: CanvasWidgetStackProps) {
   const layout = buildCanvasZoneLayout(workspace);
 
   if (!hasVisibleWidgets(layout)) {
@@ -65,11 +70,11 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
 
   switch (layoutPresetId) {
     case "editorial":
-      return <EditorialCanvasStack workspace={workspace} layout={layout} />;
+      return <EditorialCanvasStack workspace={workspace} displayName={displayName} layout={layout} />;
     case "meridian":
-      return <MeridianCanvasStack workspace={workspace} layout={layout} />;
+      return <MeridianCanvasStack workspace={workspace} displayName={displayName} layout={layout} />;
     case "atelier":
-      return <AtelierCanvasStack workspace={workspace} layout={layout} />;
+      return <AtelierCanvasStack workspace={workspace} displayName={displayName} layout={layout} />;
     default:
       break;
   }
@@ -88,7 +93,7 @@ export function CanvasWidgetStack({ workspace }: CanvasWidgetStackProps) {
 
         return (
           <div key={zone} className={`canvas-zone ${ZONE_CLASS[zone]}`}>
-            {widgets.map((widgetId) => renderCanvasWidget(widgetId, workspace))}
+            {widgets.map((widgetId) => renderCanvasWidget(widgetId, workspace, displayName))}
           </div>
         );
       })}

@@ -15,6 +15,7 @@ import {
 
 type MeridianCanvasStackProps = {
   workspace: Workspace;
+  displayName?: string;
   layout: CanvasZoneLayout;
 };
 
@@ -22,7 +23,7 @@ function isWidgetInLayout(layout: CanvasZoneLayout, widgetId: CanvasWidgetId): b
   return CANVAS_ZONES.some((zone) => layout[zone].includes(widgetId));
 }
 
-export function MeridianCanvasStack({ workspace, layout }: MeridianCanvasStackProps) {
+export function MeridianCanvasStack({ workspace, displayName, layout }: MeridianCanvasStackProps) {
   const showQuote = isWidgetInLayout(layout, "quote");
   const showWelcome = isWidgetInLayout(layout, "welcome");
   const showTasks = isWidgetInLayout(layout, "focusTasks");
@@ -37,7 +38,7 @@ export function MeridianCanvasStack({ workspace, layout }: MeridianCanvasStackPr
           {showQuote ? <CanvasQuoteWidget /> : null}
         </div>
         <div className="canvas-meridian-slot canvas-meridian-end">
-          {showWelcome ? <CanvasWelcomeWidget workspaceName={workspace.name} /> : null}
+          {showWelcome ? <CanvasWelcomeWidget displayName={displayName} /> : null}
         </div>
       </div>
 

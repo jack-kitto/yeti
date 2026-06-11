@@ -102,11 +102,14 @@ export type Library = {
   shortcuts: ShortcutBindings;
   focusRadio: FocusRadio;
   activeWorkspaceId: string;
+  /** Shown in the canvas welcome widget; not the workspace name. */
+  displayName?: string;
 };
 
 export type LibraryPatch = {
   activeWorkspaceId?: string;
   shortcuts?: Partial<ShortcutBindings>;
+  displayName?: string | null;
 };
 
 export type CatalogLinkInput = {

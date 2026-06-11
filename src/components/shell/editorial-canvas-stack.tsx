@@ -18,6 +18,7 @@ import {
 
 type EditorialCanvasStackProps = {
   workspace: Workspace;
+  displayName?: string;
   layout: CanvasZoneLayout;
 };
 
@@ -25,7 +26,7 @@ function isWidgetInLayout(layout: CanvasZoneLayout, widgetId: CanvasWidgetId): b
   return CANVAS_ZONES.some((zone) => layout[zone].includes(widgetId));
 }
 
-export function EditorialCanvasStack({ workspace, layout }: EditorialCanvasStackProps) {
+export function EditorialCanvasStack({ workspace, displayName, layout }: EditorialCanvasStackProps) {
   const showQuote = isWidgetInLayout(layout, "quote");
   const showNowPlaying = isWidgetInLayout(layout, "nowPlaying");
   const showTasks = isWidgetInLayout(layout, "focusTasks");
@@ -48,7 +49,7 @@ export function EditorialCanvasStack({ workspace, layout }: EditorialCanvasStack
       </div>
 
       <div className="canvas-editorial-corner canvas-editorial-bl">
-        {showWelcome ? <CanvasWelcomeWidget workspaceName={workspace.name} /> : null}
+        {showWelcome ? <CanvasWelcomeWidget displayName={displayName} /> : null}
         {showPomodoro ? (
           <CanvasEditorialTimerTimeWidget workspace={workspace} />
         ) : showClock ? (

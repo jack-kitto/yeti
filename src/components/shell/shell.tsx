@@ -158,6 +158,7 @@ function ShellLoaded({
       <div className="relative isolate h-screen w-screen overflow-hidden">
         <ShellWorkspaceSurface
           workspace={activeWorkspace}
+          displayName={library.displayName}
           panelBounds={panelBounds}
           className="absolute inset-0"
         />

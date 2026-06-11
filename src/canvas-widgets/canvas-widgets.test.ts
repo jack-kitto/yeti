@@ -42,12 +42,12 @@ describe("formatClockDisplay", () => {
 });
 
 describe("formatWelcomeMessage", () => {
-  it("greets with the workspace name using time of day", () => {
-    expect(formatWelcomeMessage("Work", new Date("2026-06-09T09:00:00.000Z"), "UTC")).toBe(
-      "Good morning, Work",
+  it("greets with the display name using time of day", () => {
+    expect(formatWelcomeMessage(new Date("2026-06-09T09:00:00.000Z"), "Jack", "UTC")).toBe(
+      "Good morning, Jack",
     );
-    expect(formatWelcomeMessage("Work", new Date("2026-06-09T15:00:00.000Z"), "UTC")).toBe(
-      "Good afternoon, Work",
+    expect(formatWelcomeMessage(new Date("2026-06-09T15:00:00.000Z"), "Jack", "UTC")).toBe(
+      "Good afternoon, Jack",
     );
   });
 });

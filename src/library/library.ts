@@ -68,12 +68,21 @@ export async function applyPatch(store: LibraryStore, patch: LibraryPatch): Prom
     throw new Error("Library not initialized");
   }
 
-  const { shortcuts, ...rest } = patch;
+  const { shortcuts, displayName, ...rest } = patch;
   const next: Library = {
     ...library,
     ...rest,
     ...(shortcuts ? { shortcuts: { ...library.shortcuts, ...shortcuts } } : {}),
   };
+
+  if (displayName !== undefined) {
+    const trimmed = displayName?.trim();
+    if (trimmed) {
+      next.displayName = trimmed;
+    } else {
+      delete next.displayName;
+    }
+  }
 
   return persistLibrary(store, next);
 }

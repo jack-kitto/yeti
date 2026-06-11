@@ -35,6 +35,7 @@ function expectSnapshotRoundTrip(library: Library, restored: Library) {
   expect(restored.shortcuts).toEqual(library.shortcuts);
   expect(restored.focusRadio).toEqual(library.focusRadio);
   expect(restored.activeWorkspaceId).toEqual(library.activeWorkspaceId);
+  expect(restored.displayName).toEqual(library.displayName);
   expect(restored.workspaces.map((workspace) => workspace.name)).toEqual(
     library.workspaces.map((workspace) => workspace.name),
   );

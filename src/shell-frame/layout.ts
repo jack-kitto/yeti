@@ -55,10 +55,10 @@ export function getShellLayout(): ShellLayout {
   const frameBottom = FRAME_BOTTOM;
   const frameRight = FRAME_RIGHT;
 
-  let panelX = frameLeft;
-  let panelY = frameTop;
-  let panelW = w - frameLeft - frameRight;
-  let panelH = h - frameTop - frameBottom;
+  const panelX = frameLeft;
+  const panelY = frameTop;
+  const panelW = w - frameLeft - frameRight;
+  const panelH = h - frameTop - frameBottom;
   const shellRadius = 28;
 
   return {

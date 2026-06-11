@@ -1,14 +1,15 @@
 "use client";
 
 import type { Workspace } from "@/library/types";
+import { CanvasWidgetStack } from "./canvas-widget-stack";
+import { ShellCanvas } from "./shell-canvas";
+
 type PanelBounds = {
   left: number;
   top: number;
   width: number;
   height: number;
 };
-import { CanvasWidgetStack } from "./canvas-widget-stack";
-import { ShellCanvas } from "./shell-canvas";
 
 type ShellWorkspaceSurfaceProps = {
   workspace: Workspace;

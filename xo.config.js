@@ -1,7 +1,7 @@
 /** @type {import('xo').FlatXoConfig} */
 export default [
   {
-    ignores: [".next/**", "next-env.d.ts", "xo.config.js"],
+    ignores: [".next/**", ".open-next/**", ".wrangler/**", "next-env.d.ts", "xo.config.js"],
   },
   {
     prettier: "compat",

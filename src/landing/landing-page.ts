@@ -1,3 +1,4 @@
+import process from "node:process";
 import { PRODUCT_NAME } from "@/branding/branding";
 import { YETI_ROUTES } from "@/routing/routes";
 
@@ -20,6 +21,11 @@ export type LandingPageContent = {
   waitlistHref: string | null;
   waitlistCta: string;
   earlyAccessNote: string;
+  footerGithubHref: string;
+  footerGithubLabel: string;
+  footerContextHref: string;
+  footerContextLabel: string;
+  footerLocalTierNote: string;
 };
 
 export function getLandingPageContent(): LandingPageContent {
@@ -57,5 +63,11 @@ export function getLandingPageContent(): LandingPageContent {
     waitlistCta: "Join the waitlist",
     earlyAccessNote:
       "Public preview — local tier only. Cloud library sync coming later. Your data stays in this browser until you export.",
+    footerGithubHref: "https://github.com/jack-kitto/yeti",
+    footerGithubLabel: "View source on GitHub",
+    footerContextHref: "https://github.com/jack-kitto/yeti/blob/main/CONTEXT.md",
+    footerContextLabel: "Domain glossary",
+    footerLocalTierNote:
+      "Local tier — your library stays in this browser until you export a snapshot.",
   };
 }

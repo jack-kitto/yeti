@@ -17,6 +17,11 @@ export function LandingPage() {
     waitlistHref,
     waitlistCta,
     earlyAccessNote,
+    footerGithubHref,
+    footerGithubLabel,
+    footerContextHref,
+    footerContextLabel,
+    footerLocalTierNote,
   } = getLandingPageContent();
 
   return (
@@ -70,6 +75,28 @@ export function LandingPage() {
             ))}
           </ul>
         </section>
+
+        <footer className="landing-page-footer">
+          <p className="landing-page-footer-note">{footerLocalTierNote}</p>
+          <nav className="landing-page-footer-links" aria-label="Project links">
+            <a
+              href={footerGithubHref}
+              className="landing-page-footer-link"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {footerGithubLabel}
+            </a>
+            <a
+              href={footerContextHref}
+              className="landing-page-footer-link"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {footerContextLabel}
+            </a>
+          </nav>
+        </footer>
       </div>
     </main>
   );

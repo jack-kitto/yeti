@@ -669,7 +669,8 @@ body {
   display: inline-block;
   margin: 0.55rem 0 0;
   padding: 0.2rem 0.7rem;
-  border: 1px solid color-mix(in srgb, var(--canvas-widget-clock-text, var(--qs-color-text)) 85%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--canvas-widget-clock-text, var(--qs-color-text)) 85%, transparent);
   border-radius: 999px;
   font-size: 0.6875rem;
   font-weight: 600;
@@ -697,7 +698,8 @@ body {
   align-self: flex-end;
   margin: 0 0 0.55rem;
   padding: 0.2rem 0.7rem;
-  border: 1px solid color-mix(in srgb, var(--canvas-widget-focusTasks-text, var(--qs-color-text)) 85%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--canvas-widget-focusTasks-text, var(--qs-color-text)) 85%, transparent);
   border-radius: 999px;
   font-size: 0.6875rem;
   font-weight: 600;
@@ -706,7 +708,8 @@ body {
 }
 
 .canvas-widget-stage--editorial .canvas-focus-tasks-item {
-  border: 1px solid color-mix(in srgb, var(--canvas-widget-focusTasks-text, var(--qs-color-text)) 20%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--canvas-widget-focusTasks-text, var(--qs-color-text)) 20%, transparent);
   border-radius: 999px;
   text-align: right;
 }
@@ -2800,6 +2803,7 @@ body:has(.landing-page) {
 
 .landing-page {
   min-height: 100vh;
+  overflow-x: clip;
   background:
     radial-gradient(ellipse 80% 50% at 50% -10%, rgba(193, 127, 89, 0.12), transparent),
     var(--qs-color-background);
@@ -2808,7 +2812,7 @@ body:has(.landing-page) {
 .landing-page-inner {
   width: min(1080px, 100%);
   margin: 0 auto;
-  padding: 48px 24px 80px;
+  padding: clamp(32px, 8vw, 48px) clamp(16px, 4vw, 24px) 80px;
   display: grid;
   gap: 48px;
 }
@@ -2945,4 +2949,37 @@ body:has(.landing-page) {
   font-size: 0.85rem;
   line-height: 1.55;
   color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
+}
+
+.landing-page-footer {
+  display: grid;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--qs-color-text) 8%, transparent);
+  text-align: center;
+}
+
+.landing-page-footer-note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--qs-color-text) 55%, transparent);
+}
+
+.landing-page-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+}
+
+.landing-page-footer-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--qs-color-text) 78%, transparent);
+  text-decoration: none;
+}
+
+.landing-page-footer-link:hover {
+  color: var(--qs-color-accent);
 }

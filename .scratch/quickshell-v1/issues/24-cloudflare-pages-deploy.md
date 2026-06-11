@@ -6,7 +6,9 @@ Status: ready-for-human
 
 ## What to build
 
-Deploy Quickshell to **Cloudflare Pages** by connecting the GitHub repo in the Cloudflare dashboard. Cloudflare builds and deploys `main` on each push — no GitHub deploy workflow required.
+Deploy **Yeti** to **Cloudflare Pages** by connecting the GitHub repo in the Cloudflare dashboard. Cloudflare builds and deploys `main` on each push — no GitHub deploy workflow required.
+
+**Superseded for launch scope** by `.scratch/public-preview/PRD.md` and issue 05 in that directory. OpenNext adapter (public-preview issue 04) required before first production deploy.
 
 **Recommendation:** Cloudflare Pages (not Workers) for this Next.js static/SSR app. Use the official Next.js on Pages adapter or static export, whichever fits the current App Router setup after a quick spike.
 
@@ -24,7 +26,7 @@ Document the chosen build settings in the repo README so agents don't duplicate 
 
 - [ ] Production URL is live on Cloudflare Pages
 - [ ] Pushing to `main` triggers an automatic Cloudflare build/deploy
-- [ ] README documents Cloudflare build settings and that deploy is dashboard-driven
+- [x] README documents Cloudflare build settings and that deploy is dashboard-driven
 - [ ] No redundant GitHub Actions deploy workflow (release workflow from issue 23 is separate)
 
 ## Blocked by

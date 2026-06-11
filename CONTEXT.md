@@ -19,8 +19,16 @@ A single user's complete Yeti dataset — workspaces, the link catalog, placemen
 _Avoid_: Config, database, state
 
 **Library snapshot**:
-A portable export of the entire library as a versioned **YAML** file, loadable from a URL (e.g. a raw file in a GitHub repo) for backup or cross-machine restore. Theme background images are referenced by URL, not embedded. Not live sync — a manual or on-load pull.
+A portable export of the entire library as a versioned **YAML** file, loadable from a URL (e.g. a raw file in a GitHub repo) for backup or cross-machine restore. Theme background images are referenced by URL, not embedded. Not live sync — a manual or on-load pull. The free-tier portability path for developers who keep their library in dotfiles.
 _Avoid_: Sync, backup file, settings export
+
+**Cloud library sync**:
+Paid automatic multi-device sync of the **library** — server-held copy is the sync source of truth across browsers and machines. No GitHub repo or manual **library snapshot** required. Distinct from local-only IndexedDB and from snapshot import/export.
+_Avoid_: Sync (generic), backup, hosted config, cloud version
+
+**Local tier**:
+Free Yeti usage — full **shell** and **start page**, **library** in IndexedDB on each machine. Cross-machine restore via **library snapshot** (export, GitHub raw URL, manual pull). No **cloud library sync**.
+_Avoid_: Free plan, offline mode, local storage tier
 
 **Link**:
 A single bookmark — URL plus optional title and optional image. Display uses whatever is provided: custom image, else favicon; custom title, else derived from URL. Opens in a **new tab** always. The atomic unit of the library.

@@ -8,3 +8,5 @@ dist
 npm-debug.log*
 *.tsbuildinfo
 yeti-radio.local.yaml
+demo/launchreel-output
+demo/webreel-output

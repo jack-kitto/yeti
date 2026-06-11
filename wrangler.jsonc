@@ -7,6 +7,8 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
+    // Default: static files served before worker (cheaper, faster). API routes still hit the worker.
+    "run_worker_first": ["/api/*"],
   },
   "services": [
     {

@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: wontfix
 
 ## Parent
 
@@ -6,7 +6,9 @@ Status: ready-for-agent
 
 ## What to build
 
-Optional muted autoplay video loop on the **landing page** hero — edge notch hover clip from demo assets — with the existing still image as poster and fallback when `prefers-reduced-motion` is set.
+Superseded by `.scratch/yeti-v2/issues/10-landing-scroll-linked-notch-video.md` — scroll-scrubbed **edge flyout** demo (bookmark notch opening) with poster fallback when `prefers-reduced-motion` is set.
+
+Original scope: optional muted autoplay video loop on the **landing page** hero — edge notch hover clip from demo assets.
 
 Ship optimized clip in `public/landing/` (short loop, &lt;2MB target). No impact on **home station** bundle.
 

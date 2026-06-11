@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 Category: bug
 
@@ -14,10 +14,10 @@ Likely cause: frame ring stroke + separate notch fill stroke at the pocket junct
 
 ## Acceptance criteria
 
-- [ ] Left and right rim notch open: bottom pocket corners show a single clean border join
-- [ ] Top and bottom rim notches unchanged (no regression)
-- [ ] Editorial preset signed off at 1440×900 with a left **edge flyout** open
-- [ ] Regression test or renderer snapshot if practical
+- [x] Left and right rim notch open: bottom pocket corners show a single clean border join
+- [x] Top and bottom rim notches unchanged (no regression)
+- [x] Editorial preset signed off at 1440×900 with a left **edge flyout** open
+- [x] Regression test or renderer snapshot if practical
 
 ## Blocked by
 
@@ -26,3 +26,5 @@ None
 ## Comments
 
 **Product feedback (2026-06-10):** Screenshot shows double line at pocket corner where rounded inner boundary meets square edge. See attached QA image in grill session 2026-06-10.
+
+**Shipped 2026-06-11.**

@@ -19,34 +19,37 @@ Ship a **public preview** at `/` on a Cloudflare Pages URL:
 
 Partial landing work is already merged (`feat(landing): add preview marketing page with hero and feature grid`). Remaining work is polish, deploy plumbing, and launch ops.
 
+Landing motion and theme showcase are tracked in `.scratch/yeti-v2/` (issues 10–12): scroll-linked **edge flyout** demo video, production hero re-capture, and multi-**theme preset** gallery.
+
 ## User Stories
 
 ### Landing page
 
 1. As a first-time visitor, I want the **landing page** at `/` to explain what Yeti is in plain language, so that I know whether to try it.
 2. As a first-time visitor, I want a hero image showing the **shell** and **rim menu**, so that the rice aesthetic is immediately visible.
-3. As a first-time visitor, I want a primary CTA to open the **home station**, so that I can try the full **shell** in one click.
-4. As a first-time visitor, I want a secondary path to the **start page**, so that I understand the new-tab use case.
-5. As a developer, I want copy that explains browser-agnostic / dotfiles portability, so that the Arc/Zen story lands without overselling sync.
-6. As a developer, I want an honest note that this is **local tier** only, so that I am not surprised that data stays in my browser.
-7. As a interested visitor, I want a waitlist CTA when configured, so that I can hear about **cloud library sync** without creating an account.
-8. As someone sharing a link on X, I want Open Graph title, description, and image, so that the preview card looks good.
-9. As a mobile visitor, I want the landing layout to read cleanly on a phone, so that hackathon demos work on any device.
-10. As an open-source curious visitor, I want a link to the GitHub repo, so that I can inspect the client code.
+3. As a first-time visitor, I want scroll-linked video of a **bookmark** **edge flyout** opening, so that I see the notch interaction without installing (yeti-v2 issue 10).
+4. As a first-time visitor, I want a primary CTA to open the **home station**, so that I can try the full **shell** in one click.
+5. As a first-time visitor, I want a secondary path to the **start page**, so that I understand the new-tab use case.
+6. As a developer, I want copy that explains browser-agnostic / dotfiles portability, so that the Arc/Zen story lands without overselling sync.
+7. As a developer, I want an honest note that this is **local tier** only, so that I am not surprised that data stays in my browser.
+8. As a interested visitor, I want a waitlist CTA when configured, so that I can hear about **cloud library sync** without creating an account.
+9. As someone sharing a link on X, I want Open Graph title, description, and image, so that the preview card looks good.
+10. As a mobile visitor, I want the landing layout to read cleanly on a phone, so that hackathon demos work on any device.
+11. As an open-source curious visitor, I want a link to the GitHub repo, so that I can inspect the client code.
 
 ### Deploy & hosting
 
-11. As the product owner, I want Yeti deployed on **Cloudflare Pages**, so that hosting matches the planned production stack.
-12. As the product owner, I want deploys triggered by pushes to `main` via Cloudflare dashboard Git integration, so that no deploy GitHub Action is required.
-13. As a user on the hosted URL, I want `/home` and `/start` to work identically to localhost, so that the preview is representative.
-14. As a user on the hosted URL, I want focus radio stream proxy and calendar ICS API routes to work, so that demo features do not break on production.
-15. As the product owner, I want README to document final Cloudflare build settings after adapter choice, so that future agents do not guess.
+12. As the product owner, I want Yeti deployed on **Cloudflare Pages**, so that hosting matches the planned production stack.
+13. As the product owner, I want deploys triggered by pushes to `main` via Cloudflare dashboard Git integration, so that no deploy GitHub Action is required.
+14. As a user on the hosted URL, I want `/home` and `/start` to work identically to localhost, so that the preview is representative.
+15. As a user on the hosted URL, I want focus radio stream proxy and calendar ICS API routes to work, so that demo features do not break on production.
+16. As the product owner, I want README to document final Cloudflare build settings after adapter choice, so that future agents do not guess.
 
 ### Launch ops
 
-16. As the product owner, I want `NEXT_PUBLIC_WAITLIST_URL` documented, so that enabling the waitlist button is a one-line env change in Cloudflare.
-17. As the product owner, I want the production URL recorded in README after first deploy, so that build-in-public posts can link to it.
-18. As the product owner, I want demo clips recordable against the production URL, so that X posts show the live preview.
+17. As the product owner, I want `NEXT_PUBLIC_WAITLIST_URL` documented, so that enabling the waitlist button is a one-line env change in Cloudflare.
+18. As the product owner, I want the production URL recorded in README after first deploy, so that build-in-public posts can link to it.
+19. As the product owner, I want demo clips recordable against the production URL, so that X posts show the live preview.
 
 ## Implementation Decisions
 

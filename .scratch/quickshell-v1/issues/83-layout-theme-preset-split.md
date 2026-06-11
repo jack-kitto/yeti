@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 Category: enhancement
 
@@ -19,12 +19,12 @@ Applying a layout preset must not wipe theme colours; applying a theme preset mu
 
 ## Acceptance criteria
 
-- [ ] User can apply layout A + theme B on the same workspace
-- [ ] Control center tab shows preset thumbnails/names for quick layout and/or theme apply (exact UX per grill)
-- [ ] Settings retains full theme editor for power users
-- [ ] Editorial layout is a layout preset, not coupled to editorial colours
-- [ ] Snapshot + library reset include new fields
-- [ ] CONTEXT.md glossary distinguishes **layout preset** vs **theme preset**
+- [x] User can apply layout A + theme B on the same workspace
+- [x] Control center tab shows preset thumbnails/names for quick layout and/or theme apply (exact UX per grill)
+- [x] Settings retains full theme editor for power users
+- [x] Editorial layout is a layout preset, not coupled to editorial colours
+- [x] Snapshot + library reset include new fields
+- [x] CONTEXT.md glossary distinguishes **layout preset** vs **theme preset**
 
 ## Blocked by
 
@@ -35,3 +35,5 @@ Glossary + model sign-off from grill session
 **Product feedback (2026-06-10):** Presets should be more visible (top notch tab); layout and theme should be independently composable. Current `ThemePreset` bundles both in `theme-presets.ts`.
 
 **Grill locked (2026-06-10):** Fully independent catalogs — any layout × any theme. v1 layouts: `default`, `editorial`. v1 themes: six colour presets (Work, Personal, Editorial, Forest, Sunset, Ocean). Control center new tab with two sections: **Layout** (2 thumbnails) and **Theme** (6 swatches). No bundled combo shortcuts. Track `appliedLayoutPresetId` + `appliedThemePresetId` for per-section reset.
+
+**Shipped** — `ControlCenterPresetsTab`, layout/theme preset modules. Marked done 2026-06-11.

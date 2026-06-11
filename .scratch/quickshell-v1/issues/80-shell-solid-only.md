@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 Category: enhancement
 
@@ -14,12 +14,12 @@ Drop `glassOpacity` from the theme model (or ignore/remove in reset path). Updat
 
 ## Acceptance criteria
 
-- [ ] Shell renders opaque surface colour on rim and notch at all times
-- [ ] Optional border colour respected (editorial-style black border ships as preset default where authored)
-- [ ] `glass`, `transparent`, and `glassOpacity` removed from theme type, presets, settings, and snapshot shape
-- [ ] `ShellRimBackdrop` and glass-specific CSS removed or inert
-- [ ] CONTEXT.md **shell surface** glossary updated; ADR if we document the reversal of issue 66/74 direction
-- [ ] Tests updated; library reset seeds solid-only themes
+- [x] Shell renders opaque surface colour on rim and notch at all times
+- [x] Optional border colour respected (editorial-style black border ships as preset default where authored)
+- [x] `glass`, `transparent`, and `glassOpacity` removed from theme type, presets, settings, and snapshot shape
+- [x] `ShellRimBackdrop` and glass-specific CSS removed or inert
+- [x] CONTEXT.md **shell border** glossary updated; ADR 0008 documents reversal of issue 66/74 direction
+- [x] Tests updated; library reset seeds solid-only themes
 
 ## Blocked by
 
@@ -30,3 +30,5 @@ None — can start after glossary sign-off (issue 80 grill)
 **Product feedback (2026-06-10):** User wants to "nuke" glass/texture — shell should always be a solid colour with optional/theme-based border. Supersedes frosted-glass direction in issues 66 and 74.
 
 **Grill locked (2026-06-10):** Delete `glass`, `transparent`, and `glassOpacity`. Shell fill is always opaque `palette.surface`. Border is optional — drawn only when `shellBorderColor` is set; otherwise no border. CONTEXT.md **shell border** term replaces **shell surface**.
+
+**Shipped 2026-06-11.** Documented in ADR 0008.

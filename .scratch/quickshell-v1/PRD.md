@@ -254,5 +254,6 @@ Vitest. IndexedDB in tests via in-memory store adapter.
 
 - `CONTEXT.md` is the domain glossary; `docs/adr/` records architectural decisions.
 - ADR 0001 governs persistence; ADR 0004 governs the two-surface model.
-- Visual direction: Hyprland/Quickshell rice aesthetic — soft warm off-whites, glassmorphism, large radii, spring motion.
+- Visual direction: Hyprland/Quickshell rice aesthetic — soft warm off-whites, solid shell rim, large radii, spring motion (ADR 0008).
 - GitHub remote may still be named `quickshell-start`; product name is **Yeti**.
+- Post-v1 backlog: `.scratch/yeti-v2/PRD.md` (snapshot v2, extension, config surface, landing polish).

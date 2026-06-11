@@ -1,4 +1,4 @@
-Status: ready-for-human
+Status: wontfix
 
 Category: enhancement
 
@@ -33,3 +33,5 @@ None — large visual change; human owns issue 12 sign-off
 **QA 2026-06-10:** `ShellCanvas` uses `drawShell` with gradient `glassStops` from surface hex + opacity. `globals.css` applies `backdrop-filter` to icon buttons and dialogs but not the main rim surface. User expectation: high blur radius, background color from image (palette already extracted).
 
 **Updated 2026-06-10 (grill-with-docs):** Implement frosted glass as `shellSurface: glass | transparent` in issue 74 (`PRD-preset-themes.md`). Palette is explicit from **theme preset**, not extracted.
+
+**Superseded 2026-06-11:** Product chose solid-only shell (issue 80, ADR 0008). Frosted glass direction cancelled.

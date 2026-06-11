@@ -27,8 +27,8 @@ describe("landing page", () => {
     expect(content.earlyAccessNote).toMatch(/local-first by default/i);
     expect(content.footerLocalTierNote).toMatch(/local-first/i);
     expect(content.setupLinks.some((link) => link.label.match(/example config/i))).toBe(true);
-    expect(content.setupLinks.some((link) => link.label.match(/chrome extension/i))).toBe(true);
-    expect(content.setupLinks.some((link) => link.label.match(/firefox extension/i))).toBe(true);
+    expect(content.setupLinks.some((link) => link.label.match(/config authoring skills/i))).toBe(true);
+    expect(content.setupLinks.some((link) => link.label.match(/extension/i))).toBe(false);
     expect(content.footerLinks.some((link) => link.href === "/llms.txt")).toBe(true);
     expect(content.footerLinks.some((link) => link.href.includes("github.com/jack-kitto/yeti"))).toBe(
       true,

@@ -50,6 +50,7 @@ Your **library** — workspaces, link catalog, placements, themes, shortcuts, an
 
 - **Export** — settings → export snapshot (`yeti-snapshot.yaml`)
 - **Import** — load a snapshot from URL (e.g. a raw file in a GitHub dotfiles repo)
+- **Example config** — fork [jack-kitto/yeti-config](https://github.com/jack-kitto/yeti-config) for a starter `library.yaml` and agent skills to author your own
 - **Reset** — `:reset` or settings; re-seeds the starter template (requires confirmation)
 
 Snapshots reference theme background images by URL, not embedded bytes. Import replaces the local library. Cross-machine restore is manual via snapshot — **cloud library sync** is planned as a paid tier later.

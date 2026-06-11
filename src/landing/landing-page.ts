@@ -35,6 +35,8 @@ export type LandingPageContent = {
 };
 
 const EXAMPLE_CONFIG_REPO_HREF = "https://github.com/jack-kitto/yeti-config";
+const CONFIG_SKILLS_HREF =
+  "https://github.com/jack-kitto/yeti-config/tree/main/.cursor/skills";
 const MAIN_REPO_HREF = "https://github.com/jack-kitto/yeti";
 
 export function getLandingPageContent(): LandingPageContent {
@@ -65,23 +67,15 @@ export function getLandingPageContent(): LandingPageContent {
     ],
     setupTitle: "Bring your workflow",
     setupDescription:
-      "Import existing bookmarks, workspaces, and resources into a portable YAML library. Fork the example config, use the optional new-tab extension, or import directly from your browser.",
+      "Import existing bookmarks, workspaces, and resources into a portable YAML library. Fork the example config or use agent skills to build your own from browser exports.",
     setupLinks: [
       {
         label: "Example config repo",
         href: EXAMPLE_CONFIG_REPO_HREF,
       },
       {
-        label: "Chrome extension",
-        href: MAIN_REPO_HREF,
-      },
-      {
-        label: "Firefox extension",
-        href: MAIN_REPO_HREF,
-      },
-      {
-        label: "Import skills & scripts",
-        href: EXAMPLE_CONFIG_REPO_HREF,
+        label: "Config authoring skills",
+        href: CONFIG_SKILLS_HREF,
       },
     ],
     heroImageSrc: "/landing/hero.png",

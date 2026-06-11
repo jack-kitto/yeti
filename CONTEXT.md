@@ -19,8 +19,12 @@ A single user's complete Yeti dataset — workspaces, the link catalog, placemen
 _Avoid_: Config, database, state
 
 **Library snapshot**:
-A portable export of the entire library as a versioned **YAML** file, loadable from a URL (e.g. a raw file in a GitHub repo) for backup or cross-machine restore. Theme background images are referenced by URL, not embedded. Not live sync — a manual or on-load pull. The free-tier portability path for developers who keep their library in dotfiles.
+A portable export of the entire library as a versioned **YAML** file, loadable from a URL (e.g. a raw file in a GitHub repo) for backup or cross-machine restore. v2 snapshots use per-workspace **bookmarks** with inline links (human-editable, array order). v1 snapshots (catalog + ID references) still import. Theme background images are referenced by URL, not embedded. Not live sync — a manual or on-load pull. The free-tier portability path for developers who keep their library in dotfiles.
 _Avoid_: Sync, backup file, settings export
+
+**Bookmarks** (snapshot):
+The portable YAML name for a workspace's left-rim **edge groups** — named clusters with inline link rows (`url`, optional `title`, optional `icon` or `image`). Array order in the file is flyout order. Maps to runtime **edge groups** on import; duplicate URLs across groups are allowed in the file.
+_Avoid_: Placements, edgeGroups.left, folder
 
 **Cloud library sync**:
 Paid automatic multi-device sync of the **library** — server-held copy is the sync source of truth across browsers and machines. No GitHub repo or manual **library snapshot** required. Distinct from local-only IndexedDB and from snapshot import/export.
@@ -137,7 +141,7 @@ A user-named cluster of catalog links attached to one **edge** at a specific slo
 _Avoid_: Folder, category, menu
 
 **Fractional order**:
-How Yeti stores any user-ordered sequence — **edge groups** on a rim, links within an **edge group**, **focus tasks**, and any other ordered placement. Each item carries a fractional index key; inserting or reordering assigns a new key between neighbors without renumbering the whole list.
+How Yeti stores any user-ordered sequence at runtime — **edge groups** on a rim, links within an **edge group**, **focus tasks**, and any other ordered placement. Each item carries a fractional index key; inserting or reordering assigns a new key between neighbors without renumbering the whole list. **Library snapshot** v2 YAML uses plain array order instead; keys are generated on import.
 _Avoid_: Sort order, array index, z-index
 
 **Edge order**:
@@ -197,8 +201,12 @@ _Avoid_: Generated path, payload, `/p/…` route
 Keyboard shortcuts are **configurable** with browser-safe defaults (e.g. `⌘⇧K` for command bar). All shortcuts are tab-scoped — they only work when the Yeti tab is active.
 
 **Settings**:
-A modal dialog for all configuration — workspace management, theme editing, link catalog CRUD, placement assignment, edge ordering, **canvas widget** toggles, **control center** options, library snapshot import/export, and destructive **library reset**. Opened via the **command bar action** `:settings` or a ghost control in the **top-right corner**. Not a rim **notch**; the **right rim** is reserved for **internal tools**. Sits on the **top plane** with the **launcher** — always above **shell** and open **rim menus**.
+A modal dialog for configuration (being deprecated per ADR 0011). Replacement surfaces: **library snapshot** YAML, **command bar** actions (`:add`, `:import`, `:export`, `:reset`), and **control center** for **theme preset** / **layout preset** quick apply. Until removal, opened via `:settings` or the top-right control. Not a rim **notch**; the **right rim** is reserved for **internal tools**.
 _Avoid_: Config panel, preferences page, right-edge flyout
+
+**Browser extension**:
+Optional Chrome/Firefox install for new-tab setup only — overrides the browser new-tab URL to the **start page** and improves **command bar** focus after Ctrl+T. Does not sync or read the **library**. The web app works without it (ADR 0010).
+_Avoid_: Plugin, sync extension, bookmark sidebar
 
 **Library reset**:
 Wipes the local **library** in IndexedDB and re-seeds the **starter template**. Available from **settings** and as a **command bar action** (`:reset`). Always requires confirmation — irreversible without a snapshot backup. Schema changes before v1 do not auto-migrate; reset (or snapshot re-import) is the upgrade path.

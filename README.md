@@ -108,23 +108,33 @@ Yeti uses Next.js API routes (`/api/focus-radio/stream`, `/api/calendar/ics`). T
 
 1. **Workers & Pages** → **Create** → **Workers** → **Connect to Git**
 2. Select **`jack-kitto/yeti`**, production branch **`main`**
-3. Build settings:
+3. Build settings (Node.js **22**). Leave the build output directory empty — the adapter writes to `.open-next/`.
+
+**Option A — single command (recommended):**
+
+| Setting         | Value              |
+| --------------- | ------------------ |
+| Build command   | _(leave empty)_    |
+| Deploy command  | `npm run deploy`   |
+
+**Option B — split build + deploy:**
 
 | Setting         | Value                              |
 | --------------- | ---------------------------------- |
 | Build command   | `npm run cf:build`                 |
 | Deploy command  | `npx opennextjs-cloudflare deploy` |
-| Node.js version | `22`                               |
 
-Leave the build output directory empty — the adapter writes to `.open-next/`.
+Do **not** use the old Cloudflare Pages preset (`npm run build` + `.next` output) — that worked before OpenNext but cannot run API routes on Workers.
+
+`npm run cf:build` runs OpenNext **and** a post-build worker patch required for cold starts. Plain `opennextjs-cloudflare build` is not enough.
 
 4. Under **Settings → Compatibility**, enable **`nodejs_compat`** and set compatibility date to **2024-09-23** or later.
 
 ### Local Cloudflare preview
 
 ```bash
-npm run cf:build   # produces .open-next/ worker bundle
-npm run preview    # serve on Workers runtime locally
+cp .dev.vars.example .dev.vars   # once — local only, not committed
+npm run preview                  # cf:build + wrangler dev
 ```
 
 ### Environment variables

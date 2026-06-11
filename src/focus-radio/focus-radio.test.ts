@@ -48,10 +48,8 @@ describe("createDefaultFocusRadio", () => {
 });
 
 describe("starter library focus radio", () => {
-  it("ships with illustrative BYO stations for first-run demos", () => {
-    const stations = createStarterLibrary().focusRadio.stations;
-    expect(stations.length).toBeGreaterThanOrEqual(2);
-    expect(stations.some((station) => station.label === "Fluid")).toBe(true);
+  it("ships without preloaded streams in the public starter template", () => {
+    expect(createStarterLibrary().focusRadio.stations).toEqual([]);
   });
 });
 
@@ -368,8 +366,8 @@ describe("resolveFocusRadioStreamFailureAction", () => {
 });
 
 describe("isFocusRadioStationCatalogEmpty", () => {
-  it("is false for the starter library and true when no stations exist", async () => {
-    expect(isFocusRadioStationCatalogEmpty(createStarterLibrary())).toBe(false);
+  it("is true for the public starter library and when no stations exist", async () => {
+    expect(isFocusRadioStationCatalogEmpty(createStarterLibrary())).toBe(true);
     expect(isFocusRadioStationCatalogEmpty(libraryWithoutFocusRadioStations())).toBe(true);
   });
 });

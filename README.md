@@ -100,25 +100,40 @@ Domain terminology and design decisions: [`CONTEXT.md`](./CONTEXT.md) and [`docs
 
 Version bumps and GitHub Releases are automated from [Conventional Commits](https://www.conventionalcommits.org/) on `main` via [semantic-release](https://semantic-release.gitbook.io/). Deploy is separate — Cloudflare Pages rebuilds from the dashboard when you push to `main`.
 
-## Deployment (Cloudflare Pages)
+## Deployment (Cloudflare Workers)
 
-Deploy from the [Cloudflare dashboard](https://dash.cloudflare.com/) by connecting this GitHub repo. **No GitHub Actions deploy workflow** — CI and semantic-release stay separate.
+Deploy from the [Cloudflare dashboard](https://dash.cloudflare.com/) by connecting this GitHub repo via **Workers Builds**. **No GitHub Actions deploy workflow** — CI and semantic-release stay separate.
 
-1. **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+Yeti uses Next.js API routes (`/api/focus-radio/stream`, `/api/calendar/ics`). The [OpenNext Cloudflare adapter](https://opennext.js.org/cloudflare) bundles the app for the Workers runtime — vanilla `next build` + `.next` output is not sufficient.
+
+1. **Workers & Pages** → **Create** → **Workers** → **Connect to Git**
 2. Select **`jack-kitto/yeti`**, production branch **`main`**
-3. Framework preset: **Next.js**
-4. Build settings:
+3. Build settings:
 
-| Setting            | Value           |
-| ------------------ | --------------- |
-| Build command      | `npm run build` |
-| Build output       | `.next`         |
-| Node.js version    | `22`            |
+| Setting         | Value                              |
+| --------------- | ---------------------------------- |
+| Build command   | `npm run cf:build`                 |
+| Deploy command  | `npx opennextjs-cloudflare deploy` |
+| Node.js version | `22`                               |
 
-5. Under **Settings → Functions**, enable the **`nodejs_compat`** compatibility flag for production and preview. Set compatibility date to **2024-09-23** or later.
+Leave the build output directory empty — the adapter writes to `.open-next/`.
 
-Yeti uses Next.js API routes (`/api/focus-radio/stream`, `/api/calendar/ics`). If the default Pages build does not pick up server routes, follow Cloudflare’s [Next.js Workers guide](https://developers.cloudflare.com/workers/framework-guides/nextjs/) and add the OpenNext adapter — still dashboard-driven, no deploy action in this repo.
+4. Under **Settings → Compatibility**, enable **`nodejs_compat`** and set compatibility date to **2024-09-23** or later.
 
-Optional: set `NEXT_PUBLIC_WAITLIST_URL` in Cloudflare environment variables to show a waitlist button on the landing page.
+### Local Cloudflare preview
 
-After the first production deploy, add your live URL at the top of this README.
+```bash
+npm run cf:build   # produces .open-next/ worker bundle
+npm run preview    # serve on Workers runtime locally
+```
+
+### Environment variables
+
+| Variable                   | Required | Purpose                                              |
+| -------------------------- | -------- | ---------------------------------------------------- |
+| `NEXT_PUBLIC_WAITLIST_URL` | No       | External waitlist form URL (Tally, Buttondown, etc.) |
+| `NEXT_PUBLIC_SITE_URL`     | No       | Production URL for Open Graph absolute image links   |
+
+When `NEXT_PUBLIC_WAITLIST_URL` is set in Cloudflare environment variables, the landing page shows a **Join the waitlist** button linking to your external form. When unset, the button is hidden.
+
+After the first production deploy, set `NEXT_PUBLIC_SITE_URL` to your live URL and add the URL at the top of this README.

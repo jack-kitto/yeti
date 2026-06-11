@@ -1,10 +1,11 @@
 import { parse, stringify } from "yaml";
 import { createDefaultCanvasWidgets } from "@/canvas-widgets/config";
 import { createDefaultFocusRadio } from "@/focus-radio/config";
+import type { FocusRadio } from "@/focus-radio/types";
 import { ensureWorkspaceInternalTools } from "@/internal-tools/defaults";
 import { createDefaultWorkspaceInternalTools } from "@/internal-tools/pomodoro";
-import type { FocusRadio } from "@/focus-radio/types";
 import type { WorkspaceInternalTools } from "@/internal-tools/types";
+import { rebalanceKeys } from "@/fractional-order/fractional-order";
 import { validateLibrary } from "@/library/library";
 import { normalizeWorkspacePlacements } from "@/library/migrate-placements";
 import type {
@@ -18,9 +19,15 @@ import type {
 } from "@/library/types";
 import { LIBRARY_SCHEMA_VERSION } from "@/library/schema";
 import { resolveTheme } from "@/theme/theme-defaults";
+import { DEFAULT_WORKSPACE_THEME } from "@/workspace/workspaces";
 import type { CanvasWidgetConfig } from "@/canvas-widgets/types";
 
 export const SNAPSHOT_VERSION = 2;
+
+const DEFAULT_SHORTCUTS: ShortcutBindings = {
+  focusCommandBar: "Meta+Shift+k",
+  cycleWorkspace: "Control+Tab",
+};
 
 type SnapshotLinkPlacement = {
   id: string;
@@ -65,13 +72,52 @@ type SnapshotWorkspace = {
 };
 
 export type LibrarySnapshot = {
-  version: typeof SNAPSHOT_VERSION;
+  version: 1 | typeof SNAPSHOT_VERSION;
   catalog: Link[];
   workspaces: SnapshotWorkspace[];
   shortcuts: ShortcutBindings;
   focusRadio?: FocusRadio;
   activeWorkspaceId: string;
 };
+
+type SnapshotV2BookmarkLink = {
+  url: string;
+  title?: string;
+  image?: string;
+};
+
+type SnapshotV2Bookmark = {
+  name: string;
+  icon?: string;
+  links: SnapshotV2BookmarkLink[];
+};
+
+type SnapshotV2HumanWorkspace = {
+  id?: string;
+  name: string;
+  theme?: Theme;
+  bookmarks: SnapshotV2Bookmark[];
+  internalTools?: WorkspaceInternalTools;
+  canvasWidgets?: CanvasWidgetConfig;
+  canvasNowPlayingDismissed?: boolean;
+  icsFeedUrl?: string;
+};
+
+export type HumanLibrarySnapshot = {
+  version: typeof SNAPSHOT_VERSION;
+  workspaces: SnapshotV2HumanWorkspace[];
+  shortcuts?: ShortcutBindings;
+  focusRadio?: FocusRadio;
+  activeWorkspaceId?: string;
+};
+
+type ParsedSnapshot =
+  | { format: "machine"; snapshot: LibrarySnapshot }
+  | { format: "human"; snapshot: HumanLibrarySnapshot };
+
+function createSnapshotId(): string {
+  return crypto.randomUUID();
+}
 
 function edgeGroupToSnapshot(group: EdgeGroup): SnapshotEdgeGroup {
   return {
@@ -205,15 +251,17 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function parseSnapshotDocument(document: unknown): LibrarySnapshot {
-  if (!isRecord(document)) {
-    throw new Error("Snapshot must be a YAML mapping");
+function isHumanSnapshotDocument(document: Record<string, unknown>): boolean {
+  if (!Array.isArray(document.workspaces)) {
+    return false;
   }
 
-  if (document.version !== SNAPSHOT_VERSION) {
-    throw new Error(`Unsupported snapshot version: ${String(document.version)}`);
-  }
+  return document.workspaces.some(
+    (workspace) => isRecord(workspace) && Array.isArray(workspace.bookmarks),
+  );
+}
 
+function parseMachineSnapshot(document: Record<string, unknown>): LibrarySnapshot {
   if (!Array.isArray(document.catalog) || !Array.isArray(document.workspaces)) {
     throw new TypeError("Snapshot is missing catalog or workspaces");
   }
@@ -223,6 +271,131 @@ function parseSnapshotDocument(document: unknown): LibrarySnapshot {
   }
 
   return document as LibrarySnapshot;
+}
+
+function parseHumanSnapshot(document: Record<string, unknown>): HumanLibrarySnapshot {
+  if (!Array.isArray(document.workspaces)) {
+    throw new TypeError("Snapshot is missing workspaces");
+  }
+
+  return document as HumanLibrarySnapshot;
+}
+
+function parseSnapshotDocument(document: unknown): ParsedSnapshot {
+  if (!isRecord(document)) {
+    throw new Error("Snapshot must be a YAML mapping");
+  }
+
+  const version = document.version;
+  if (version === 1) {
+    return { format: "machine", snapshot: parseMachineSnapshot(document) };
+  }
+
+  if (version === SNAPSHOT_VERSION) {
+    if (isHumanSnapshotDocument(document)) {
+      return { format: "human", snapshot: parseHumanSnapshot(document) };
+    }
+    return { format: "machine", snapshot: parseMachineSnapshot(document) };
+  }
+
+  throw new Error(`Unsupported snapshot version: ${String(version)}`);
+}
+
+function resolveWorkspaceTheme(theme: Theme | undefined): Theme {
+  if (!theme) {
+    return {
+      ...DEFAULT_WORKSPACE_THEME,
+      palette: { ...DEFAULT_WORKSPACE_THEME.palette },
+    };
+  }
+
+  return resolveTheme({
+    palette: { ...theme.palette },
+    ...(theme.shellBorderColor ? { shellBorderColor: theme.shellBorderColor } : {}),
+    ...(theme.backgroundUrl ? { backgroundUrl: theme.backgroundUrl } : {}),
+    borderRadius: theme.borderRadius ?? 20,
+    widgets: theme.widgets ?? {},
+    ...(theme.appliedPresetId ? { appliedPresetId: theme.appliedPresetId } : {}),
+    ...(theme.appliedThemePresetId ? { appliedThemePresetId: theme.appliedThemePresetId } : {}),
+    ...(theme.appliedLayoutPresetId ? { appliedLayoutPresetId: theme.appliedLayoutPresetId } : {}),
+  });
+}
+
+function humanSnapshotToLibrary(snapshot: HumanLibrarySnapshot): Library {
+  const catalog: Link[] = [];
+  const workspaces: Workspace[] = snapshot.workspaces.map((workspaceSnapshot) => {
+    const workspaceId = workspaceSnapshot.id ?? createSnapshotId();
+    const groupOrderKeys = rebalanceKeys(workspaceSnapshot.bookmarks.length);
+
+    const left: EdgeGroup[] = workspaceSnapshot.bookmarks.map((bookmark, groupIndex) => {
+      const linkOrderKeys = rebalanceKeys(bookmark.links.length);
+
+      const links: EdgeGroupLinkPlacement[] = bookmark.links.map((linkSnapshot, linkIndex) => {
+        const link: Link = {
+          id: createSnapshotId(),
+          url: linkSnapshot.url,
+          ...(linkSnapshot.title !== undefined ? { title: linkSnapshot.title } : {}),
+          ...(linkSnapshot.image !== undefined ? { image: linkSnapshot.image } : {}),
+        };
+        catalog.push(link);
+
+        return {
+          linkId: link.id,
+          orderKey: linkOrderKeys[linkIndex]!,
+        };
+      });
+
+      return {
+        id: createSnapshotId(),
+        name: bookmark.name,
+        ...(bookmark.icon ? { handleIcon: bookmark.icon } : {}),
+        orderKey: groupOrderKeys[groupIndex]!,
+        links,
+      };
+    });
+
+    return ensureWorkspaceInternalTools({
+      id: workspaceId,
+      name: workspaceSnapshot.name,
+      theme: resolveWorkspaceTheme(workspaceSnapshot.theme),
+      placements: normalizeWorkspacePlacements({
+        edges: { left, top: [], bottom: [] },
+      }),
+      internalTools: workspaceSnapshot.internalTools ?? createDefaultWorkspaceInternalTools(),
+      canvasWidgets: workspaceSnapshot.canvasWidgets ?? createDefaultCanvasWidgets(),
+      ...(workspaceSnapshot.canvasNowPlayingDismissed
+        ? { canvasNowPlayingDismissed: workspaceSnapshot.canvasNowPlayingDismissed }
+        : {}),
+      ...(workspaceSnapshot.icsFeedUrl ? { icsFeedUrl: workspaceSnapshot.icsFeedUrl } : {}),
+    });
+  });
+
+  const activeWorkspaceId =
+    snapshot.activeWorkspaceId &&
+    workspaces.some((workspace) => workspace.id === snapshot.activeWorkspaceId)
+      ? snapshot.activeWorkspaceId
+      : workspaces[0]?.id;
+
+  if (!activeWorkspaceId) {
+    throw new Error("Snapshot has no workspaces");
+  }
+
+  const library: Library = {
+    schemaVersion: LIBRARY_SCHEMA_VERSION,
+    catalog,
+    workspaces,
+    shortcuts: { ...DEFAULT_SHORTCUTS, ...snapshot.shortcuts },
+    focusRadio: snapshot.focusRadio
+      ? {
+          stations: snapshot.focusRadio.stations.map((station) => ({ ...station })),
+          playback: { ...snapshot.focusRadio.playback },
+        }
+      : createDefaultFocusRadio(),
+    activeWorkspaceId,
+  };
+
+  validateLibrary(library);
+  return library;
 }
 
 export function serializeSnapshot(library: Library): string {
@@ -240,7 +413,12 @@ export function deserializeSnapshot(yaml: string): Library {
     throw new Error("Snapshot is not valid YAML");
   }
 
-  return snapshotToLibrary(parseSnapshotDocument(document));
+  const parsed = parseSnapshotDocument(document);
+  if (parsed.format === "human") {
+    return humanSnapshotToLibrary(parsed.snapshot);
+  }
+
+  return snapshotToLibrary(parsed.snapshot);
 }
 
 export async function fetchSnapshotYaml(url: string): Promise<string> {

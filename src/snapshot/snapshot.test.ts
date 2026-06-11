@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { stringify } from "yaml";
-import { initialKey } from "@/fractional-order/fractional-order";
+import { initialKey, sortByKey } from "@/fractional-order/fractional-order";
 import { loadOrSeedLibrary } from "@/library/library";
 import { createInMemoryLibraryStore } from "@/library/store";
 import {
@@ -213,11 +213,13 @@ describe("deserializeSnapshot", () => {
     expect(() => deserializeSnapshot("{\n  not: [yaml")).toThrow(/not valid yaml/i);
   });
 
-  it("rejects pre-bump snapshot versions", async () => {
+  it("imports v1 machine-format snapshots without regression", async () => {
     const library = await loadOrSeedLibrary(createInMemoryLibraryStore());
     const yaml = serializeSnapshot(library).replace("version: 2", "version: 1");
 
-    expect(() => deserializeSnapshot(yaml)).toThrow(/unsupported snapshot version/i);
+    const restored = deserializeSnapshot(yaml);
+
+    expect(restored).toEqual(library);
   });
 
   it("rejects unsupported snapshot versions", async () => {
@@ -250,6 +252,154 @@ describe("deserializeSnapshot", () => {
     for (const workspace of snapshot.workspaces) {
       expect(workspace.placements).not.toHaveProperty("pins");
     }
+  });
+});
+
+describe("deserializeSnapshot v2 human format", () => {
+  const minimalTheme = {
+    palette: {
+      background: "#101010",
+      surface: "#202020",
+      text: "#f5f5f5",
+      accent: "#ff5500",
+    },
+    borderRadius: 20,
+    widgets: {},
+  };
+
+  it("parses v2 YAML with inline bookmarks into a valid library", () => {
+    const yaml = stringify({
+      version: 2,
+      workspaces: [
+        {
+          name: "Work",
+          theme: minimalTheme,
+          bookmarks: [
+            {
+              name: "Today",
+              icon: "☀️",
+              links: [
+                { title: "GitHub", url: "https://github.com" },
+                { url: "https://linear.app" },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    const library = deserializeSnapshot(yaml);
+
+    expect(library.workspaces).toHaveLength(1);
+    expect(library.workspaces[0]?.name).toBe("Work");
+    expect(library.catalog).toHaveLength(2);
+    expect(library.catalog[0]?.url).toBe("https://github.com");
+    expect(library.catalog[0]?.title).toBe("GitHub");
+    expect(library.catalog[1]?.url).toBe("https://linear.app");
+
+    const group = library.workspaces[0]?.placements.edges.left[0];
+    expect(group?.name).toBe("Today");
+    expect(group?.handleIcon).toBe("☀️");
+    expect(group?.links).toHaveLength(2);
+    expect(group?.links.map((placement) => placement.linkId)).toEqual(
+      library.catalog.map((link) => link.id),
+    );
+  });
+
+  it("maps YAML array order to fractional order keys", () => {
+    const yaml = stringify({
+      version: 2,
+      workspaces: [
+        {
+          name: "Work",
+          theme: minimalTheme,
+          bookmarks: [
+            {
+              name: "Third",
+              links: [{ url: "https://third.example" }],
+            },
+            {
+              name: "First",
+              links: [
+                { url: "https://link-c.example" },
+                { url: "https://link-a.example" },
+                { url: "https://link-b.example" },
+              ],
+            },
+            {
+              name: "Second",
+              links: [{ url: "https://second.example" }],
+            },
+          ],
+        },
+      ],
+    });
+
+    const library = deserializeSnapshot(yaml);
+    const workspace = library.workspaces[0]!;
+    const groups = sortByKey(workspace.placements.edges.left, (group) => group.orderKey);
+    expect(groups.map((group) => group.name)).toEqual(["Third", "First", "Second"]);
+
+    const firstGroup = groups[1]!;
+    const links = sortByKey(firstGroup.links, (placement) => placement.orderKey);
+    const urls = links.map(
+      (placement) => library.catalog.find((link) => link.id === placement.linkId)!.url,
+    );
+    expect(urls).toEqual([
+      "https://link-c.example",
+      "https://link-a.example",
+      "https://link-b.example",
+    ]);
+  });
+
+  it("creates distinct catalog entries for duplicate URLs", () => {
+    const yaml = stringify({
+      version: 2,
+      workspaces: [
+        {
+          name: "Work",
+          theme: minimalTheme,
+          bookmarks: [
+            {
+              name: "A",
+              links: [{ url: "https://github.com" }, { url: "https://github.com" }],
+            },
+            {
+              name: "B",
+              links: [{ url: "https://github.com" }],
+            },
+          ],
+        },
+      ],
+    });
+
+    const library = deserializeSnapshot(yaml);
+
+    expect(library.catalog).toHaveLength(3);
+    expect(new Set(library.catalog.map((link) => link.id)).size).toBe(3);
+    expect(library.catalog.every((link) => link.url === "https://github.com")).toBe(true);
+  });
+
+  it("defaults shortcuts, focus radio, and active workspace when omitted", () => {
+    const yaml = stringify({
+      version: 2,
+      workspaces: [
+        {
+          name: "Solo",
+          theme: minimalTheme,
+          bookmarks: [],
+        },
+      ],
+    });
+
+    const library = deserializeSnapshot(yaml);
+
+    expect(library.shortcuts).toEqual({
+      focusCommandBar: "Meta+Shift+k",
+      cycleWorkspace: "Control+Tab",
+    });
+    expect(library.focusRadio.stations).toEqual([]);
+    expect(library.activeWorkspaceId).toBe(library.workspaces[0]?.id);
   });
 });
 

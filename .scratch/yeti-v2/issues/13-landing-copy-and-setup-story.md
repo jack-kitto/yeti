@@ -31,3 +31,5 @@ None — copy can ship before example repo and extension are published (links ma
 ## Comments
 
 **Jack (2026-06-11):** Captured from landing review session. Extension and example repo issues remain separate (07, 03, 04); this issue is copy + landing module only.
+
+**Jack (2026-06-11, copy v2):** Headline → “Make any browser your home”. Body → bookmarks not locked to one browser; keystroke access + quickshell spatial navigation for pinned tabs.

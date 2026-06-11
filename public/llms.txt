@@ -1,6 +1,6 @@
 # Yeti
 
-> A developer-focused start page and home station — Arc / Zen-style edge bookmarks and a calm focus canvas, in any browser. Local-first library in IndexedDB; portable v2 YAML snapshots for dotfiles.
+> Make any browser your home — spatial bookmarks at the screen edge, command-bar search, and a pinned home station. Local-first library in IndexedDB; portable v2 YAML snapshots for dotfiles.
 
 ## Product
 

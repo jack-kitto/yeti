@@ -7,9 +7,11 @@ describe("landing page", () => {
     const content = getLandingPageContent();
 
     expect(content.productName).toBe("Yeti");
-    expect(content.headline).toMatch(/start page/i);
-    expect(content.headline).not.toMatch(/shell|riced/i);
-    expect(content.tagline).not.toMatch(/rim/i);
+    expect(content.headline).toMatch(/make any browser your home/i);
+    expect(content.headline).not.toMatch(/riced/i);
+    expect(content.tagline).toMatch(/bookmarks stuck inside one browser/i);
+    expect(content.tagline).toMatch(/few keystrokes/i);
+    expect(content.tagline).toMatch(/quickshell/i);
     expect(content.tagline.length).toBeGreaterThan(0);
     expect(content.features).toHaveLength(3);
     expect(content.features.every((feature) => !/rim/i.test(feature.description))).toBe(true);

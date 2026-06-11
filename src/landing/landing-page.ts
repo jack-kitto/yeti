@@ -41,24 +41,24 @@ export function getLandingPageContent(): LandingPageContent {
 
   return {
     productName: PRODUCT_NAME,
-    headline: "The Arc / Zen experience, as your start page",
+    headline: "Make any browser your home",
     tagline:
-      "Pin one tab. Edge bookmarks and a calm focus canvas. Your library travels as human-editable YAML — no new browser required.",
+      "You don't need all your bookmarks stuck inside one browser. Access any link with a few keystrokes—or explore and open pinned tabs through a quickshell that puts bookmarks right where you need them.",
     features: [
       {
-        title: "Browser-agnostic",
+        title: "Any browser",
         description:
-          "What you liked about Arc or Zen, without switching browsers. A start page you own — local-first, portable like dotfiles.",
+          "Keep Chrome, Firefox, or Safari. Pin Yeti as your home station and set the start page as your new tab—your library is yours, not locked to one vendor.",
       },
       {
-        title: "Edge bookmarks",
+        title: "Keystrokes first",
         description:
-          "Named link clusters at the screen edge, command-bar search, and focus tools — inspired by linux rice, explained in plain language.",
+          "The command bar finds links, workspaces, and actions instantly. Less hunting through bookmark bars and more opening what you need.",
       },
       {
-        title: "Dotfiles-friendly",
+        title: "Bookmarks at the edge",
         description:
-          "Export and import your whole library as v2 YAML. Fork the example config repo, or generate a fresh layout with Claude skills.",
+          "Named clusters at the screen edge open into flyouts—spatial navigation inspired by Quickshell rice, without switching browsers.",
       },
     ],
     setupTitle: "Bring your bookmarks",

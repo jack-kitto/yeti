@@ -222,4 +222,4 @@ Yeti ships with an **opinionated starter template** (Omarchy-style) — tasteful
 
 ## Repo and package names
 
-The GitHub repo may remain `quickshell-start` until hosting is renamed; the npm `package.json` name is `yeti`. Product-facing strings and IndexedDB use **Yeti** / `yeti`.
+The GitHub repo is [`jack-kitto/yeti`](https://github.com/jack-kitto/yeti). The npm `package.json` name is `yeti`. Product-facing strings and IndexedDB use **Yeti** / `yeti`.

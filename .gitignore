@@ -10,3 +10,4 @@ npm-debug.log*
 yeti-radio.local.yaml
 demo/launchreel-output
 demo/webreel-output
+.vercel

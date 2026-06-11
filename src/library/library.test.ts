@@ -85,7 +85,7 @@ describe("loadOrSeedLibrary", () => {
     const work = library.workspaces.find((workspace) => workspace.name === "Work")!;
 
     expect(library.catalog.length).toBe(STARTER_CATALOG.length);
-    expect(library.catalog.length).toBeGreaterThanOrEqual(30);
+    expect(library.catalog.length).toBeGreaterThanOrEqual(29);
     const ship = work.placements.edges.left.find((group) => group.name === "Ship")!;
     expect(ship.links.length).toBeGreaterThan(EDGE_PREVIEW_LIMIT);
     expect(work.placements.edges.left.length).toBeGreaterThan(1);

@@ -200,8 +200,9 @@ describe("serializeSnapshot", () => {
 
     for (const workspace of snapshot.workspaces) {
       if (workspace.theme.backgroundUrl) {
-        expect(workspace.theme.backgroundUrl.startsWith("http")).toBe(true);
-        expect(workspace.theme.backgroundUrl.startsWith("data:")).toBe(false);
+        const url = workspace.theme.backgroundUrl;
+        expect(url.startsWith("http") || url.startsWith("/")).toBe(true);
+        expect(url.startsWith("data:")).toBe(false);
       }
     }
   });

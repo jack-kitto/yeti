@@ -9,9 +9,11 @@ describe("shell layering", () => {
     "utf8",
   );
 
-  it("paints the rim canvas beneath the canvas widget layer", () => {
-    expect(css).toMatch(/\.shell-rim-canvas[\s\S]*z-index:\s*5/);
-    expect(css).toMatch(/\.shell-canvas-layer[\s\S]*z-index:\s*11/);
+  it("paints canvas widgets beneath the opaque shell rim canvas", () => {
+    const canvasLayerMatch = css.match(/\.shell-canvas-layer[\s\S]*?z-index:\s*(\d+)/);
+    const rimCanvasMatch = css.match(/\.shell-rim-canvas[\s\S]*?z-index:\s*(\d+)/);
+
+    expect(Number(canvasLayerMatch?.[1])).toBeLessThan(Number(rimCanvasMatch?.[1]));
     expect(surfaceSource.indexOf("ShellCanvas")).toBeLessThan(
       surfaceSource.indexOf("shell-canvas-layer"),
     );

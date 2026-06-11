@@ -3,6 +3,7 @@
 import type { Library } from "@/library/types";
 import { useApplyLayoutPreset, useApplyThemePreset } from "@/hooks/use-library";
 import { LAYOUT_PRESETS } from "@/theme/layout-presets";
+import { resolveLayoutPresetId } from "@/theme/resolve-layout-preset";
 import { THEME_PRESETS } from "@/theme/theme-presets";
 import {
   THEME_PRESET_CARD_CLASS,
@@ -22,13 +23,15 @@ export function ControlCenterPresetsTab({ library }: ControlCenterPresetsTabProp
     return null;
   }
 
+  const activeLayoutPresetId = resolveLayoutPresetId(workspace.theme);
+
   return (
     <div className="shell-dashboard-presets">
       <section className="shell-dashboard-presets-section">
         <h3 className="shell-dashboard-presets-heading">Layout</h3>
         <div className="shell-dashboard-presets-layout-grid">
           {LAYOUT_PRESETS.map((preset) => {
-            const isSelected = workspace.theme.appliedLayoutPresetId === preset.id;
+            const isSelected = activeLayoutPresetId === preset.id;
             return (
               <button
                 key={preset.id}
@@ -43,6 +46,7 @@ export function ControlCenterPresetsTab({ library }: ControlCenterPresetsTabProp
                 }
               >
                 <span className="shell-dashboard-layout-preset-name">{preset.name}</span>
+                <span className="shell-dashboard-layout-preset-copy">{preset.description}</span>
               </button>
             );
           })}

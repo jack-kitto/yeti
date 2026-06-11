@@ -20,7 +20,7 @@ type TabId = (typeof TABS)[number]["id"];
 
 type ShellDashboardProps = {
   library: Library;
-  onSwitchWorkspace: (workspaceId: string, origin?: { x: number; y: number }) => void;
+  onSwitchWorkspace: (workspaceId: string) => void;
 };
 
 function ControlCenterWorkspacesTab({
@@ -28,7 +28,7 @@ function ControlCenterWorkspacesTab({
   onSwitchWorkspace,
 }: {
   library: Library;
-  onSwitchWorkspace: (workspaceId: string, origin?: { x: number; y: number }) => void;
+  onSwitchWorkspace: (workspaceId: string) => void;
 }) {
   const rows = buildControlCenterWorkspaceRows(library);
   const active = rows.find((row) => row.active);
@@ -52,9 +52,7 @@ function ControlCenterWorkspacesTab({
             <button
               type="button"
               className={`shell-dashboard-workspace-row${row.active ? " active" : ""}`}
-              onClick={(event) =>
-                onSwitchWorkspace(row.id, { x: event.clientX, y: event.clientY })
-              }
+              onClick={() => onSwitchWorkspace(row.id)}
               aria-current={row.active ? "true" : undefined}
             >
               <span

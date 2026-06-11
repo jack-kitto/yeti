@@ -55,10 +55,6 @@ import {
   syncActiveZonePocket,
   toggleZonePin,
 } from "@/shell-frame/shell-zones";
-import {
-  getWorkspaceTransitionSnapshot,
-  subscribeWorkspaceTransition,
-} from "@/shell-frame/workspace-transition";
 import { useLauncherStore } from "@/store/launcher-store";
 import { CommandBar } from "./command-bar";
 import { LinkItem } from "./link-item";
@@ -72,7 +68,7 @@ const DRAG_THRESHOLD_PX = 6;
 type ShellEdgeLayerProps = {
   library: Library;
   onReorderGroup: (groupId: string, targetSlotIndex: number) => void;
-  onSwitchWorkspace: (workspaceId: string, origin?: { x: number; y: number }) => void;
+  onSwitchWorkspace: (workspaceId: string) => void;
   onUpdateInternalTools: (internalTools: WorkspaceInternalTools) => void;
 };
 
@@ -124,12 +120,6 @@ export function ShellEdgeLayer({
   } | null>(null);
   const openFromEdgeGroup = useLauncherStore((state) => state.openFromEdgeGroup);
   const shellState = useSyncExternalStore(subscribeShellState, getShellState, getShellState);
-  const workspaceTransition = useSyncExternalStore(
-    subscribeWorkspaceTransition,
-    getWorkspaceTransitionSnapshot,
-    getWorkspaceTransitionSnapshot,
-  );
-  const chromeHidden = workspaceTransition.running && workspaceTransition.reveal > 0.02;
   const dashboardMenuSize =
     shellState.menuSizes.get(BUILTIN_SURFACE.TOP_DASHBOARD) ??
     defaultMenuSize(BUILTIN_SURFACE.TOP_DASHBOARD);
@@ -662,13 +652,7 @@ export function ShellEdgeLayer({
 
   return (
     <>
-      <div
-        className="shell-edge-chrome pointer-events-none absolute inset-0 z-[15]"
-        style={{
-          opacity: chromeHidden ? 0 : 1,
-          transition: "opacity 100ms cubic-bezier(0.2, 0, 0, 1)",
-        }}
-      >
+      <div className="shell-edge-chrome pointer-events-none absolute inset-0 z-[15]">
         {renderRimHit(BUILTIN_SURFACE.TOP_DASHBOARD, "shell-rim-hit-top", {
           top: topDashboardHit.top,
           left: topDashboardHit.left,

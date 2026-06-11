@@ -2934,6 +2934,14 @@ body:has(.landing-page) {
   color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
 }
 
+.landing-page-supporting {
+  margin: 0 auto;
+  max-width: 32rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--qs-color-text) 58%, transparent);
+}
+
 .landing-page-actions {
   display: flex;
   flex-wrap: wrap;

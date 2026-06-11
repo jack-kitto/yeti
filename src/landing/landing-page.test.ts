@@ -7,24 +7,28 @@ describe("landing page", () => {
     const content = getLandingPageContent();
 
     expect(content.productName).toBe("Yeti");
-    expect(content.headline).toMatch(/make any browser your home/i);
-    expect(content.headline).not.toMatch(/riced/i);
-    expect(content.tagline).toMatch(/bookmarks stuck inside one browser/i);
-    expect(content.tagline).toMatch(/few keystrokes/i);
+    expect(content.headline).toBe("Make any browser your home");
+    expect(content.tagline).toMatch(/portable home station/i);
     expect(content.tagline).toMatch(/quickshell/i);
-    expect(content.tagline.length).toBeGreaterThan(0);
+    expect(content.supportingStatement).toMatch(/start page when you need speed/i);
     expect(content.features).toHaveLength(3);
-    expect(content.features.every((feature) => !/rim/i.test(feature.description))).toBe(true);
+    expect(content.features.map((feature) => feature.title)).toEqual([
+      "Works anywhere",
+      "Launch instantly",
+      "Always within reach",
+    ]);
+    expect(content.setupTitle).toBe("Bring your workflow");
+    expect(content.setupDescription).toMatch(/portable yaml library/i);
     expect(content.heroImageSrc).toBe("/landing/hero.png");
-    expect(content.heroImageAlt).not.toMatch(/rim/i);
     expect(content.homeStationHref).toBe("/home");
-    expect(content.homeStationCta).toMatch(/preview/i);
+    expect(content.homeStationCta).toBe("Open Yeti");
     expect(content.startPageHref).toBe("/start");
-    expect(content.earlyAccessNote).toMatch(/local tier/i);
+    expect(content.startPageCta).toBe("Open start page");
+    expect(content.earlyAccessNote).toMatch(/local-first by default/i);
+    expect(content.footerLocalTierNote).toMatch(/local-first/i);
     expect(content.setupLinks.some((link) => link.label.match(/example config/i))).toBe(true);
     expect(content.setupLinks.some((link) => link.label.match(/chrome extension/i))).toBe(true);
     expect(content.setupLinks.some((link) => link.label.match(/firefox extension/i))).toBe(true);
-    expect(content.setupLinks.some((link) => link.label.match(/import skills/i))).toBe(true);
     expect(content.footerLinks.some((link) => link.href === "/llms.txt")).toBe(true);
     expect(content.footerLinks.some((link) => link.href.includes("github.com/jack-kitto/yeti"))).toBe(
       true,

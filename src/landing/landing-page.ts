@@ -16,6 +16,7 @@ export type LandingPageContent = {
   productName: string;
   headline: string;
   tagline: string;
+  supportingStatement: string;
   features: LandingFeature[];
   setupTitle: string;
   setupDescription: string;
@@ -43,27 +44,28 @@ export function getLandingPageContent(): LandingPageContent {
     productName: PRODUCT_NAME,
     headline: "Make any browser your home",
     tagline:
-      "You don't need all your bookmarks stuck inside one browser. Access any link with a few keystrokes—or explore and open pinned tabs through a quickshell that puts bookmarks right where you need them.",
+      "A portable home station for links, projects, and workflows. Launch anything with a few keystrokes, or browse through an always-within-reach quickshell.",
+    supportingStatement: "A start page when you need speed. A home station when you need context.",
     features: [
       {
-        title: "Any browser",
+        title: "Works anywhere",
         description:
-          "Keep Chrome, Firefox, or Safari. Pin Yeti as your home station and set the start page as your new tab—your library is yours, not locked to one vendor.",
+          "Keep your browser of choice. Yeti runs as a home station in any modern browser and keeps your library portable.",
       },
       {
-        title: "Keystrokes first",
+        title: "Launch instantly",
         description:
-          "The command bar finds links, workspaces, and actions instantly. Less hunting through bookmark bars and more opening what you need.",
+          "Find links, projects, workspaces, and actions from a keyboard-first command bar.",
       },
       {
-        title: "Bookmarks at the edge",
+        title: "Always within reach",
         description:
-          "Named clusters at the screen edge open into flyouts—spatial navigation inspired by Quickshell rice, without switching browsers.",
+          "Organize resources around screen-edge quickshells that stay accessible without cluttering your workspace.",
       },
     ],
-    setupTitle: "Bring your bookmarks",
+    setupTitle: "Bring your workflow",
     setupDescription:
-      "Fork the example config, sideload the optional new-tab extension, or use Claude skills to import from Chrome, Firefox, or Arc.",
+      "Import existing bookmarks, workspaces, and resources into a portable YAML library. Fork the example config, use the optional new-tab extension, or import directly from your browser.",
     setupLinks: [
       {
         label: "Example config repo",
@@ -85,13 +87,13 @@ export function getLandingPageContent(): LandingPageContent {
     heroImageSrc: "/landing/hero.png",
     heroImageAlt: "Yeti home station with a left edge bookmark flyout open",
     homeStationHref: YETI_ROUTES.homeStation,
-    homeStationCta: "Try the preview",
+    homeStationCta: "Open Yeti",
     startPageHref: YETI_ROUTES.startPage,
     startPageCta: "Open start page",
     waitlistHref,
     waitlistCta: "Join the waitlist",
     earlyAccessNote:
-      "Public preview — local tier only. Cloud library sync coming later. Your data stays in this browser until you export.",
+      "Public preview. Local-first by default, with portable YAML snapshots for backup and migration. Cloud sync is planned for a future release.",
     footerLinks: [
       {
         label: "View source on GitHub",
@@ -103,6 +105,6 @@ export function getLandingPageContent(): LandingPageContent {
       },
     ],
     footerLocalTierNote:
-      "Local tier — your library stays in this browser until you export a snapshot.",
+      "Local-first. Your library stays in this browser until you export a snapshot.",
   };
 }

@@ -8,6 +8,7 @@ export function LandingPage() {
     productName,
     headline,
     tagline,
+    supportingStatement,
     features,
     setupTitle,
     setupDescription,
@@ -32,6 +33,7 @@ export function LandingPage() {
           <YetiLogo size={28} lockup plain label={productName} className="landing-page-brand" />
           <h1 className="landing-page-headline">{headline}</h1>
           <p className="landing-page-tagline">{tagline}</p>
+          <p className="landing-page-supporting">{supportingStatement}</p>
 
           <div className="landing-page-actions">
             <Link href={homeStationHref} className="landing-page-cta landing-page-cta--primary">

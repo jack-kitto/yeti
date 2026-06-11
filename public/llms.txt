@@ -1,6 +1,6 @@
 # Yeti
 
-> Make any browser your home — spatial bookmarks at the screen edge, command-bar search, and a pinned home station. Local-first library in IndexedDB; portable v2 YAML snapshots for dotfiles.
+> Make any browser your home — a portable home station for links, projects, and workflows. Command-bar search, screen-edge quickshells, and a lightweight start page. Local-first library in IndexedDB; portable v2 YAML snapshots for dotfiles.
 
 ## Product
 

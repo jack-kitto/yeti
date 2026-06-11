@@ -395,6 +395,12 @@ body {
   color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
 }
 
+.shell-dashboard-calendar-error-hint {
+  margin: 0;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--qs-color-text) 52%, transparent);
+}
+
 .shell-dashboard-calendar-list {
   display: flex;
   flex-direction: column;

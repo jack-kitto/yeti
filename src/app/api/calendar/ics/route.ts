@@ -1,21 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
+import { describeIcsFeedFetchError, validateIcsFeedUrl } from "@/calendar/ics-feed-url";
 
 export async function GET(request: NextRequest) {
-  const url = request.nextUrl.searchParams.get("url");
+  const rawUrl = request.nextUrl.searchParams.get("url");
+  const validation = validateIcsFeedUrl(rawUrl);
 
-  if (!url) {
-    return NextResponse.json({ error: "Missing url parameter" }, { status: 400 });
+  if (!validation.ok) {
+    return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
+  const feedUrl = validation.url.toString();
+
   try {
-    const response = await fetch(url, {
+    const response = await fetch(feedUrl, {
       headers: { Accept: "text/calendar" },
       next: { revalidate: 0 },
     });
 
     if (!response.ok) {
+      const hint = describeIcsFeedFetchError(response.status, feedUrl);
       return NextResponse.json(
-        { error: `Calendar feed request failed (${response.status})` },
+        {
+          error: `Calendar feed request failed (${response.status})`,
+          ...(hint ? { hint } : {}),
+        },
         { status: response.status },
       );
     }

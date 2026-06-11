@@ -8,6 +8,7 @@ import {
   type CalendarEvent,
 } from "@/calendar/ics-events";
 import { formatCalendarEventTime } from "@/calendar/format-event-time";
+import { resolveCalendarIcsProxyUrl } from "@/calendar/ics-feed-url";
 import { resolveWorkspaceIcsFeedUrl } from "@/calendar/workspace-ics";
 import type { Library } from "@/library/types";
 import { useConfigStore } from "@/store/config-store";
@@ -23,7 +24,7 @@ type CalendarState =
   | { status: "idle" }
   | { status: "loading"; events: CalendarEvent[] }
   | { status: "ready"; events: CalendarEvent[] }
-  | { status: "error"; message: string; events: CalendarEvent[] };
+  | { status: "error"; message: string; hint?: string; events: CalendarEvent[] };
 
 export function ControlCenterCalendarTab({ library, active }: ControlCenterCalendarTabProps) {
   const openSection = useConfigStore((state) => state.openSection);
@@ -46,9 +47,30 @@ export function ControlCenterCalendarTab({ library, active }: ControlCenterCalen
     }));
 
     try {
-      const response = await fetch(`/api/calendar/ics?url=${encodeURIComponent(feedUrl)}`);
+      const response = await fetch(resolveCalendarIcsProxyUrl(feedUrl));
       if (!response.ok) {
-        throw new Error(`Calendar feed request failed (${response.status})`);
+        let message = `Calendar feed request failed (${response.status})`;
+        let hint: string | undefined;
+
+        try {
+          const body = (await response.json()) as { error?: string; hint?: string };
+          if (body.error) {
+            message = body.error;
+          }
+          if (body.hint) {
+            hint = body.hint;
+          }
+        } catch {
+          // Keep the status-based fallback message.
+        }
+
+        setState((current) => ({
+          status: "error",
+          message,
+          hint,
+          events: current.status === "ready" || current.status === "error" ? current.events : [],
+        }));
+        return;
       }
 
       const text = await response.text();
@@ -107,6 +129,7 @@ export function ControlCenterCalendarTab({ library, active }: ControlCenterCalen
       {state.status === "error" ? (
         <div className="shell-dashboard-calendar-error">
           <p>{state.message}</p>
+          {state.hint ? <p className="shell-dashboard-calendar-error-hint">{state.hint}</p> : null}
           <button
             type="button"
             className="shell-dashboard-setup-button"

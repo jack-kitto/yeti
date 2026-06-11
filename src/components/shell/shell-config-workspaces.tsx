@@ -44,6 +44,7 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
   const [workspaceName, setWorkspaceName] = useState("");
   const [newWorkspaceName, setNewWorkspaceName] = useState("");
   const [backgroundUrlDraft, setBackgroundUrlDraft] = useState("");
+  const [icsFeedUrlDraft, setIcsFeedUrlDraft] = useState("");
 
   const selectedWorkspace =
     library.workspaces.find((workspace) => workspace.id === selectedWorkspaceId) ??
@@ -64,6 +65,10 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
   useEffect(() => {
     setBackgroundUrlDraft(selectedWorkspace?.theme.backgroundUrl ?? "");
   }, [selectedWorkspace?.id, selectedWorkspace?.theme.backgroundUrl]);
+
+  useEffect(() => {
+    setIcsFeedUrlDraft(selectedWorkspace?.icsFeedUrl ?? "");
+  }, [selectedWorkspace?.id, selectedWorkspace?.icsFeedUrl]);
 
   useEffect(() => {
     if (!selectedWorkspace) {
@@ -92,6 +97,28 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
     selectedWorkspace?.theme.backgroundUrl,
     updateWorkspaceTheme,
   ]);
+
+  useEffect(() => {
+    if (!selectedWorkspace) {
+      return;
+    }
+
+    const workspaceId = selectedWorkspace.id;
+    const current = selectedWorkspace.icsFeedUrl ?? "";
+
+    const timer = window.setTimeout(() => {
+      const trimmed = icsFeedUrlDraft.trim();
+      if (trimmed === current.trim()) {
+        return;
+      }
+
+      mutateLibrary.mutate((library) =>
+        updateWorkspaceIcsFeedUrl(library, workspaceId, trimmed || null),
+      );
+    }, 400);
+
+    return () => window.clearTimeout(timer);
+  }, [icsFeedUrlDraft, mutateLibrary, selectedWorkspace?.id, selectedWorkspace?.icsFeedUrl]);
 
   function handleCreateWorkspace(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -355,19 +382,15 @@ export function ShellConfigWorkspaces({ library }: ShellConfigWorkspacesProps) {
               <span className="shell-config-form-label">ICS feed URL</span>
               <input
                 type="url"
-                value={selectedWorkspace.icsFeedUrl ?? ""}
-                onChange={(event) =>
-                  mutateLibrary.mutate((current) =>
-                    updateWorkspaceIcsFeedUrl(
-                      current,
-                      selectedWorkspace.id,
-                      event.target.value || null,
-                    ),
-                  )
-                }
+                value={icsFeedUrlDraft}
+                onChange={(event) => setIcsFeedUrlDraft(event.target.value)}
                 placeholder="https://calendar.google.com/calendar/ical/…/basic.ics"
                 className="shell-config-input"
               />
+              <span className="shell-config-menu-item-hint">
+                Google Calendar: Settings → your calendar → Integrate calendar → Secret address in
+                iCal format.
+              </span>
             </label>
           </div>
         </div>

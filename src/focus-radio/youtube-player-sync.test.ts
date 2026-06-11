@@ -26,6 +26,7 @@ describe("syncFocusRadioYoutubePlayer", () => {
       setVolume: () => {},
       mute: () => {},
       unMute: () => {},
+      setSize: () => {},
       destroy: () => {},
     };
 

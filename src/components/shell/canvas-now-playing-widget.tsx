@@ -1,15 +1,18 @@
 "use client";
 
+import { useLayoutEffect } from "react";
 import {
   dismissCanvasNowPlaying,
   shouldShowCanvasNowPlayingWidget,
 } from "@/canvas-widgets/now-playing";
 import { resolveFocusRadioNowPlaying } from "@/focus-radio/playback";
 import { updateFocusRadioPlayback } from "@/focus-radio/stations";
+import { parseYoutubeVideoId } from "@/focus-radio/youtube";
 import { useLibrary, useMutateLibrary } from "@/hooks/use-library";
 import type { Workspace } from "@/library/types";
 import { CanvasNowPlayingVisualizer } from "./canvas-now-playing-visualizer";
 import { useFocusRadioPlayback } from "./focus-radio-playback-context";
+import { FocusRadioYoutubePlayer } from "./focus-radio-youtube-player";
 
 type CanvasNowPlayingWidgetProps = {
   workspace: Workspace;
@@ -18,18 +21,32 @@ type CanvasNowPlayingWidgetProps = {
 export function CanvasNowPlayingWidget({ workspace }: CanvasNowPlayingWidgetProps) {
   const { data: library } = useLibrary();
   const mutateLibrary = useMutateLibrary();
-  const { getStreamAnalyser } = useFocusRadioPlayback();
+  const {
+    getStreamAnalyser,
+    setCanvasYoutubePlayerMounted,
+    reportPlaybackFailure,
+    registerYoutubePlayer,
+  } = useFocusRadioPlayback();
 
-  if (!library || !shouldShowCanvasNowPlayingWidget(workspace, library)) {
+  const nowPlaying = library ? resolveFocusRadioNowPlaying(library) : null;
+  const showWidget =
+    library !== undefined && library !== null && shouldShowCanvasNowPlayingWidget(workspace, library);
+  const showYoutubeVideo = showWidget && nowPlaying?.kind === "youtube";
+  const youtubeVideoId =
+    showYoutubeVideo && nowPlaying ? parseYoutubeVideoId(nowPlaying.url) : null;
+
+  useLayoutEffect(() => {
+    setCanvasYoutubePlayerMounted(showYoutubeVideo);
+    return () => {
+      setCanvasYoutubePlayerMounted(false);
+    };
+  }, [setCanvasYoutubePlayerMounted, showYoutubeVideo]);
+
+  if (!library || !showWidget || !nowPlaying) {
     return null;
   }
 
-  const nowPlaying = resolveFocusRadioNowPlaying(library);
   const playing = library.focusRadio.playback.playing;
-
-  if (!nowPlaying) {
-    return null;
-  }
 
   function patchPlayback(patch: Parameters<typeof updateFocusRadioPlayback>[1]) {
     mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, patch));
@@ -97,10 +114,18 @@ export function CanvasNowPlayingWidget({ workspace }: CanvasNowPlayingWidgetProp
           </button>
         </div>
       </div>
-      <CanvasNowPlayingVisualizer
-        active={playing}
-        getAnalyser={nowPlaying.kind === "stream" ? getStreamAnalyser : undefined}
-      />
+      {showYoutubeVideo && youtubeVideoId ? (
+        <FocusRadioYoutubePlayer
+          videoId={youtubeVideoId}
+          shouldPlay={playing}
+          playback={library.focusRadio.playback}
+          presentation="inline"
+          onError={reportPlaybackFailure}
+          onPlayerReady={registerYoutubePlayer}
+        />
+      ) : (
+        <CanvasNowPlayingVisualizer active={playing} getAnalyser={getStreamAnalyser} />
+      )}
     </div>
   );
 }

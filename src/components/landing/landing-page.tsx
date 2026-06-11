@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { YetiLogo } from "@/components/branding/yeti-logo";
 import { getLandingPageContent } from "@/landing/landing-page";
 
 export function LandingPage() {
@@ -28,7 +29,7 @@ export function LandingPage() {
     <main className="landing-page">
       <div className="landing-page-inner">
         <header className="landing-page-header">
-          <p className="landing-page-eyebrow">{productName}</p>
+          <YetiLogo size={28} lockup label={productName} className="landing-page-brand" />
           <h1 className="landing-page-headline">{headline}</h1>
           <p className="landing-page-tagline">{tagline}</p>
 

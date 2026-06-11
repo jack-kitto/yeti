@@ -70,7 +70,7 @@ export function CanvasNowPlayingVisualizer({
         for (let index = 0; index < BAR_COUNT; index++) {
           const target = readBarLevel(index, frequencyData);
           const previous = smoothed[index] ?? 0;
-          smoothed[index] = previous * 0.55 + target * 0.45;
+          smoothed[index] = previous * 0.35 + target * 0.65;
         }
       } else {
         for (let index = 0; index < BAR_COUNT; index++) {

@@ -694,6 +694,22 @@ body {
   height: 36px;
 }
 
+.canvas-now-playing-video-host {
+  width: 100%;
+  min-height: 135px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--qs-color-text) 8%, transparent);
+}
+
+.canvas-now-playing-video-host iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
 .canvas-focus-tasks-header {
   display: none;
   margin: 0;
@@ -1218,9 +1234,17 @@ body {
   opacity: 0.72;
 }
 
-.shell-focus-radio-audio,
-.shell-focus-radio-youtube {
+.shell-focus-radio-audio {
   display: none;
+}
+
+.shell-focus-radio-youtube--hidden {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .shell-dashboard-media-now-playing {
@@ -2827,6 +2851,62 @@ body:has(.landing-page) {
   display: grid;
   gap: 16px;
   text-align: center;
+}
+
+.yeti-logo-lockup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.yeti-logo-lockup-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--qs-color-text);
+}
+
+.yeti-logo--animated {
+  animation: yeti-logo-pulse 1.8s ease-in-out infinite;
+}
+
+.yeti-loading-gate {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.yeti-loading-gate-label {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+@keyframes yeti-logo-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.landing-page-brand {
+  justify-self: center;
+}
+
+.landing-page-brand .yeti-logo-lockup-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
 }
 
 .landing-page-eyebrow {

@@ -5,6 +5,7 @@ import { createDefaultFocusRadio } from "./config";
 import {
   resolveFocusRadioNowPlaying,
   resolveFocusRadioOutputVolume,
+  resolveFocusRadioStreamPlaybackUrl,
   shouldPlayFocusRadioStream,
   shouldPlayFocusRadioYoutube,
 } from "./playback";
@@ -327,43 +328,44 @@ describe("shouldPlayFocusRadioYoutube", () => {
   });
 });
 
-describe("resolveFocusRadioStreamFailureAction", () => {
-  it("retries the current station once before falling back to the next one", async () => {
-    let library = libraryWithoutFocusRadioStations();
-    library = addFocusRadioStation(
-      library,
-      { label: "First", url: "https://stream.example.com/1.mp3", kind: "stream" },
-      "first",
-    );
-    library = addFocusRadioStation(
-      library,
-      { label: "Second", url: "https://stream.example.com/2.mp3", kind: "stream" },
-      "second",
-    );
-
-    expect(resolveFocusRadioStreamFailureAction(library, "first", false)).toEqual({
-      type: "retry",
-    });
-    expect(resolveFocusRadioStreamFailureAction(library, "first", true)).toEqual({
-      type: "fallback",
-      stationId: "second",
-    });
-  });
-
-  it("reports exhaustion when no other station can be tried", async () => {
-    const library = addFocusRadioStation(
+describe("resolveFocusRadioStreamPlaybackUrl", () => {
+  it("returns the stream proxy url for stream stations", async () => {
+    let library = addFocusRadioStation(
       libraryWithoutFocusRadioStations(),
       {
-        label: "Only",
-        url: "https://stream.example.com/only.mp3",
+        label: "Lofi",
+        url: "https://stream.example.com/lofi.mp3",
         kind: "stream",
       },
-      "only",
+      "lofi",
     );
+    library = updateFocusRadioPlayback(library, { stationId: "lofi", playing: true });
 
-    expect(resolveFocusRadioStreamFailureAction(library, "only", true)).toEqual({
-      type: "exhausted",
-    });
+    expect(resolveFocusRadioStreamPlaybackUrl(library)).toBe(
+      "/api/focus-radio/stream?url=https%3A%2F%2Fstream.example.com%2Flofi.mp3",
+    );
+  });
+
+  it("returns null for youtube stations", async () => {
+    let library = addFocusRadioStation(
+      libraryWithoutFocusRadioStations(),
+      {
+        label: "Live",
+        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        kind: "youtube",
+      },
+      "live",
+    );
+    library = updateFocusRadioPlayback(library, { stationId: "live", playing: true });
+
+    expect(resolveFocusRadioStreamPlaybackUrl(library)).toBeNull();
+  });
+});
+
+describe("resolveFocusRadioStreamFailureAction", () => {
+  it("retries the current station once before failing", () => {
+    expect(resolveFocusRadioStreamFailureAction(false)).toEqual({ type: "retry" });
+    expect(resolveFocusRadioStreamFailureAction(true)).toEqual({ type: "failed" });
   });
 });
 

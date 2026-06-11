@@ -21,9 +21,10 @@ export function focusStartPageCommandBar(input: HTMLInputElement | null): void {
 
 export function scheduleStartPageCommandBarFocus(
   input: HTMLInputElement | null,
-  schedule: (callback: () => void, delayMs: number) => void = window.setTimeout.bind(window),
+  schedule: (callback: () => void, delayMs: number) => number = (callback, delayMs) =>
+    window.setTimeout(callback, delayMs),
 ): () => void {
-  const timeouts = START_PAGE_FOCUS_RETRY_DELAYS_MS.map((delayMs) =>
+  const timeouts: number[] = START_PAGE_FOCUS_RETRY_DELAYS_MS.map((delayMs) =>
     schedule(() => {
       if (shouldFocusStartPageCommandBar(document.activeElement)) {
         focusStartPageCommandBar(input);

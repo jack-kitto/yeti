@@ -1,6 +1,7 @@
 import type { Library } from "@/library/types";
 import type { FocusRadioPlayback, FocusRadioStation } from "./types";
 import { listFocusRadioStations } from "./stations";
+import { resolveFocusRadioStreamProxyUrl } from "./stream-proxy";
 
 export type FocusRadioNowPlaying = {
   id: string;
@@ -50,4 +51,13 @@ export function shouldPlayFocusRadioYoutube(library: Library): boolean {
   return (
     library.focusRadio.playback.playing && nowPlaying !== null && nowPlaying.kind === "youtube"
   );
+}
+
+export function resolveFocusRadioStreamPlaybackUrl(library: Library): string | null {
+  const nowPlaying = resolveFocusRadioNowPlaying(library);
+  if (!nowPlaying || nowPlaying.kind !== "stream") {
+    return null;
+  }
+
+  return resolveFocusRadioStreamProxyUrl(nowPlaying.url);
 }

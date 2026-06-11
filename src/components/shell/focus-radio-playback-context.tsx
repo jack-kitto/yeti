@@ -12,6 +12,7 @@ import {
 import {
   resolveFocusRadioNowPlaying,
   resolveFocusRadioOutputVolume,
+  resolveFocusRadioStreamPlaybackUrl,
   shouldPlayFocusRadioStream,
   shouldPlayFocusRadioYoutube,
 } from "@/focus-radio/playback";
@@ -30,7 +31,6 @@ import {
   resolveFocusRadioStreamFailureAction,
 } from "@/focus-radio/stream-fallback";
 import { updateFocusRadioPlayback } from "@/focus-radio/stations";
-import { resolveFocusRadioStreamProxyUrl } from "@/focus-radio/stream-proxy";
 import { useMutateLibrary } from "@/hooks/use-library";
 import {
   registerChimePlaybackDucker,
@@ -38,10 +38,7 @@ import {
 } from "@/internal-tools/chime-audio";
 import type { Library } from "@/library/types";
 import { FocusRadioYoutubePlayer } from "./focus-radio-youtube-player";
-
-type YoutubePlayerVolume = {
-  setVolume: (volume: number) => void;
-};
+import type { YoutubePlayerInstance } from "@/focus-radio/youtube-player-sync";
 
 type FocusRadioPlaybackContextValue = {
   playbackError: string | null;
@@ -50,6 +47,9 @@ type FocusRadioPlaybackContextValue = {
   dispatchExternalMediaKey: typeof dispatchExternalMediaKey;
   getStreamAnalyser: () => AnalyserNode | null;
   streamVisualizerActive: boolean;
+  setCanvasYoutubePlayerMounted: (mounted: boolean) => void;
+  reportPlaybackFailure: () => void;
+  registerYoutubePlayer: (player: YoutubePlayerInstance | null) => void;
 };
 
 const FocusRadioPlaybackContext = createContext<FocusRadioPlaybackContextValue | null>(null);
@@ -73,13 +73,15 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadedUrlRef = useRef<string | null>(null);
   const retriedCurrentRef = useRef(false);
+  const playbackFailedRef = useRef(false);
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const libraryRef = useRef(library);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const elementSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const wasPlayingBeforeExternalRef = useRef(false);
-  const youtubePlayerRef = useRef<YoutubePlayerVolume | null>(null);
+  const youtubePlayerRef = useRef<YoutubePlayerInstance | null>(null);
+  const [canvasYoutubePlayerMounted, setCanvasYoutubePlayerMounted] = useState(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
   const [externalGlance, setExternalGlance] = useState<ExternalMediaGlance | null>(null);
   const externalGlanceRef = useRef<ExternalMediaGlance | null>(null);
@@ -125,7 +127,7 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   nowPlayingRef.current = nowPlaying;
   const shouldPlayStream = shouldPlayFocusRadioStream(library);
   const shouldPlayYoutube = shouldPlayFocusRadioYoutube(library);
-  const streamUrl = nowPlaying?.kind === "stream" ? nowPlaying.url : null;
+  const streamPlaybackUrl = resolveFocusRadioStreamPlaybackUrl(library);
   const youtubeVideoId =
     nowPlaying?.kind === "youtube" ? parseYoutubeVideoId(nowPlaying.url) : null;
   const activeStationId = playback.stationId;
@@ -170,7 +172,7 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
 
       const analyser = context.createAnalyser();
       analyser.fftSize = 512;
-      analyser.smoothingTimeConstant = 0.35;
+      analyser.smoothingTimeConstant = 0.12;
       analyser.minDecibels = -85;
       analyser.maxDecibels = -10;
 
@@ -185,7 +187,32 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
     }
   }, [teardownStreamAnalyser]);
 
+  const markPlaybackFailed = useCallback(() => {
+    playbackFailedRef.current = true;
+    setPlaybackError("Unable to play this station. Try again or choose another.");
+
+    const audio = audioRef.current;
+    if (audio) {
+      loadedUrlRef.current = null;
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+    }
+
+    mutateLibrary.mutate((current) => {
+      if (!current.focusRadio.playback.playing) {
+        return current;
+      }
+
+      return updateFocusRadioPlayback(current, { playing: false });
+    });
+  }, [mutateLibrary]);
+
   attemptPlayRef.current = () => {
+    if (playbackFailedRef.current) {
+      return;
+    }
+
     const audio = audioRef.current;
     if (!audio) {
       return;
@@ -203,62 +230,66 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
   };
 
   const handleStreamFailure = useCallback(() => {
+    if (playbackFailedRef.current) {
+      return;
+    }
+
     const currentLibrary = libraryRef.current;
     const stationId = currentLibrary.focusRadio.playback.stationId;
     if (!stationId) {
       return;
     }
 
-    const action = resolveFocusRadioStreamFailureAction(
-      currentLibrary,
-      stationId,
-      retriedCurrentRef.current,
-    );
+    const action = resolveFocusRadioStreamFailureAction(retriedCurrentRef.current);
 
     if (action.type === "retry") {
       retriedCurrentRef.current = true;
       setPlaybackError(null);
       clearRetryTimer();
       retryTimerRef.current = setTimeout(() => {
-        const audio = audioRef.current;
-        if (!audio) {
+        if (playbackFailedRef.current) {
           return;
         }
-        audio.load();
-        attemptPlayRef.current();
+
+        const currentNowPlaying = resolveFocusRadioNowPlaying(libraryRef.current);
+
+        if (currentNowPlaying?.kind === "stream") {
+          const audio = audioRef.current;
+          if (!audio) {
+            return;
+          }
+
+          audio.load();
+          attemptPlayRef.current();
+          return;
+        }
+
+        if (currentNowPlaying?.kind === "youtube") {
+          youtubePlayerRef.current?.playVideo();
+        }
       }, FOCUS_RADIO_STREAM_RETRY_MS);
       return;
     }
 
-    if (action.type === "fallback") {
-      retriedCurrentRef.current = false;
-      setPlaybackError(null);
-      mutateLibrary.mutate((current) =>
-        updateFocusRadioPlayback(current, {
-          stationId: action.stationId,
-          playing: true,
-        }),
-      );
-      return;
-    }
-
-    setPlaybackError("All stations failed to play. Try again.");
-    mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, { playing: false }));
-  }, [clearRetryTimer, mutateLibrary]);
+    clearRetryTimer();
+    markPlaybackFailed();
+  }, [clearRetryTimer, markPlaybackFailed]);
 
   handleStreamFailureRef.current = handleStreamFailure;
 
   const retryPlayback = useCallback(() => {
     retriedCurrentRef.current = false;
+    playbackFailedRef.current = false;
     setPlaybackError(null);
     mutateLibrary.mutate((current) => updateFocusRadioPlayback(current, { playing: true }));
   }, [mutateLibrary]);
 
   useEffect(() => {
     retriedCurrentRef.current = false;
+    playbackFailedRef.current = false;
     setPlaybackError(null);
     clearRetryTimer();
-  }, [activeStationId, clearRetryTimer, streamUrl]);
+  }, [activeStationId, clearRetryTimer, streamPlaybackUrl]);
 
   useEffect(() => {
     return () => {
@@ -356,7 +387,16 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
 
   const getStreamAnalyser = useCallback(() => analyserRef.current, []);
 
-  const playbackStreamUrl = streamUrl ? resolveFocusRadioStreamProxyUrl(streamUrl) : null;
+  const registerYoutubePlayer = useCallback((player: YoutubePlayerInstance | null) => {
+    youtubePlayerRef.current = player;
+  }, []);
+
+  const reportPlaybackFailureRef = useRef(handleStreamFailure);
+  reportPlaybackFailureRef.current = handleStreamFailure;
+
+  const reportPlaybackFailure = useCallback(() => {
+    reportPlaybackFailureRef.current();
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -366,7 +406,7 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
 
     audio.volume = resolveFocusRadioOutputVolume(playback);
 
-    if (!playbackStreamUrl) {
+    if (!streamPlaybackUrl) {
       loadedUrlRef.current = null;
       audio.pause();
       audio.removeAttribute("src");
@@ -374,23 +414,23 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
       return;
     }
 
-    if (loadedUrlRef.current !== playbackStreamUrl) {
-      loadedUrlRef.current = playbackStreamUrl;
-      audio.src = playbackStreamUrl;
+    if (loadedUrlRef.current !== streamPlaybackUrl) {
+      loadedUrlRef.current = streamPlaybackUrl;
+      audio.src = streamPlaybackUrl;
       audio.load();
     }
 
-    if (shouldPlayStream) {
+    if (shouldPlayStream && !playbackFailedRef.current) {
       attemptPlayRef.current();
       return;
     }
 
     audio.pause();
-  }, [playback.muted, playback.volume, playbackStreamUrl, shouldPlayStream]);
+  }, [playback.muted, playback.volume, shouldPlayStream, streamPlaybackUrl]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !streamUrl) {
+    if (!audio || !streamPlaybackUrl) {
       return;
     }
 
@@ -420,7 +460,7 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
         clearInterval(retryTimer);
       }
     };
-  }, [ensureStreamAnalyser, streamUrl]);
+  }, [ensureStreamAnalyser, streamPlaybackUrl]);
 
   return (
     <FocusRadioPlaybackContext
@@ -431,18 +471,22 @@ export function FocusRadioPlaybackProvider({ library, children }: FocusRadioPlay
         dispatchExternalMediaKey,
         getStreamAnalyser,
         streamVisualizerActive: shouldPlayStream,
+        setCanvasYoutubePlayerMounted,
+        reportPlaybackFailure,
+        registerYoutubePlayer,
       }}
     >
       <audio ref={audioRef} className="shell-focus-radio-audio" aria-hidden />
-      <FocusRadioYoutubePlayer
-        videoId={youtubeVideoId}
-        shouldPlay={shouldPlayYoutube}
-        playback={playback}
-        onError={handleStreamFailure}
-        onPlayerReady={(player) => {
-          youtubePlayerRef.current = player;
-        }}
-      />
+      {youtubeVideoId && !canvasYoutubePlayerMounted ? (
+        <FocusRadioYoutubePlayer
+          videoId={youtubeVideoId}
+          shouldPlay={shouldPlayYoutube}
+          playback={playback}
+          presentation="hidden"
+          onError={handleStreamFailure}
+          onPlayerReady={registerYoutubePlayer}
+        />
+      ) : null}
       {children}
     </FocusRadioPlaybackContext>
   );

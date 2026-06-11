@@ -1,13 +1,14 @@
 import type { FocusRadioPlayback } from "@/focus-radio/types";
 import { resolveFocusRadioOutputVolume } from "@/focus-radio/playback";
 
-type YoutubePlayerInstance = {
+export type YoutubePlayerInstance = {
   loadVideoById: (videoId: string) => void;
   playVideo: () => void;
   pauseVideo: () => void;
   setVolume: (volume: number) => void;
   mute: () => void;
   unMute: () => void;
+  setSize: (width: number, height: number) => void;
   destroy: () => void;
 };
 

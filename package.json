@@ -18,6 +18,7 @@
     "demo": "webreel record -c demo/webreel.config.json full-demo hero edge-notches universal-input focus-radio",
     "demo:preview": "webreel preview -c demo/webreel.config.json",
     "demo:validate": "webreel validate -c demo/webreel.config.json",
+    "generate:icons": "node scripts/generate-icons.mjs",
     "prepare": "husky"
   },
   "dependencies": {
@@ -47,6 +48,7 @@
     "postcss": "^8.5.4",
     "prettier": "^3.8.4",
     "semantic-release": "^24.2.9",
+    "sharp": "^0.35.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "vitest": "^3.2.1",

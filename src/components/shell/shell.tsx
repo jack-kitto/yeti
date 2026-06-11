@@ -18,6 +18,7 @@ import { Launcher } from "./launcher";
 import { ShellConfigDialog } from "./shell-config-dialog";
 import { ShellWorkspaceSurface } from "./shell-workspace-surface";
 import { FocusRadioPlaybackProvider } from "./focus-radio-playback-context";
+import { LoadingGate } from "@/components/branding/loading-gate";
 import { ShellEdgeLayer } from "./shell-edge-layer";
 
 type PanelBounds = {
@@ -92,11 +93,7 @@ export function Shell() {
   }
 
   if (isLoading || !library || !activeWorkspace) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-sm opacity-70">
-        Loading shell…
-      </div>
-    );
+    return <LoadingGate label="Loading shell…" />;
   }
 
   return (

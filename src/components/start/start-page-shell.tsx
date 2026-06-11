@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useStartPageLibrary } from "@/hooks/use-start-page-library";
 import { applyTheme } from "@/theme/theme";
 import { getStartPageShellContent } from "@/start/start-page-shell";
+import { LoadingGate } from "@/components/branding/loading-gate";
 import { StartPageCommandBar } from "./start-page-command-bar";
 
 export function StartPageShell() {
@@ -29,11 +30,7 @@ export function StartPageShell() {
         backgroundImage: "var(--qs-background-image)",
       }}
     >
-      {phase === "loading" ? (
-        <p className="text-sm opacity-70" role="status">
-          {content.loadingLabel}
-        </p>
-      ) : null}
+      {phase === "loading" ? <LoadingGate label={content.loadingLabel} /> : null}
 
       {resolved?.source === "starter" && phase === "ready" ? (
         <p className="max-w-md text-center text-xs opacity-70">

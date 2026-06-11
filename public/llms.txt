@@ -1,0 +1,26 @@
+# Yeti
+
+> A developer-focused start page and home station — Arc / Zen-style edge bookmarks and a calm focus canvas, in any browser. Local-first library in IndexedDB; portable v2 YAML snapshots for dotfiles.
+
+## Product
+
+- Landing: /
+- Home station (full UI): /home — pin this tab for daily work
+- Start page (command bar): /start — bookmark as new-tab URL or use the optional browser extension
+
+## Setup for developers
+
+- Example config repo: https://github.com/jack-kitto/yeti-config
+- Import a library snapshot from a raw GitHub URL in settings or via `:import`
+- Claude skills in the example repo help import bookmarks from Chrome, Firefox, and Arc into v2 YAML
+- Optional Chrome and Firefox extensions open /start on new tab (see main repo README)
+
+## Source
+
+- App repository: https://github.com/jack-kitto/yeti
+- License and contribution: see repository README
+
+## Not in scope (v1 / preview)
+
+- Cloud library sync (planned paid tier)
+- Live multi-device sync — use YAML snapshot export/import instead

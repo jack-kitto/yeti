@@ -9,6 +9,9 @@ export function LandingPage() {
     headline,
     tagline,
     features,
+    setupTitle,
+    setupDescription,
+    setupLinks,
     heroImageSrc,
     heroImageAlt,
     homeStationHref,
@@ -18,10 +21,7 @@ export function LandingPage() {
     waitlistHref,
     waitlistCta,
     earlyAccessNote,
-    footerGithubHref,
-    footerGithubLabel,
-    footerContextHref,
-    footerContextLabel,
+    footerLinks,
     footerLocalTierNote,
   } = getLandingPageContent();
 
@@ -29,7 +29,7 @@ export function LandingPage() {
     <main className="landing-page">
       <div className="landing-page-inner">
         <header className="landing-page-header">
-          <YetiLogo size={28} lockup label={productName} className="landing-page-brand" />
+          <YetiLogo size={28} lockup plain label={productName} className="landing-page-brand" />
           <h1 className="landing-page-headline">{headline}</h1>
           <p className="landing-page-tagline">{tagline}</p>
 
@@ -77,25 +77,38 @@ export function LandingPage() {
           </ul>
         </section>
 
+        <section className="landing-page-setup" aria-label="Setup">
+          <h2 className="landing-page-setup-title">{setupTitle}</h2>
+          <p className="landing-page-setup-copy">{setupDescription}</p>
+          <nav className="landing-page-setup-links" aria-label="Setup resources">
+            {setupLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="landing-page-setup-link"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        </section>
+
         <footer className="landing-page-footer">
           <p className="landing-page-footer-note">{footerLocalTierNote}</p>
           <nav className="landing-page-footer-links" aria-label="Project links">
-            <a
-              href={footerGithubHref}
-              className="landing-page-footer-link"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {footerGithubLabel}
-            </a>
-            <a
-              href={footerContextHref}
-              className="landing-page-footer-link"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {footerContextLabel}
-            </a>
+            {footerLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="landing-page-footer-link"
+                rel={link.href.startsWith("/") ? undefined : "noopener noreferrer"}
+                target={link.href.startsWith("/") ? undefined : "_blank"}
+              >
+                {link.label}
+              </a>
+            ))}
           </nav>
         </footer>
       </div>

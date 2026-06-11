@@ -3037,6 +3037,47 @@ body:has(.landing-page) {
   color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
 }
 
+.landing-page-setup {
+  display: grid;
+  gap: 1rem;
+  padding: 1.75rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--qs-color-text) 12%, transparent);
+  background: color-mix(in srgb, var(--qs-color-surface) 88%, transparent);
+}
+
+.landing-page-setup-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.landing-page-setup-copy {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--qs-color-text) 72%, transparent);
+}
+
+.landing-page-setup-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem 1rem;
+}
+
+.landing-page-setup-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--qs-color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.landing-page-setup-link:hover {
+  opacity: 0.85;
+}
+
 .landing-page-footer {
   display: grid;
   gap: 12px;

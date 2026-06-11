@@ -7,16 +7,27 @@ describe("landing page", () => {
     const content = getLandingPageContent();
 
     expect(content.productName).toBe("Yeti");
-    expect(content.headline.length).toBeGreaterThan(0);
+    expect(content.headline).toMatch(/start page/i);
+    expect(content.headline).not.toMatch(/shell|riced/i);
+    expect(content.tagline).not.toMatch(/rim/i);
     expect(content.tagline.length).toBeGreaterThan(0);
     expect(content.features).toHaveLength(3);
+    expect(content.features.every((feature) => !/rim/i.test(feature.description))).toBe(true);
     expect(content.heroImageSrc).toBe("/landing/hero.png");
+    expect(content.heroImageAlt).not.toMatch(/rim/i);
     expect(content.homeStationHref).toBe("/home");
     expect(content.homeStationCta).toMatch(/preview/i);
     expect(content.startPageHref).toBe("/start");
     expect(content.earlyAccessNote).toMatch(/local tier/i);
-    expect(content.footerGithubHref).toBe("https://github.com/jack-kitto/yeti");
-    expect(content.footerContextHref).toContain("CONTEXT.md");
+    expect(content.setupLinks.some((link) => link.label.match(/example config/i))).toBe(true);
+    expect(content.setupLinks.some((link) => link.label.match(/chrome extension/i))).toBe(true);
+    expect(content.setupLinks.some((link) => link.label.match(/firefox extension/i))).toBe(true);
+    expect(content.setupLinks.some((link) => link.label.match(/import skills/i))).toBe(true);
+    expect(content.footerLinks.some((link) => link.href === "/llms.txt")).toBe(true);
+    expect(content.footerLinks.some((link) => link.href.includes("github.com/jack-kitto/yeti"))).toBe(
+      true,
+    );
+    expect(content.footerLinks.some((link) => link.href.includes("CONTEXT.md"))).toBe(false);
   });
 
   it("hides the waitlist CTA when NEXT_PUBLIC_WAITLIST_URL is unset", () => {

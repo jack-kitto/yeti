@@ -5,6 +5,8 @@ type YetiLogoProps = {
   size?: number;
   lockup?: boolean;
   animated?: boolean;
+  /** Icon mark only — no dark rounded background plate. */
+  plain?: boolean;
   className?: string;
   label?: string;
 };
@@ -13,6 +15,7 @@ export function YetiLogo({
   size = 32,
   lockup = false,
   animated = false,
+  plain = false,
   className,
   label = PRODUCT_NAME,
 }: YetiLogoProps) {
@@ -27,8 +30,14 @@ export function YetiLogo({
       role={lockup ? undefined : "img"}
       className={animated ? "yeti-logo--animated" : undefined}
     >
-      <rect width={LOGO_VIEWBOX_SIZE} height={LOGO_VIEWBOX_SIZE} rx={LOGO_CONTAINER_RX} fill={BRAND_DARK} />
-      <path fill={BRAND_CREAM} fillRule="evenodd" d={LOGO_MARK_PATH} />
+      {plain ? (
+        <path fill={BRAND_DARK} fillRule="evenodd" d={LOGO_MARK_PATH} />
+      ) : (
+        <>
+          <rect width={LOGO_VIEWBOX_SIZE} height={LOGO_VIEWBOX_SIZE} rx={LOGO_CONTAINER_RX} fill={BRAND_DARK} />
+          <path fill={BRAND_CREAM} fillRule="evenodd" d={LOGO_MARK_PATH} />
+        </>
+      )}
     </svg>
   );
 

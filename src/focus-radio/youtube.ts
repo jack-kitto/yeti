@@ -8,13 +8,13 @@ export function parseYoutubeVideoId(url: string): string | null {
       return id || null;
     }
 
-    if (host === "youtube.com" || host === "m.youtube.com") {
+    if (host === "youtube.com" || host === "m.youtube.com" || host === "music.youtube.com") {
       if (parsed.pathname === "/watch") {
         return parsed.searchParams.get("v");
       }
 
       const [segment, id] = parsed.pathname.split("/").filter(Boolean);
-      if ((segment === "live" || segment === "embed" || segment === "v") && id) {
+      if ((segment === "live" || segment === "embed" || segment === "v" || segment === "shorts") && id) {
         return id;
       }
     }

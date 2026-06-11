@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
-import { resolveFocusRadioOutputVolume } from "@/focus-radio/playback";
+import { useEffect, useId, useRef, useState } from "react";
 import type { FocusRadioPlayback } from "@/focus-radio/types";
+import { syncFocusRadioYoutubePlayer } from "@/focus-radio/youtube-player-sync";
 
 type YoutubePlayerInstance = {
   loadVideoById: (videoId: string) => void;
@@ -84,6 +84,18 @@ export function FocusRadioYoutubePlayer({
   const elementId = useId().replace(/:/g, "");
   const playerRef = useRef<YoutubePlayerInstance | null>(null);
   const loadedVideoIdRef = useRef<string | null>(null);
+  const onErrorRef = useRef(onError);
+  const onPlayerReadyRef = useRef(onPlayerReady);
+  const playbackRef = useRef(playback);
+  const shouldPlayRef = useRef(shouldPlay);
+  const videoIdRef = useRef(videoId);
+  const [playerReady, setPlayerReady] = useState(false);
+
+  onErrorRef.current = onError;
+  onPlayerReadyRef.current = onPlayerReady;
+  playbackRef.current = playback;
+  shouldPlayRef.current = shouldPlay;
+  videoIdRef.current = videoId;
 
   useEffect(() => {
     let cancelled = false;
@@ -98,9 +110,18 @@ export function FocusRadioYoutubePlayer({
         width: "0",
         playerVars: { autoplay: 0, controls: 0 },
         events: {
-          onError: onError,
+          onError: () => {
+            onErrorRef.current();
+          },
           onReady: (event) => {
-            onPlayerReady?.(event.target);
+            setPlayerReady(true);
+            onPlayerReadyRef.current?.(event.target);
+            syncFocusRadioYoutubePlayer(event.target, {
+              videoId: videoIdRef.current,
+              shouldPlay: shouldPlayRef.current,
+              playback: playbackRef.current,
+              loadedVideoIdRef,
+            });
           },
         },
       });
@@ -108,44 +129,30 @@ export function FocusRadioYoutubePlayer({
 
     return () => {
       cancelled = true;
+      setPlayerReady(false);
       playerRef.current?.destroy();
       playerRef.current = null;
       loadedVideoIdRef.current = null;
     };
-  }, [elementId, onError]);
+  }, [elementId]);
 
   useEffect(() => {
+    if (!playerReady) {
+      return;
+    }
+
     const player = playerRef.current;
     if (!player) {
       return;
     }
 
-    const outputVolume = resolveFocusRadioOutputVolume(playback);
-    player.setVolume(Math.round(outputVolume * 100));
-    if (playback.muted || outputVolume === 0) {
-      player.mute();
-    } else {
-      player.unMute();
-    }
-
-    if (!videoId) {
-      loadedVideoIdRef.current = null;
-      player.pauseVideo();
-      return;
-    }
-
-    if (loadedVideoIdRef.current !== videoId) {
-      loadedVideoIdRef.current = videoId;
-      player.loadVideoById(videoId);
-    }
-
-    if (shouldPlay) {
-      player.playVideo();
-      return;
-    }
-
-    player.pauseVideo();
-  }, [playback.muted, playback.volume, shouldPlay, videoId]);
+    syncFocusRadioYoutubePlayer(player, {
+      videoId,
+      shouldPlay,
+      playback,
+      loadedVideoIdRef,
+    });
+  }, [playback, playerReady, shouldPlay, videoId]);
 
   return <div id={elementId} className="shell-focus-radio-youtube" aria-hidden />;
 }

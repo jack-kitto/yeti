@@ -283,6 +283,8 @@ describe("parseYoutubeVideoId", () => {
     expect(parseYoutubeVideoId("https://www.youtube.com/watch?v=dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
     expect(parseYoutubeVideoId("https://youtu.be/dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
     expect(parseYoutubeVideoId("https://youtube.com/live/abc123XYZ_0")).toBe("abc123XYZ_0");
+    expect(parseYoutubeVideoId("https://www.youtube.com/shorts/dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
+    expect(parseYoutubeVideoId("https://music.youtube.com/watch?v=dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
     expect(parseYoutubeVideoId("not-a-url")).toBeNull();
   });
 });

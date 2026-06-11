@@ -2,7 +2,9 @@
  * One-off generator: reads Arc + Zen browser state and writes a Yeti library snapshot.
  * Run: npx tsx scripts/generate-jack-yeti-config.ts [output-dir]
  */
+import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import process from "node:process";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { stringify } from "yaml";
@@ -175,7 +177,6 @@ function parseArcSidebar(path: string) {
 }
 
 function readZenSessions(path: string) {
-  const { execFileSync } = require("node:child_process") as typeof import("node:child_process");
   const script = `
 import json, lz4.block, sys
 path = sys.argv[1]
@@ -357,7 +358,7 @@ function buildLibrary(): Library {
         ...workspaces[0].placements,
         edges: {
           ...workspaces[0].placements.edges,
-          left: [...essentialsGroups, ...workspaces[0].placements.edges.left],
+          left: [...orderedEdgeGroups(essentialsGroups), ...workspaces[0].placements.edges.left],
         },
       },
     };

@@ -171,7 +171,7 @@ The full Yeti experience — **shell** rims, **canvas**, **edge groups**, **inte
 _Avoid_: Main app, dashboard, root URL
 
 **Landing page**:
-The public entry at `/` — product name, one-liner, and a primary path into the **home station** (`/home`). v1 is minimal. Not a **start page** and not the **shell**.
+The public entry at `/` — product intro, preview hero, feature summary, and paths into the **home station** (`/home`) and **start page** (`/start`). Optional waitlist link when configured. Public preview ships **local tier** only. Not a **start page** and not the **shell**.
 _Avoid_: Homepage, marketing site, start page, setup wizard
 
 **Start page**:

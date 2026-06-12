@@ -15,9 +15,6 @@
     "format:check": "prettier --check .",
     "lint": "xo",
     "verify:surface-boundaries": "vitest run src/routing/surface-boundaries.test.ts",
-    "demo": "webreel record -c demo/webreel.config.json full-demo hero edge-notches universal-input focus-radio",
-    "demo:preview": "webreel preview -c demo/webreel.config.json",
-    "demo:validate": "webreel validate -c demo/webreel.config.json",
     "generate:icons": "node scripts/generate-icons.mjs",
     "prepare": "husky"
   },
@@ -52,7 +49,6 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "vitest": "^3.2.1",
-    "webreel": "^0.1.4",
     "wrangler": "^4.99.0",
     "xo": "^2.0.2"
   },

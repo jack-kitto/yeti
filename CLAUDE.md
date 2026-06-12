@@ -1,13 +1,7 @@
 ## Agent skills
 
-### Issue tracker
-
-Issues live as markdown files under `.scratch/`. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-Five canonical triage roles with default label strings. See `docs/agents/triage-labels.md`.
-
 ### Domain docs
 
-Single-context layout: `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Product glossary: `CONTEXT.md`. Architecture decisions: `docs/adr/`.
+
+This is the public **Personal edition** app repo. Planning issues, commercial roadmap, and demo tooling live in the private [yeti-workspace](https://github.com/jack-kitto/yeti-workspace) monorepo (`packages/yeti` submodule).
